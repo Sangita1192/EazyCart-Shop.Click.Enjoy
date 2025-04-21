@@ -6,6 +6,7 @@ import { FiLogOut } from "react-icons/fi";
 import { FaExpeditedssl } from "react-icons/fa";
 import Badge from "@mui/material/Badge";
 import user from "./../../public/Images/profile.jpg";
+import logo from "./../../public/Images/logo.png";
 import { useState } from "react";
 
 const Header = ({ setShowSidebar }) => {
@@ -13,8 +14,8 @@ const Header = ({ setShowSidebar }) => {
 
   return (
     <div className="w-full py-2 shadow-md flex items-center justify-between px-4 bg-white z-10 relative">
-      <div className="flex gap-2">
-      <h1 className="text-xl font-bold mb-4 lg:w-[200px]  text-center">SP Mart</h1>
+      <div className="flex gap-2 items-center ">
+      <img src={logo} alt="logo" className="w-[210px] h-[60px]"/>
         <Button
           className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px]"
           onClick={() => setShowSidebar((prev) => !prev)}

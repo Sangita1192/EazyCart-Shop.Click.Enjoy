@@ -70,14 +70,19 @@ export const SideBar = () => {
                         </Button>
                         <ul className={`w-[90%] ml-auto text-[gray] transition-all ease-in-out duration-400 ${productShow ? "opacity-100 max-h-[1000px] pointer-events-auto" : "opacity-0 max-h-0 pointer-events-none"}`}>
                             <li>
-                                <Button className="!py-[10px] !text-[dimgray] w-full !capitalize  flex !justify-start items-center gap-3">
-                                    Add Products
-                                </Button>
+                                <Link to="/products/add">
+                                    <Button className="!py-[10px] !text-[dimgray] w-full !capitalize  flex !justify-start items-center gap-3">
+                                        Add Products
+                                    </Button>
+                                </Link>
+
                             </li>
                             <li>
+                                <Link to="/products/list">
                                 <Button className="!py-[10px] !text-[dimgray]  w-full !capitalize  flex !justify-start items-center gap-3">
                                     View Products List
                                 </Button>
+                                </Link>
                             </li>
                         </ul>
                     </li>
