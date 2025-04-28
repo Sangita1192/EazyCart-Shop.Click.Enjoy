@@ -1,11 +1,15 @@
 import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 
 const RecentOrders = () => {
     return (
         <div className="rounded-[8px] border border-gray-200 shadow-lg bg-white p-5">
             <div className="flex justify-between items-center my-[15px] mb-[25px]">
                 <h1 className="text-2xl font-bold">Recent Orders </h1>
-                <p className="hover:!text-blue-600 hover:underline transition-all duration-200 cursor-pointer">View Orders</p>
+                <Link to="/orders">
+                    <p className="hover:!text-blue-600 hover:underline transition-all duration-200 cursor-pointer">View Orders</p>
+                </Link>
+
             </div>
             <div className="overflow-x-auto overflow-y-auto ">
                 <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[8px]">

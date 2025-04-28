@@ -8,6 +8,7 @@ import Badge from "@mui/material/Badge";
 import user from "./../../public/Images/profile.jpg";
 import logo from "./../../public/Images/logo.png";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = ({ setShowSidebar }) => {
   const [dropdown, setDropdown] = useState(false);
@@ -15,7 +16,7 @@ const Header = ({ setShowSidebar }) => {
   return (
     <div className="w-full py-2 shadow-md flex items-center justify-between px-4 bg-white z-10 relative">
       <div className="flex gap-2 items-center ">
-      <img src={logo} alt="logo" className="w-[210px] h-[60px]"/>
+        <img src={logo} alt="logo" className="w-[210px] h-[60px]" />
         <Button
           className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px]"
           onClick={() => setShowSidebar((prev) => !prev)}
@@ -43,15 +44,16 @@ const Header = ({ setShowSidebar }) => {
           <ul
             className={`w-[200px] absolute top-[110%] right-[-10px] bg-white shadow-md rounded-md z-[99] border border-slate-300 
               transition-all duration-300 ease-in-out transform
-              ${
-                dropdown
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-95 pointer-events-none"
+              ${dropdown
+                ? "opacity-100 scale-100 pointer-events-auto"
+                : "opacity-0 scale-95 pointer-events-none"
               }`}
           >
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-slate-200 flex items-center gap-[15px]">
-              <MdManageAccounts size={20} />
-              My Account
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-slate-200 ">
+              <Link to="/profile" className="flex items-center gap-[15px]">
+                <MdManageAccounts size={20} />
+                My Account
+              </Link>
             </li>
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-slate-200 flex items-center gap-[15px]">
               <FaExpeditedssl size={20} />

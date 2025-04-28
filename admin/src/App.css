@@ -1,3 +1,7 @@
 .css-ihowzd-MuiBadge-badge{
   background-color: indianred !important;
 }
+.PhoneInput input {
+  outline: none;
+  height:100%;
+}

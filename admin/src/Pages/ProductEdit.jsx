@@ -1,30 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@mui/material';
-import { RiProductHuntFill } from 'react-icons/ri';
+import { IoMdCloudUpload } from 'react-icons/io';
 
-const ProductCreate = () => {
-    const [selectedImages, setSelectedImages] = useState([]);
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        const newImages = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-        }));
-
-        setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-
-    };
-
-    const handleRemoveImage = (index) => {
-        setSelectedImages((prevImages) =>
-            prevImages.filter((_, i) => i !== index)
-        );
-    };
+const ProductEdit = () => {
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-[30px]">
-                <h1 className='text-2xl mb-[35px]'>Add Product</h1>
+                <h1 className='text-2xl mb-[35px]'>Edit Product</h1>
                 <div className="my-[25px] flex flex-col gap-[5px] relative">
                     <label htmlFor="name" className="mb-2 font-semibold">Product Name</label>
                     <input type="text" className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600" placeholder="Product Name" />
@@ -138,42 +121,18 @@ const ProductCreate = () => {
                         id="images"
                         multiple
                         accept="image/*"
-                        onChange={handleImageChange}
+                        // onChange={handleImageChange}
                         className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] text-sm focus:outline-blue-600 cursor-pointer"
                     />
-                    {/* Previews */}
-                    {selectedImages.length > 0 && (
-                        <div className="mt-4 flex flex-wrap gap-4">
-                            {selectedImages.map((img, idx) => (
-                                <div
-                                    key={idx}
-                                    className="relative w-[100px] h-[100px] rounded-md border border-gray-300"
-                                >
-                                    {/* Cancel icon */}
-                                    <button
-                                        onClick={() => handleRemoveImage(idx)}
-                                        className="absolute w-[20px] h-[20px] top-[-5px] right-[-5px] bg-red-500 rounded-full p-1 flex justify-center items-center z-[99] !text-white"
-                                        title="Remove image"
-                                    >
-                                        ✕
-                                    </button>
 
-                                    {/* Image */}
-                                    <img
-                                        src={img.url}
-                                        alt={`Preview ${idx}`}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-
-                    )}
                 </div>
 
                 <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >
-                    <Button className='!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full'>
-                        Add Product
+                    <Button className='!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full                        !flex 
+                                !justify-center !items-center gap-x-2'
+                    >
+                        <IoMdCloudUpload className='text-xl' />
+                        Update & View Product
                     </Button>
                 </div>
 
@@ -182,5 +141,4 @@ const ProductCreate = () => {
     )
 }
 
-
-export default ProductCreate;
+export default ProductEdit
