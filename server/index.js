@@ -4,8 +4,11 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import morgan from 'morgan';
 import router from "./src/app.js";
+import connectDb from "./src/config/dbconfig.js";
 
 const app = express();
+
+connectDb();
 app.use(cors());
 
 app.use(express.json());

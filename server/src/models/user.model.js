@@ -57,11 +57,11 @@ const UserSchema = new mongoose.Schema({
             ref: 'order'
         }
     ],
-    forgotPasswordOtp:{
+    otp:{
         type: Number,
         default: null
     },
-    forgotPasswordOtpExpiry:{
+    otpExpiry:{
         type: Date,
         default: null
     },
