@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+body {
+  background-color: #F5F0F0;
+  color: rgba(0, 0, 0, 0.8);
+  overflow-x: hidden !important;
+}
+
+Button {
+  color: rgba(0, 0, 0, 0.8) !important;
+  text-transform: capitalize !important;
+}
+
+/* Hide scrollbar for all browsers */
+.scrollbar-hide {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+.sliderHome {
+  overflow: inherit !important;
+}
+
+.swiper-button-prev,
+.swiper-button-next 
+{
+  width: 50px !important;
+  height: 50px !important;
+  background-color: lightgray !important;
+  border-radius: 50% !important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after 
+{
+  font-size: 28px !important;
+  font-weight: bold !important;
+  color:darkslategray !important;
+}
