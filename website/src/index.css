@@ -37,6 +37,11 @@ Button {
   border-radius: 50% !important;
 }
 
+.swiper-button-prev:hover,
+.swiper-button-next:hover{
+  background-color: darkcyan !important;
+} 
+
 .swiper-button-prev::after,
 .swiper-button-next::after 
 {
