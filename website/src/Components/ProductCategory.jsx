@@ -62,7 +62,6 @@ const ProductCategory = () => {
                     </div>              
                     <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Footwear</p>
                 </div>
-
             </div>
 
         </div>
