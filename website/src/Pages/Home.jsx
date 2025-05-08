@@ -2,6 +2,8 @@ import React from 'react'
 import HomeSlider from '../Components/HomeSlider'
 import ProductCategory from '../Components/ProductCategory'
 import PopularProducts from '../Components/PopularProducts'
+import FreeShipping from '../Components/FreeShipping'
+import FeaturedCategoryBanner from '../Components/FeaturedCategoryBanner'
 
 const Home = () => {
   return (
@@ -10,6 +12,11 @@ const Home = () => {
           <HomeSlider/>
           <ProductCategory/>
           <PopularProducts/>
+          <div className='w-full py-8 bg-[#FCFAFA]'>
+            <FreeShipping/>
+            <FeaturedCategoryBanner/>
+          </div>
+          
       </div>
     </>
   )
