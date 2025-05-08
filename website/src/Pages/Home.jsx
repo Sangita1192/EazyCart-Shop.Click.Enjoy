@@ -12,7 +12,7 @@ const Home = () => {
           <HomeSlider/>
           <ProductCategory/>
           <PopularProducts/>
-          <div className='w-full py-8 bg-[#FCFAFA]'>
+          <div className='w-full py-8 bg-[#f5f5f5]'>
             <FreeShipping/>
             <FeaturedCategoryBanner/>
           </div>
