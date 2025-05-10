@@ -30,8 +30,7 @@ Button {
 }
 
 .swiper-button-prev,
-.swiper-button-next 
-{
+.swiper-button-next {
   width: 50px !important;
   height: 50px !important;
   background-color: lightgray !important;
@@ -39,14 +38,28 @@ Button {
 }
 
 .swiper-button-prev:hover,
-.swiper-button-next:hover{
+.swiper-button-next:hover {
   background-color: darkcyan !important;
-} 
+}
 
 .swiper-button-prev::after,
-.swiper-button-next::after 
-{
+.swiper-button-next::after {
   font-size: 28px !important;
   font-weight: bold !important;
-  color:darkslategray !important;
+  color: darkslategray !important;
+}
+
+
+/* Offer Banner Slider */
+.offer-banner-swiper .swiper-button-next,
+.offer-banner-swiper .swiper-button-prev {
+  display: none !important;
+}
+
+/* Show only on md+ when hovering the wrapper */
+@media (min-width: 768px) {
+  .offer-banner-swiper:hover .swiper-button-next,
+  .offer-banner-swiper:hover .swiper-button-prev {
+    display: flex !important;
+  }
 }

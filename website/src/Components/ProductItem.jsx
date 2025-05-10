@@ -28,14 +28,14 @@ const ProductItem = () => {
                     <img
                         src={product1}
                         alt="Product"
-                        className="w-full h-full object-contain absolute top-0 left-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0"
+                        className="w-full h-full absolute top-0 left-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0"
                     />
 
                     {/* Hover Image */}
                     <img
                         src={product2}
                         alt="Product Hover"
-                        className="w-full h-full object-contain absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                        className="w-full h-full absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
                     />
 
                     {/* Discount Tag */}

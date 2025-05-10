@@ -4,6 +4,8 @@ import ProductCategory from '../Components/ProductCategory'
 import PopularProducts from '../Components/PopularProducts'
 import FreeShipping from '../Components/FreeShipping'
 import FeaturedCategoryBanner from '../Components/FeaturedCategoryBanner'
+import LatestProducts from '../Components/LatestProducts'
+import OfferBanners from '../Components/LatestOfferBanner'
 
 const Home = () => {
   return (
@@ -12,9 +14,15 @@ const Home = () => {
           <HomeSlider/>
           <ProductCategory/>
           <PopularProducts/>
-          <div className='w-full py-8 bg-[#f5f5f5]'>
+          <div className='w-full border py-8'>
+            <OfferBanners/>
+          </div>
+          <div className='w-full py-8 bg-white'>
             <FreeShipping/>
             <FeaturedCategoryBanner/>
+          </div>
+          <div className='w-full py-8 bg-[#f5f5f5]'>
+            <LatestProducts/>
           </div>
           
       </div>
