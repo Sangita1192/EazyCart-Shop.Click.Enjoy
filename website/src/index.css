@@ -51,15 +51,15 @@ Button {
 
 
 /* Offer Banner Slider */
-.offer-banner-swiper .swiper-button-next,
-.offer-banner-swiper .swiper-button-prev {
-  display: none !important;
-}
-
-/* Show only on md+ when hovering the wrapper */
-@media (min-width: 768px) {
-  .offer-banner-swiper:hover .swiper-button-next,
-  .offer-banner-swiper:hover .swiper-button-prev {
-    display: flex !important;
+  .offer-banner-swiper .swiper-button-next,
+  .offer-banner-swiper .swiper-button-prev {
+    display: none !important;
   }
-}
+
+  /* Show only on md+ when hovering the wrapper */
+  @media (min-width: 768px) {
+    .offer-banner-swiper:hover .swiper-button-next,
+    .offer-banner-swiper:hover .swiper-button-prev {
+      display: flex !important;
+    }
+  }

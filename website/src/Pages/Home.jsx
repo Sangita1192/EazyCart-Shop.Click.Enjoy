@@ -14,16 +14,20 @@ const Home = () => {
           <HomeSlider/>
           <ProductCategory/>
           <PopularProducts/>
-          <div className='w-full border py-8'>
+          <div className='w-full py-8 bg-[#f5f5f5]'>
             <OfferBanners/>
           </div>
-          <div className='w-full py-8 bg-white'>
+          <div className='w-full py-[40px] bg-white'>
             <FreeShipping/>
             <FeaturedCategoryBanner/>
           </div>
-          <div className='w-full py-8 bg-[#f5f5f5]'>
+          <div className='w-full py-8 bg-white'>
             <LatestProducts/>
           </div>
+          <div className='w-full border-t border-gray-50 py-8 '>
+            
+          </div>
+
           
       </div>
     </>
