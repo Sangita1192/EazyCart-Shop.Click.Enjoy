@@ -6,6 +6,7 @@ import FreeShipping from '../Components/FreeShipping'
 import FeaturedCategoryBanner from '../Components/FeaturedCategoryBanner'
 import LatestProducts from '../Components/LatestProducts'
 import OfferBanners from '../Components/LatestOfferBanner'
+import BlogPost from '../Components/BlogPost'
 
 const Home = () => {
   return (
@@ -25,7 +26,7 @@ const Home = () => {
             <LatestProducts/>
           </div>
           <div className='w-full border-t border-gray-50 py-8 '>
-            
+            <BlogPost/>
           </div>
 
           
