@@ -13,7 +13,7 @@ const BlogPost = () => {
                     <div className='rounded-[8px] shadow-md group mt-[5px]'>
                         <div className='h-[180px] lg:h-[200px] rounded-tl-[8px] rounded-tr-[8px] overflow-hidden relative'>
                             <img
-                                src={blog1}
+                                src={blog2}
                                 alt="blog post 1"
                                 className='h-full w-full object-cover rounded-tl-[8px] rounded-tr-[8px] transform transition-transform duration-300 group-hover:scale-105'
                             />
@@ -59,7 +59,7 @@ New had happen unable uneasy. Drawings can followed`.slice(0, 100)}...
                     <div className='rounded-[8px] shadow-md group mt-[5px]'>
                         <div className='h-[180px] lg:h-[200px] rounded-tl-[8px] rounded-tr-[8px] overflow-hidden relative'>
                             <img
-                                src={blog1}
+                                src={blog2}
                                 alt="blog post 1"
                                 className='h-full w-full object-cover rounded-tl-[8px] rounded-tr-[8px] transform transition-transform duration-300 group-hover:scale-105'
                             />
