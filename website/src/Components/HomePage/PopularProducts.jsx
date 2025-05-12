@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ProductItem from './ProductItem';
+import ProductItem from '../ProductItem';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';     
          

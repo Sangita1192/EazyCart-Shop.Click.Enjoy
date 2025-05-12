@@ -1,12 +1,13 @@
 import React from 'react'
-import HomeSlider from '../Components/HomeSlider'
-import ProductCategory from '../Components/ProductCategory'
-import PopularProducts from '../Components/PopularProducts'
-import FreeShipping from '../Components/FreeShipping'
-import FeaturedCategoryBanner from '../Components/FeaturedCategoryBanner'
-import LatestProducts from '../Components/LatestProducts'
-import OfferBanners from '../Components/LatestOfferBanner'
-import BlogPost from '../Components/BlogPost'
+import HomeSlider from '../Components/HomePage/HomeSlider'
+import ProductCategory from '../Components/HomePage/ProductCategory'
+import PopularProducts from '../Components/HomePage/PopularProducts'
+import OfferBanners from '../Components/HomePage/LatestOfferBanner'
+import FreeShipping from '../Components/HomePage/FreeShipping'
+import FeaturedCategoryBanner from '../Components/HomePage/FeaturedCategoryBanner'
+import LatestProducts from '../Components/HomePage/LatestProducts'
+import BlogPost from '../Components/HomePage/BlogPost'
+
 
 const Home = () => {
   return (

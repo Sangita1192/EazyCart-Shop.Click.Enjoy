@@ -2,7 +2,7 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import banner from './../../public/banner.jpg';
+import banner from '/banner.jpg';
 
 import { Navigation, Autoplay } from 'swiper/modules';
 

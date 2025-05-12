@@ -1,6 +1,6 @@
 import React from 'react'
-import grocery from "./../../public/grocery.png"
-import fashion from './../../public/fashion.png'
+import grocery from "/grocery.png"
+import fashion from '/fashion.png'
 
 const ProductCategory = () => {
   return (

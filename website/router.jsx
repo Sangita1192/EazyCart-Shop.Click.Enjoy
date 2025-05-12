@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from './src/App'
 import Home from './src/Pages/Home'
+import Login from './src/Pages/Login'
+import Register from './src/Pages/Register'
 
 const router = createBrowserRouter([
   {
@@ -8,8 +10,9 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
-    //   { path: 'about', element: <About /> },
-    //   { path: '*', element: <NotFound /> },
+      { path: 'login', element: <Login/> },
+      {path:'register', element: <Register/>},
+      // { path: '*', element: <NotFound /> },
     ],
   },
 ])

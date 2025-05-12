@@ -12,7 +12,7 @@ const Footer = () => {
         <>
             <footer className='md:pb-0 pb-[50px]'>
                 <MobileFooter />
-                <div className='w-full border pt-8 bg-white'>
+                <div className='w-full pt-8 bg-white'>
                     <div className='lg:w-[80%] md:w-[90%] w-[95%] m-auto'>
                         <div className='w-full grid sm:grid-cols-4 grid-cols-2 gap-[15px] border-b border-gray-200 py-6 '>
                             <div className='flex flex-col items-center text-center gap-[6px]'>
