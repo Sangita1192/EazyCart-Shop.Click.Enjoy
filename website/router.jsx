@@ -4,6 +4,7 @@ import Home from './src/Pages/Home'
 import Login from './src/Pages/Login'
 import Register from './src/Pages/Register'
 import ProductListing from './src/Pages/ProductListing'
+import ProductDetail from './src/Pages/ProductDetail'
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
       { path: 'login', element: <Login/> },
       {path:'register', element: <Register/>},
       {path:'products', element: <ProductListing/>},
+      {path:'product/:id', element: <ProductDetail/>},
       // { path: '*', element: <NotFound /> },
     ],
   },
