@@ -10,7 +10,7 @@ import { Button } from '@mui/material';
 const Footer = () => {
     return (
         <>
-            <footer className='md:pb-0 pb-[50px]'>
+            <footer className='md:pb-0 pb-[50px] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]'>
                 <MobileFooter />
                 <div className='w-full pt-8 bg-white'>
                     <div className='lg:w-[80%] md:w-[90%] w-[95%] m-auto'>

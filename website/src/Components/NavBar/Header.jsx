@@ -12,7 +12,7 @@ const Header = ({isSideBarOpen, setIsSidebarOpen}) => {
     const [login, setLogin] = useState(true)
     return (
         <>
-            <header className='w-full bg-white'>
+            <header className='w-full bg-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]'>
                 <div className='w-full border-b border-gray-100 py-[4px] hidden lg:block'>
                     <div className='w-[80%] m-auto text-[rgba(0,0,0,0.8)] '>
                         <div className='flex justify-between w-full'>
@@ -29,7 +29,6 @@ const Header = ({isSideBarOpen, setIsSidebarOpen}) => {
                         </div>
                     </div>
                 </div>
-
                 <div className="w-full border-t border-b border-gray-100 py-[10px]">
                     <div className="w-[85%] m-auto">
                         <div className='flex justify-between gap-[10px] items-center'>

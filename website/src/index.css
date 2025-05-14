@@ -63,3 +63,17 @@ Button {
       display: flex !important;
     }
   }
+
+/* Custom Scrollbar for filterSection */
+.scrollbar-sidebar::-webkit-scrollbar {
+    width: 6px; /* Set the width of the scrollbar */
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Set the background color of the track */
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb {
+    background-color: #FA9C4A; /* Set the color of the thumb */
+}
+

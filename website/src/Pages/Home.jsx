@@ -29,8 +29,6 @@ const Home = () => {
           <div className='w-full border-t border-gray-50 py-8 '>
             <BlogPost/>
           </div>
-
-          
       </div>
     </>
   )
