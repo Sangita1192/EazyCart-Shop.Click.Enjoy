@@ -80,7 +80,7 @@ const Footer = () => {
                                         I agree to the terms and conditions and the privacy policy.
                                     </label>
                                 </div>
-                                <Button className='!bg-red-400 !text-white !mt-[10px] !w-full hover:!bg-red-500'> Subscribe</Button>
+                                <Button className='!bg-amber-600 !text-white !mt-[10px] !w-full hover:!bg-amber-500'> Subscribe</Button>
                             </div>
 
                         </div>

@@ -115,7 +115,7 @@ const ProductDetail = () => {
                                 </div>
                             </div>
 
-                            <Button className='!flex !gap-2 !justify-center !items-center !bg-amber-500 !cursor-pointer !hover:bg-amber-600 !px-[15px]'>
+                            <Button className='!flex !gap-2 !justify-center !items-center !bg-amber-600 !cursor-pointer hover:!bg-amber-700 !text-white !px-[15px]'>
                                 <FaShoppingCart className="inline-block mr-2" size={16} />
                                 Add to Cart
                             </Button>
