@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { FaMinus, FaPlus } from 'react-icons/fa6'
 
 const FilterSection = ({ title, options, selected, onToggle }) => {
-    const [show, setShow] = useState(true);
+  const [show, setShow] = useState(true);
 
-    return (
-        <div className="w-full">
+  return (
+    <div className="w-full">
       <div
         className="flex justify-between items-center py-2 text-lg font-semibold cursor-pointer"
         onClick={() => setShow(!show)}

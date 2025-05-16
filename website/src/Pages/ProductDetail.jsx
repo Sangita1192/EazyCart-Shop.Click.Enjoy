@@ -6,7 +6,9 @@ import { Button } from '@mui/material';
 import { FaShoppingCart } from 'react-icons/fa';
 import InnerImageZoom from 'react-inner-image-zoom'
 import 'react-inner-image-zoom/lib/styles.min.css'
-import ProductReview from '../Components/ProductReview';
+import ProductReview from '../Components/Review/ProductReview';
+import RelatedProducts from '../Components/RelatedProducts';
+
 
 
 const ProductDetail = () => {
@@ -126,9 +128,12 @@ const ProductDetail = () => {
                         </Button>
                     </div>
                 </div>
-                <div className='xl:w-[80%] lg:w-[85%] sm:w-[95%] w-full m-auto shadow-lg p-2 bg-gray-200/50 mt-4'>
+                <div className='lg:w-[85%] sm:w-[95%] lg:px-6 w-full m-auto shadow-lg p-2 bg-gray-200/50 mt-4'>
                     <ProductReview/>
                 </div>
+            </div>
+            <div className='m-auto w-[90%] '>
+                <RelatedProducts/>     
             </div>
         </>
     )

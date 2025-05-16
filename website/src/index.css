@@ -68,7 +68,7 @@ Button {
   }
 }
 
-/* Custom Scrollbar for filterSection */
+/* Custom Scrollbar for filterSection and Cart */
 .scrollbar-sidebar::-webkit-scrollbar {
   width: 6px;
   /* Set the width of the scrollbar */
@@ -95,3 +95,24 @@ Button {
   height: 100%;
   width: 100%
 }
+
+/* Swiper navigation related products */
+.swiper-navigation-related-products .swiper-prev,
+.swiper-navigation-related-products .swiper-next {
+    width:35px;
+    height:35px;
+    background-color: #E17100;
+    color: white !important;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: color 0.3s ease;
+}
+
+.swiper-prev:hover,
+.swiper-next:hover {
+    background-color: #6F3800;
+}
+
+
+

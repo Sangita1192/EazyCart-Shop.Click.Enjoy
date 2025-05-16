@@ -7,8 +7,10 @@ import { FaBars, FaRegHeart, FaRegUser } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import Button from '@mui/material/Button';
 import MenuBar from './MenuBar';
+import Cart from '../Cart';
 
-const Header = ({isSideBarOpen, setIsSidebarOpen}) => {
+const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
+    const [isCartOpen, setIsCartOpen] = useState(false);
     const [login, setLogin] = useState(true)
     return (
         <>
@@ -32,7 +34,7 @@ const Header = ({isSideBarOpen, setIsSidebarOpen}) => {
                 <div className="w-full border-t border-b border-gray-100 py-[10px]">
                     <div className="w-[85%] m-auto">
                         <div className='flex justify-between gap-[10px] items-center'>
-                            <FaBars className="block lg:hidden" onClick={()=>setIsSidebarOpen(true)}/>
+                            <FaBars className="block lg:hidden" onClick={() => setIsSidebarOpen(true)} />
                             <div className='w-[25%] '>
                                 <img src={logo} alt="Logo" className='w-[220px] h-[60px]' />
                             </div>
@@ -59,26 +61,23 @@ const Header = ({isSideBarOpen, setIsSidebarOpen}) => {
 
                                 <FaRegHeart className='text-[22px]' />
                                 <Badge badgeContent={4} color="success">
-                                    <IoCartOutline className='text-[24px]' />
+                                    <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)} />
                                 </Badge>
-
                             </div>
                             <div className='block lg:hidden'>
                                 <Badge badgeContent={4} color="success" >
-                                    <IoCartOutline className='text-[24px]' />
+                                    <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)}/>
                                 </Badge>
                             </div>
-
-
                         </div>
                     </div>
 
                 </div>
                 <div className='w-full border-t border-b border-gray-100'>
-                    <MenuBar setIsSidebarOpen={setIsSidebarOpen}/>
-                </div>
-
+                    <MenuBar setIsSidebarOpen={setIsSidebarOpen} />
+                </div>          
             </header>
+             <Cart isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
 
 
         </>

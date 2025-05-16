@@ -1,6 +1,6 @@
 import React from 'react'
-import ReviewItem from './Review/ReviewItem'
-import AddReview from './Review/AddReview'
+import ReviewItem from './ReviewItem'
+import AddReview from './AddReview'
 
 const ProductReview = () => {
     return (

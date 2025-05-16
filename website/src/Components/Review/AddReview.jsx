@@ -8,7 +8,7 @@ const AddReview = () => {
 
     return (
         <>
-            <div className='bg-gray-50 p-2 py-4'>
+            <div className='bg-gray-50 lg:p-6 p-4'>
                 <h1 className='xl:text-xl md:text-lg mb-2 font-semibold'>Add a Review</h1>
                 <textarea
                     className="w-full h-24 resize-none border border-gray-500 rounded p-2 focus:outline-none focus:ring-2 focus:ring-orange-500 overflow-y-auto"
@@ -16,7 +16,6 @@ const AddReview = () => {
                 // value={review}
                 // onChange={(e) => setReview(e.target.value)}
                 />
-                {/* ⭐ Star Rating */}
                 <div className="flex items-center gap-1 my-4">
                     {[...Array(5)].map((_, i) => {
                         const value = i + 1;
