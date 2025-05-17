@@ -5,6 +5,7 @@ import { IoClose } from 'react-icons/io5';
 import { Button } from '@mui/material';
 import { BsFillCartXFill } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const Cart = ({ isCartOpen, setIsCartOpen }) => {
     const [cart, setCart] = useState([]);
@@ -108,7 +109,11 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                                         </div>
 
                                         <div className='flex justify-center gap-2 items-center py-3 border-t border-gray-300'>
-                                            <Button className="!bg-amber-600 !border-2 !border-amber-600 !text-white hover:!bg-black hover:!border-black !w-[45%]">View Cart</Button>
+                                            <Button className="!bg-amber-600 !border-2 !border-amber-600 !text-white hover:!bg-black hover:!border-black !w-[45%]" onClick={()=>setIsCartOpen(false)}>
+                                                <Link to="/cart">
+                                                    View Cart
+                                                </Link>
+                                            </Button>
                                             <Button className="!w-[45%] !border-2 !border-amber-600 hover:!bg-black hover:!text-white !text-amber-600 hover:!border-black">Checkout</Button>
                                         </div>
                                     </div>

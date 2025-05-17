@@ -5,6 +5,7 @@ import Login from './src/Pages/Login'
 import Register from './src/Pages/Register'
 import ProductListing from './src/Pages/ProductListing'
 import ProductDetail from './src/Pages/ProductDetail'
+import CartPage from './src/Pages/CartPage'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       {path:'register', element: <Register/>},
       {path:'products', element: <ProductListing/>},
       {path:'product/:id', element: <ProductDetail/>},
+      {path:'cart', element:<CartPage/>}
       // { path: '*', element: <NotFound /> },
     ],
   },
