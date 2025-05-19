@@ -64,7 +64,8 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                     <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)} />
                                 </Badge>
                             </div>
-                            <div className='block lg:hidden'>
+                            <div className='flex sm:gap-4 gap-2 lg:hidden'>
+                                <FaRegHeart className='text-[22px]' />
                                 <Badge badgeContent={4} color="success" >
                                     <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)}/>
                                 </Badge>

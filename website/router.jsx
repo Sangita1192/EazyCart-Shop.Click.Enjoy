@@ -6,6 +6,11 @@ import Register from './src/Pages/Register'
 import ProductListing from './src/Pages/ProductListing'
 import ProductDetail from './src/Pages/ProductDetail'
 import CartPage from './src/Pages/CartPage'
+import Account from './src/Pages/Account'
+import Profile from './src/Components/Account/Profile'
+import Address from './src/Components/Account/Address'
+import Wishlist from './src/Components/Account/Wishlist'
+import Order from './src/Components/Account/Order'
 
 const router = createBrowserRouter([
   {
@@ -13,11 +18,21 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'login', element: <Login/> },
-      {path:'register', element: <Register/>},
-      {path:'products', element: <ProductListing/>},
-      {path:'product/:id', element: <ProductDetail/>},
-      {path:'cart', element:<CartPage/>}
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+      { path: 'products', element: <ProductListing /> },
+      { path: 'product/:id', element: <ProductDetail /> },
+      { path: 'cart', element: <CartPage /> },
+      {
+        path: 'my-account',
+        element: <Account />,
+        children:[
+          {index: true, element: <Profile/>},
+          {path: "address", element: <Address/>},
+          {path: "wishlist", element: <Wishlist/>},
+          {path: "orders", element: <Order/>},   
+        ]
+      }
       // { path: '*', element: <NotFound /> },
     ],
   },
