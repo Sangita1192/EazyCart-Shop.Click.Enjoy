@@ -44,7 +44,6 @@ const CartPage = () => {
 
 
                         </div>
-
                     </div>
                     <div className='bg-white/70 p-2 shadow-lg rounded-md w-[95%] mx-auto md:mx-0 md:w-[35%] lg:w-[30%] xl:w-[25%] text-gray-600 pb-8'>
                         <h3 className='border-b pb-2 border-gray-300 text-lg font-semibold'>Cart Total</h3>

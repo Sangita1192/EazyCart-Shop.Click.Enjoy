@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 body {
   background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.8);
@@ -66,8 +67,8 @@ Button {
 
 /* Custom Scrollbar for filterSection and Cart */
 .scrollbar-sidebar::-webkit-scrollbar {
-  width: 6px;
-  /* Set the width of the scrollbar */
+  width: 6px;/* Set the width of the scrollbar */
+  height:4px; 
 }
 
 .scrollbar-sidebar::-webkit-scrollbar-track {

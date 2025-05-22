@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import AddressItem from './AddressItem';
 
 const Address = () => {
     const [addAddress, setAddAdress] = useState(false);
@@ -19,21 +20,7 @@ const Address = () => {
                 {
                     (addressList.length > 0) &&
                     <div className='w-full p-2 rounded-md bg-gray-100/50 my-2'>
-                        <div className='p-2 flex gap-2 items-start'>
-                            <div className='flex-1'>
-                                <div className='flex gap-2 items-center'>
-                                    <p className='px-2 py-1 bg-gray-200 rounded-md text-gray-600'>Office</p>
-                                </div>
-                                <div className='mt-1 py-1'>
-                                    <div className='flex gap-3 lg:text-md text-sm'>
-                                        <p className='font-semibold'>Sangeeta</p>
-                                        <span>+1-643-413-9841</span>
-                                    </div>
-                                    <p>18451 85Ave Surrey, British Columbia, V8B-8Ml</p>
-                                </div>
-                            </div>
-                            <BsThreeDotsVertical />
-                        </div>
+                        <AddressItem/>
                     </div>
                 }
 

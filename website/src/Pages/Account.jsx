@@ -9,7 +9,7 @@ const Account = () => {
         <div className='shadow-md rounded-lg border-gray-800 hidden md:block'>
             <ProfileSidebar/>
         </div>
-        <div className='shadow-md rounded-md border-gray-800 p-4 flex-1 bg-white'>
+        <div className='shadow-md rounded-md border-gray-800 p-4 flex-1 bg-white min-w-0'>
             <Outlet/>
         </div>
     </div>
