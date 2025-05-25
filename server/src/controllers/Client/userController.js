@@ -162,7 +162,7 @@ const userLogin = async (req, res) => {
         if (!user) {
             return sendErrorResponse(res, "User not found", 404)
         }
-        if (!user.status == "Active") {
+        if (user.status !== "Active") {
             return sendErrorResponse(res, "Contact to Admin", 400)
         };
 
