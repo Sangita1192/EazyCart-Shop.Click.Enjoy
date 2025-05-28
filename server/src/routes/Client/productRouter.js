@@ -1,9 +1,0 @@
-import express from "express";
-import auth from "../../middleware/auth.js";
-import upload from "../../middleware/multer.js";
-import { createProduct } from "../../controllers/Client/productController.js";
-
-const productRouter = express.Router();
-
-productRouter.post('/create', auth(["ADMIN"]), upload.array("images", 5), createProduct);
-export default productRouter;

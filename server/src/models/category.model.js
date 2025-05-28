@@ -1,13 +1,19 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const categorySchema = mongoose.Schema({
     name: {
         type: String,
-        required: true,
-        trim: true,  //automatically remove leading and tailing space
-        unique: true
+        required: [true, "Category name is required"],
+        trim: true,
+        unique: [true, "Category name must be unique"]
     },
-    image: [
+    slug: {
+        type: String,
+        unique: true,
+        lowercase: true
+    },
+    images: [
         { type: String }
     ],
     parent: {
@@ -17,7 +23,8 @@ const categorySchema = mongoose.Schema({
     },
     description: {
         type: String,
-        trim: true
+        trim: true,
+        required: [true, "Description is required"]
     },
     isFeatured: {
         type: Boolean,
@@ -25,12 +32,21 @@ const categorySchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'inactive'],
+        enum: {
+            values: ['active', 'inactive'],
+            message: "Status must be either 'active' or 'inactive'"
+        },
         default: 'active'
-    },
-},
-    { timestamps: true }
-);
+    }
+}, { timestamps: true });
+
+// Auto-generate slug from name
+categorySchema.pre('save', function (next) {
+    if (this.isModified('name')) {
+        this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+    next();
+});
 
 const Category = mongoose.model("Category", categorySchema);
 export default Category;

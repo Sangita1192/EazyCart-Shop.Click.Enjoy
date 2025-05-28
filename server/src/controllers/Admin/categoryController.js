@@ -9,12 +9,6 @@ const createCategory = async (req, res) => {
     try {
         const { name, parent, description, isFeatured, status } = req.body;
 
-        //check if existing category
-        const existing = await Category.findOne({ name });
-        if (existing) {
-            return sendErrorResponse(res, "Category already exists", 400);
-        }
-
         const imageFiles = req.files || [];
         const uploadedImageUrls = [];
 
@@ -32,9 +26,9 @@ const createCategory = async (req, res) => {
             name,
             parent: parent,
             description,
-            isFeatured: isFeatured,
-            status: status,
-            image: uploadedImageUrls
+            isFeatured: isFeatured ?? false,
+            status: status ?? "active",
+            images: uploadedImageUrls
         });
 
         await category.save();
@@ -43,7 +37,76 @@ const createCategory = async (req, res) => {
             message: "Category created successfully",
             error: false,
             success: true,
-            image: uploadedImageUrls
+            category
+        })
+
+    }
+    catch (error) {
+        console.log(error);
+
+        //unique error (like duplicate name)
+        if (error?.cause?.code === 11000) {
+            return res.status(400).json({
+                errors: { name: "Category name must be unique" },
+                message: "Validation Error"
+            });
+        }
+
+        //Schema Validation error
+        if (error.name === "ValidationError") {
+            const fieldErrors = {};
+            for (const field in error.errors) {
+                fieldErrors[field] = error.errors[field].message;
+            }
+            return res.status(400).json({
+                errors: fieldErrors,
+                message: "Validation Error"
+            });
+        }
+
+        return sendErrorResponse(res, "Internal Server Error", 500);
+    }
+}
+
+//get all categories
+const getAllCategories = async (req, res) => {
+    try {
+        const { page = 1, limit = 10, search = "", categoryName } = req.query;
+
+        const skip = (parseInt(page) - 1) * parseInt(limit)
+
+        const query = search ?
+            {
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { description: { $regex: search, $options: "i" } }
+                ],
+            }
+            : {};
+
+        //filter by category name
+        if (categoryName && categoryName !== "all") {
+            query.name = categoryName;
+        }
+
+        const totalCategories = await Category.countDocuments(query);
+
+        const categories = await Category.find(query)
+            .populate("parent", "name")
+            .skip(skip)
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })   //newest first
+
+
+        const totalPages = Math.ceil(totalCategories / limit);
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            categories,
+            totalPages,
+            currentPage: page,
+            totalItems: totalCategories,
         })
 
     }
@@ -53,17 +116,15 @@ const createCategory = async (req, res) => {
     }
 }
 
-//get all categories
-const getAllCategories = async (req, res) => {
+//get CategoryNameList
+const getCategoryList = async (req, res) => {
     try {
-        const categories = await Category.find()
-            .populate("parent", "name");
+        const categories = await Category.find({}, 'name')
+            .sort({ name: 1 });
         return res.status(200).json({
             success: true,
-            error: false,
-            categories,
-        })
-
+            categories
+        });
     }
     catch (error) {
         console.log(error);
@@ -84,7 +145,7 @@ const getCategoryById = async (req, res) => {
         return res.status(200).json({
             success: true,
             error: false,
-            category,
+            category
         });
     }
     catch (error) {
@@ -98,23 +159,25 @@ const updateCategory = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, parent, description, isFeatured, status } = req.body;
+        let existingImages = req.body.existingImages;
+        existingImages = existingImages ? JSON.parse(existingImages) : [];
 
         const category = await Category.findById(id);
         if (!category) {
             return sendErrorResponse(res, "Category not found", 400);
         }
 
-        // handle new image upload
+        // Determine which images to delete (those that existed before but are not in the updated list)
+        const imagesToRemove = (category.images || []).filter(oldUrl => !existingImages.includes(oldUrl));
+
+        for (const oldUrl of imagesToRemove) {
+            const publicId = extractPublicId(oldUrl);
+            await removeImageFromCloudinary(publicId);
+        }
+
+        // upload new image files (if any)
         const imageFiles = req.files || [];
         const newImageUrls = [];
-
-        if (imageFiles.length > 0) {
-            //Remove old images from cloudinary
-            for (const oldUrl of category.image) {
-                const publicId = extractPublicId(oldUrl);
-                await removeImageFromCloudinary(publicId);
-            }
-        }
 
         //upload new image(s)
         for (let i = 0; i < imageFiles.length; i++) {
@@ -124,7 +187,9 @@ const updateCategory = async (req, res) => {
             }
             newImageUrls.push(result.url);
         }
-        category.image = newImageUrls;
+
+        // Final combined image array
+        category.images = [...existingImages, ...newImageUrls];
 
         // Update other fields
         category.name = name || category.name;
@@ -138,12 +203,34 @@ const updateCategory = async (req, res) => {
         return res.status(200).json({
             message: "Category updated successfully",
             success: true,
+            error: false,
             category,
         });
 
     }
     catch (error) {
-        console.log(error);
+        console.log("Error in updateCategory", error);
+
+        //Duplicate key error
+        if(error?.cause?.code === 11000){
+            return res.status(400).json({
+                errors: {name: "Category name must be unique"},
+                message: "Validation Error"
+            });
+        }
+
+        //Mongoose Schema validation errors
+        if(error.name === "ValidationError"){
+            const fieldErrors = {};
+            for (const field in error.errors) {
+                fieldErrors[field] = error.errors[field].message;
+            }
+            return res.status(400).json({
+                errors: fieldErrors,
+                message: "Validation Error"
+            });
+        }
+
         return sendErrorResponse(res, "Internal Server Error", 500);
     }
 }
@@ -158,11 +245,12 @@ const deleteCategory = async (req, res) => {
             return sendErrorResponse(res, "Category not found", 404);
         }
         //remove images from cloudinary
-        for (const url of category.image) {
-            const publicId = extractPublicId(url);
-            await removeImageFromCloudinary(publicId);
+        if (category.image) {
+            for (const url of category.image) {
+                const publicId = extractPublicId(url);
+                await removeImageFromCloudinary(publicId);
+            }
         }
-
         await Category.findByIdAndDelete(id);
 
         return res.status(200).json({
@@ -187,7 +275,7 @@ const toggleFeaturedCategory = async (req, res) => {
         if (!category) {
             return sendErrorResponse(res, "Category not found", 404);
         }
-        
+
         //toggle the current value
         category.isFeatured = !category.isFeatured;
         await category.save();
@@ -202,7 +290,35 @@ const toggleFeaturedCategory = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        return sendErrorResponse(res, "Failed to delete category", 500);
+        return sendErrorResponse(res, "Failed to update featured category", 500);
+    }
+}
+
+//toggle Status
+const toggleStatusCategory = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const category = await Category.findById(id);
+
+        if (!category) {
+            return sendErrorResponse(res, "Category not found", 404);
+        }
+
+        //toggle the current value
+        category.status = category.status === "active" ? "inactive" : "active";
+        await category.save();
+
+        return res.status(200).json({
+            message: `Category status updated`,
+            success: true,
+            error: false,
+            category
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, "Failed to update category status", 500);
     }
 }
 
@@ -212,4 +328,4 @@ const toggleFeaturedCategory = async (req, res) => {
 
 
 
-export { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory, toggleFeaturedCategory }
+export { createCategory, getCategoryList, getAllCategories, getCategoryById, updateCategory, deleteCategory, toggleFeaturedCategory, toggleStatusCategory }

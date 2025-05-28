@@ -53,15 +53,18 @@ const productSchema = mongoose.Schema({
         min: 0,
         max: 100 // percentage discount
     },
-    color: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Color'
-    },
-    size: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Size",
-
-    },
+    color: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Color'
+        }
+    ],
+    size: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Size'
+        }
+    ],
     weight: {
         type: Number
     },

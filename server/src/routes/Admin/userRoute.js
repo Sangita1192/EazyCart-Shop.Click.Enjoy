@@ -1,5 +1,5 @@
 import express from 'express';
-import { logoutUser, registerUserController, removeImageFromCloudinary, resendOTP, updateUserDetails, userLogin, userProfileUpload, verifyUserAccount} from '../../controllers/Client/userController.js';
+import { logoutUser, registerUserController, removeImageFromCloudinary, resendOTP, updateUserDetails, userLogin, userProfileUpload, verifyUserAccount} from '../../controllers/Admin/userController.js';
 import auth from '../../middleware/auth.js';
 import upload from '../../middleware/multer.js';
 

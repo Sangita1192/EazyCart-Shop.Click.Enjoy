@@ -1,12 +1,14 @@
 import { Button, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react'
-import { addCategory, getCategoryList } from '../api/categoryApi';
+import { getCategoryById, getCategoryList, updateCategory } from '../api/categoryApi';
 import { showError, showSuccess } from '../../services/toastService';
 import { showSuccessAlert } from '../../utils/successAlert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CategoryCreate = () => {
-  const nav = useNavigate()
+const CategoryEdit = () => {
+  const [errors, setErrors] = useState({});
+  const nav = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -14,55 +16,70 @@ const CategoryCreate = () => {
     status: 'active',
     parent: '',
   });
-  const [errors, setErrors] = useState({});
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchCategoryNames = async () => {
-      setLoading(true);
-      try {
-        const res = await getCategoryList();
-        setCategoryList(res.data.categories || []);
-      } catch (err) {
-        console.error('Failed to fetch category names', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (id) fetchData();
+    document.title = "Edit Category";
+  }, [id])
 
-    fetchCategoryNames();
-  }, []);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [catListRes, categoryRes] = await Promise.all([
+        getCategoryList(),
+        getCategoryById(id)
+      ]);
+      setCategoryList(catListRes.data.categories || []);
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-
-    setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-
-  };
-
-  const handleRemoveImage = (index) => {
-    setSelectedImages((prevImages) =>
-      prevImages.filter((_, i) => i !== index)
-    );
-  };
+      const category = categoryRes.data.category;
+      setFormData({
+        name: category.name || '',
+        description: category.description || '',
+        isFeatured: category.isFeatured || false,
+        status: category.status || 'active',
+        parent: category.parent?._id || '',
+      });
+      setExistingImages(category.images || []);
+    } catch (error) {
+      showError("Failed to load category details");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'isFeatured') {
-      setFormData({ ...formData, [name]: value === 'true' });
-    } else if (name === 'status') {
-      setFormData({ ...formData, [name]: value === 'true' ? 'active' : 'inactive' });
-    } else {
-      setFormData({ ...formData, [name]: value });
+      return setFormData((prev) => ({ ...prev, [name]: value === 'true' }));
     }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const updatedImages = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setNewImages((prev) => [...prev, ...updatedImages]);
+  };
+
+  const removeNewImage = (index) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (index) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  useEffect(() => { if (existingImages) console.log('existingImg', existingImages) }, [existingImages])
+
 
   const handleSubmit = async () => {
     try {
@@ -74,26 +91,17 @@ const CategoryCreate = () => {
       payload.append("description", formData.description.trim());
       payload.append("isFeatured", formData.isFeatured);
       payload.append("status", formData.status);
-      if (formData.parent.trim() !== "") {
-        payload.append("parent", formData.parent);
-      }
-      selectedImages.forEach((imgObj) => {
-        payload.append("images", imgObj.file);
-      });
+      if (formData.parent) payload.append("parent", formData.parent);
 
-      await addCategory(payload);
-      showSuccess("Category created Successfully");
+      payload.append("existingImages", JSON.stringify(existingImages));
 
-      setFormData({
-        name: "",
-        description: "",
-        isFeatured: "false",
-        status: "true",
-        parent: "",
-      });
-      setSelectedImages([]);
-      await showSuccessAlert("Category Created", "The category was successfully created.");
-      nav("/category/list");
+      //append Images
+      newImages.forEach((imgObj) => payload.append("images", imgObj.file));
+
+      await updateCategory(id, payload);
+      showSuccess("Category updated Successfully");
+      await showSuccessAlert("Success, The category was updated")
+      nav("/category/list")
     } catch (error) {
       const apiErrors = error?.response?.data?.errors;
       const errMsg = error?.response?.data?.message || "Something went wrong.";
@@ -106,11 +114,17 @@ const CategoryCreate = () => {
     } finally {
       setSubmitting(false);
     }
-  }
+  };
+
   return (
     <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5">
-      <h1 className='text-2xl mb-[35px]'>Add Category</h1>
-      <form action="" method='post'>
+      <h1 className='text-2xl mb-[35px]'>Edit Category</h1>
+      {
+        loading &&
+        <div className="text-center py-10"><CircularProgress /></div>
+      }
+      <form method='post'>
+        {/* Name */}
         <div className="my-[25px] flex flex-col gap-[5px] relative">
           <label htmlFor="name" className="mb-2 font-semibold">Category Name</label>
           <input type="text"
@@ -119,9 +133,11 @@ const CategoryCreate = () => {
             value={formData.name}
             onChange={handleChange}
             className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600" placeholder="Category Name" />
-          {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
+          {errors.name && (
+            <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+          )}
         </div>
-
+        {/* Description */}
         <div className="my-[25px] flex flex-col gap-[5px]">
           <label htmlFor="description" className="mb-2 font-semibold">Description</label>
           <textarea name='description'
@@ -129,12 +145,15 @@ const CategoryCreate = () => {
             value={formData.description}
             onChange={handleChange}
             className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600" placeholder="Category Description" />
-          {errors.description && <p className="text-red-600 text-sm mt-1">{errors.description}</p>}
+          {errors.description && (
+            <p className="text-sm text-red-500 mt-1">{errors.description}</p>
+          )}
         </div>
 
+        {/* Select fields */}
         <div className="my-[25px] flex flex-col md:flex-row gap-[15px]">
           <div className="flex flex-col gap-[5px] w-full lg:w-1/3">
-            <label className="block mb-2 font-medium">Parent Category (optional)</label>
+            <label className="block mb-2 font-medium">Parent Category</label>
             <select
               name="parent"
               value={formData.parent}
@@ -148,9 +167,7 @@ const CategoryCreate = () => {
                 </option>
               ))}
             </select>
-            {errors.parent && <p className="text-red-600 text-sm mt-1">{errors.parent}</p>}
           </div>
-          
           <div className="flex flex-col gap-[5px] w-full lg:w-1/3">
             <label htmlFor="isFeatured" className="mb-2 font-semibold">isFeatured</label>
             <select
@@ -179,6 +196,7 @@ const CategoryCreate = () => {
           </div>
         </div>
 
+        {/* Image upload */}
         <div className="my-[25px] flex flex-col w-full lg:w-1/2">
           <label htmlFor="images" className="mb-2 font-semibold">Category Image</label>
           <input
@@ -189,50 +207,52 @@ const CategoryCreate = () => {
             onChange={handleImageChange}
             className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] text-sm focus:outline-blue-600 cursor-pointer"
           />
-          {/* Previews */}
-          {selectedImages.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-4">
-              {selectedImages.map((img, idx) => (
-                <div
-                  key={idx}
+
+          <div className="mt-4 flex gap-4 flex-wrap">
+            {/* Existing images */}
+            {existingImages.length > 0 &&
+              existingImages.map((url, idx) => (
+                <div key={idx}
                   className="relative w-[100px] h-[100px] rounded-md border border-gray-300"
                 >
-                  {/* Cancel icon */}
                   <button
-                    onClick={() => handleRemoveImage(idx)}
+                    onClick={() => removeExistingImage(idx)}
                     className="absolute w-[20px] h-[20px] top-[-5px] right-[-5px] bg-red-500 rounded-full p-1 flex justify-center items-center z-[99] !text-white"
                     title="Remove image"
                   >
                     ✕
                   </button>
-
-                  {/* Image */}
-                  <img
-                    src={img.url}
-                    alt={`Preview ${idx}`}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={url} className="w-full h-full object-cover" alt={`existing-${idx}`} />
                 </div>
               ))}
-            </div>
-
-          )}
+            {/* New images */}
+            {newImages.map((imgObj, idx) => (
+              <div key={`new-${idx}`} className="relative w-[100px] h-[100px] rounded-md border border-gray-300">
+                <button
+                  type="button"
+                  onClick={() => removeNewImage(idx)}
+                  className="absolute w-[20px] h-[20px] top-[-5px] right-[-5px] bg-red-500 rounded-full p-1 flex justify-center items-center z-[99] !text-white"
+                >
+                  ✕
+                </button>
+                <img src={imgObj.url} className="w-full h-full object-cover" alt={`new-${idx}`} />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >
+        <div className="w-full sm:w-1/2 md:w-1/3">
           <Button
             onClick={handleSubmit}
             disabled={submitting}
-            className="!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full"
+            className="!bg-blue-600 hover:!bg-blue-700 !text-white !w-full"
           >
-            {submitting ? <CircularProgress size={20} color="inherit" /> : 'Add Category'}
+            {submitting ? <CircularProgress size={20} color="inherit" /> : 'Update Category'}
           </Button>
         </div>
       </form>
-
-
     </div>
-  )
-}
+  );
+};
 
-export default CategoryCreate
+export default CategoryEdit
