@@ -1,7 +1,9 @@
 import express from 'express';
-import { logoutUser, registerUserController, removeImageFromCloudinary, resendOTP, updateUserDetails, userLogin, userProfileUpload, verifyUserAccount} from '../../controllers/Admin/userController.js';
+import { logoutUser, registerUserController, resendOTP, updateUserDetails, userLogin, userProfileUpload, verifyUserAccount } from '../../controllers/Website/userController.js';
 import auth from '../../middleware/auth.js';
 import upload from '../../middleware/multer.js';
+import { removeImageFromCloudinary } from '../../utils/Cloudinary/removeImgCloudinary.js';
+
 
 const userRouter = express.Router();
 

@@ -323,9 +323,29 @@ const toggleStatusCategory = async (req, res) => {
 }
 
 
+//fetchActiveCategory
+const fetchActiveCategory =  async(req,res)=>{
+    try {
+        const categories = await Category.find({status: "active"})
+            .populate("parent", "name")
+            .sort({ createdAt: -1 })  
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            categories
+        })
+
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, "Internal Server Error", 500);
+    }
+}
 
 
 
 
 
-export { createCategory, getCategoryList, getAllCategories, getCategoryById, updateCategory, deleteCategory, toggleFeaturedCategory, toggleStatusCategory }
+
+export { createCategory, getCategoryList, getAllCategories, getCategoryById, updateCategory, deleteCategory, toggleFeaturedCategory, toggleStatusCategory, fetchActiveCategory }

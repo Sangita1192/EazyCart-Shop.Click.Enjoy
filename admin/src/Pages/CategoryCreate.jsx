@@ -4,9 +4,12 @@ import { addCategory, getCategoryList } from '../api/categoryApi';
 import { showError, showSuccess } from '../../services/toastService';
 import { showSuccessAlert } from '../../utils/successAlert';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
 
 const CategoryCreate = () => {
-  const nav = useNavigate()
+  const nav = useNavigate();
+  const { activeCategories, fetchActiveCategories } = useContext(GlobalContext);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,24 +19,12 @@ const CategoryCreate = () => {
   });
   const [errors, setErrors] = useState({});
   const [selectedImages, setSelectedImages] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchCategoryNames = async () => {
-      setLoading(true);
-      try {
-        const res = await getCategoryList();
-        setCategoryList(res.data.categories || []);
-      } catch (err) {
-        console.error('Failed to fetch category names', err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchCategoryNames();
+  useEffect(() => {
+    fetchActiveCategories();
   }, []);
 
   const handleImageChange = (e) => {
@@ -142,7 +133,8 @@ const CategoryCreate = () => {
               className="w-full bg-[#f1f1f1] px-4 py-2 rounded-md focus:outline-blue-600"
             >
               <option value="">None</option>
-              {categoryList.map((cat) => (
+              { activeCategories && 
+              activeCategories.map((cat) => (
                 <option key={cat._id} value={cat._id}>
                   {cat.name}
                 </option>
@@ -150,7 +142,7 @@ const CategoryCreate = () => {
             </select>
             {errors.parent && <p className="text-red-600 text-sm mt-1">{errors.parent}</p>}
           </div>
-          
+
           <div className="flex flex-col gap-[5px] w-full lg:w-1/3">
             <label htmlFor="isFeatured" className="mb-2 font-semibold">isFeatured</label>
             <select

@@ -4,9 +4,11 @@ import { getCategoryById, getCategoryList, updateCategory } from '../api/categor
 import { showError, showSuccess } from '../../services/toastService';
 import { showSuccessAlert } from '../../utils/successAlert';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
 
 const CategoryEdit = () => {
-  const [errors, setErrors] = useState({});
+  const { activeCategories, fetchActiveCategories } = useContext(GlobalContext);
   const nav = useNavigate();
   const { id } = useParams();
   const [formData, setFormData] = useState({
@@ -16,26 +18,24 @@ const CategoryEdit = () => {
     status: 'active',
     parent: '',
   });
+  const [errors, setErrors] = useState({});
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (id) fetchData();
+    if (id) {
+      fetchData();
+      fetchActiveCategories();
+    }
     document.title = "Edit Category";
   }, [id])
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [catListRes, categoryRes] = await Promise.all([
-        getCategoryList(),
-        getCategoryById(id)
-      ]);
-      setCategoryList(catListRes.data.categories || []);
-
+      const categoryRes = await getCategoryById(id)
       const category = categoryRes.data.category;
       setFormData({
         name: category.name || '',
@@ -77,8 +77,6 @@ const CategoryEdit = () => {
   const removeExistingImage = (index) => {
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
-
-  useEffect(() => { if (existingImages) console.log('existingImg', existingImages) }, [existingImages])
 
 
   const handleSubmit = async () => {
@@ -161,11 +159,12 @@ const CategoryEdit = () => {
               className="w-full bg-[#f1f1f1] px-4 py-2 rounded-md focus:outline-blue-600"
             >
               <option value="">None</option>
-              {categoryList.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
+              {activeCategories &&
+                activeCategories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
             </select>
           </div>
           <div className="flex flex-col gap-[5px] w-full lg:w-1/3">

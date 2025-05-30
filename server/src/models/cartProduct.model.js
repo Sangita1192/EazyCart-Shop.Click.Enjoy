@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const cartProductSchema = new mongoose.Schema({
     productId: {
         type: mongoose.Schema.ObjectId,
-        ref: 'product'
+        ref: 'Product',
+        required: true,
     },
     quantity: {
         type: Number,
@@ -11,11 +12,16 @@ const cartProductSchema = new mongoose.Schema({
     },
     userId : {
         type: mongoose.Schema.ObjectId,
-        ref: "user"
+        ref: "user",
+        required: true
     }
 },{
     timestamps: true
 });
 
+cartProductSchema.index({ userId: 1, productId: 1 }, { unique: true });
 
-const cartProductModel = mongoose.model('cartProduct', cartProductSchema);
+
+const Cart = mongoose.model('cart', cartProductSchema);
+
+export default Cart;

@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema({
     shoppingCart:[
         {
             type: mongoose.Schema.ObjectId,
-            ref: 'cartProduct'
+            ref: 'cart'
         }
     ],
     orderHistory: [

@@ -6,7 +6,9 @@ export const getAllCategories = async ({ page = 1, limit = 10, search = '', cate
     params: { page, limit, search, categoryName },
   });
 };
-export const getCategoryList = () => axios.get(`categories/category/list`);
+export const getCategoryList = () => axios.get(`categories/category-list`);
+
+export const getActiveCategories = () => axios.get(`categories/active-category`);
 
 export const getCategoryById = (id) => axios.get(`categories/category/${id}`);
 
