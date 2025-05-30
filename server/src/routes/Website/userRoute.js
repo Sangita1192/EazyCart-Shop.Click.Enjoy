@@ -7,7 +7,7 @@ import { removeImageFromCloudinary } from '../../utils/Cloudinary/removeImgCloud
 
 const userRouter = express.Router();
 
-userRouter.post('/register', registerUserController);
+userRouter.post('/register',upload.none(), registerUserController);
 userRouter.post('/verify-email', verifyUserAccount);
 userRouter.post('/resend-otp', resendOTP);
 userRouter.post('/login', userLogin);

@@ -18,51 +18,67 @@ import removeImg from "../../helperFunction/removeImgFromCloudinary.js";
 const registerUserController = async (req, res) => {
     try {
         const { name, email, password, confirm_password } = req.body;
-        if (!name || !email || !password || !confirm_password) {
-            sendErrorResponse(res, "Provide Email,Name or Password", 401)
+
+        if (password !== confirm_password && !password) {
+            return res.status(400).json({
+                errors: {
+                    confirm_password: "Passwords do not match"
+                }
+            });
         }
 
-        if (password !== confirm_password) {
-            sendErrorResponse(res, "password doesn't match", 401);
+        // Check if user already exists
+        const existingUser = await UserModel.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                errors: {
+                    email: "User already registered"
+                }
+            });
         }
 
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         const otpCode = generateOtp();
 
-        const user = await UserModel.findOne({ email: email });
-        if (user) {
-            sendErrorResponse(res, "User already registered", 401);
-        };
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         const newUser = new UserModel({
+            name,
             email,
             password: hashedPassword,
-            name,
             otp: otpCode,
             otpExpiry: Date.now() + 2 * 60 * 1000   //2 mins in ms
         });
 
-        const userData = await newUser.save();
+        const savedUser = await newUser.save();
 
-        //send verfication email
-        const verificationEmail = await sendEmailFun(
-            email,
-            "Your EazyCart OTP Code",
-            "",
-            emailTemplate(name, otpCode)
-        );
+        // Send verification email
+        try {
+            const emailSent = await sendEmailFun(
+                email,
+                "Your EazyCart OTP Code",
+                "",
+                emailTemplate(name, otpCode)
+            );
+
+            if (!emailSent) {
+                console.error("Email sending failed - deleting user");
+                await UserModel.findByIdAndDelete(savedUser._id);
+                return sendErrorResponse(res, "Failed to send verification email", 500);
+            }
+        } catch (emailError) {
+            console.error("Unexpected email error:", emailError.message);
+            await UserModel.findByIdAndDelete(savedUser._id);
+            return sendErrorResponse(res, "Email sending error", 500);
+        }
+
 
         //create jwt token for verfication purpose
         const token = jwt.sign(
-            { email: userData.email, id: userData._id },
+            { email: savedUser.email, id: savedUser._id },
             process.env.TOKEN_SECRET
         );
 
-        return res.status(201).json({
-            message: "user registered successfully! Please verify your email.",
+        return res.status(200).json({
+            message: "user registered successful",
             error: false,
             success: true,
             token
@@ -70,7 +86,15 @@ const registerUserController = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        sendErrorResponse(res, "Internal Server Error", 500);
+        if (error.name === "ValidationError") {
+            const errors = {};
+            Object.keys(error.errors).forEach(key => {
+                errors[key] = error.errors[key].message;
+            });
+
+            return res.status(400).json({ errors });
+        }
+        return sendErrorResponse(res, "Internal Server Error", 500);
     }
 };
 
@@ -166,7 +190,7 @@ const userLogin = async (req, res) => {
             return sendErrorResponse(res, "Contact to Admin", 400)
         };
 
-        if(!user.verifyEmail){
+        if (!user.verifyEmail) {
             return sendErrorResponse(res, "Your email is not verified yet, Please verify you email first", 400);
         }
 
@@ -410,23 +434,23 @@ const updateUserDetails = async (req, res) => {
 };
 
 //forgotPasword
-const forgotPassword = async(req,res)=>{
-    try{
-        const {email} = req.body;
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
         const userId = req.userId;
 
-        const user = await UserModel.findOne({_id:userId});
+        const user = await UserModel.findOne({ _id: userId });
 
-        if(!user){
+        if (!user) {
             return sendErrorResponse(res, "User not found", 404);
         }
-        
+
         let otpCode = generateOtp();
         user.otp = otpCode;
         user.otpExpiry = Date.now() + 60000;
 
         await user.save();
-        
+
         await sendEmailFun(
             email,
             "otp has been send to your email",
@@ -437,9 +461,9 @@ const forgotPassword = async(req,res)=>{
         await user.save();
 
         return res.status(200).json({
-            message:"link has been sent to your email",
-            error:false,
-            success:true,
+            message: "link has been sent to your email",
+            error: false,
+            success: true,
         })
     }
     catch (error) {
