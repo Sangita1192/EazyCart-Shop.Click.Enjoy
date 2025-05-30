@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: [true, "Name is required"],
     },
@@ -10,11 +10,11 @@ const UserSchema = new mongoose.Schema({
         required: [true, "Email is required"],
         unique: true
     },
-    password:{
+    password: {
         type: String,
         required: [true, "Password is required"]
     },
-    profilePicture:{
+    profilePicture: {
         type: String,
         default: ""
     },
@@ -22,34 +22,40 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
-    accessToken:{
+    accessToken: {
         type: String,
-        default:""
+        default: ""
     },
     refreshToken: {
         type: String,
         default: ""
     },
-    verifyEmail:{
+    verifyEmail: {
         type: Boolean,
         default: false
     },
-    lastLoginDate:{
+    lastLoginDate: {
         type: Date,
         default: null
     },
-    status:{
+    status: {
         type: String,
         enum: ["Active", "Inactive", "Suspended"],
         default: "Active"
     },
-    addressDetail:[
+    addressDetail: [
         {
             type: mongoose.Schema.ObjectId,
             ref: 'address'
         }
     ],
-    shoppingCart:[
+    shoppingCart: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'cart'
+        }
+    ],
+    wishlist: [
         {
             type: mongoose.Schema.ObjectId,
             ref: 'cart'
@@ -61,20 +67,20 @@ const UserSchema = new mongoose.Schema({
             ref: 'order'
         }
     ],
-    otp:{
+    otp: {
         type: Number,
         default: null
     },
-    otpExpiry:{
+    otpExpiry: {
         type: Date,
         default: null
     },
-    role:{
+    role: {
         type: String,
         enum: ["ADMIN", "USER"],
         default: "USER"
     }
-},{
+}, {
     timestamps: true
 });
 
