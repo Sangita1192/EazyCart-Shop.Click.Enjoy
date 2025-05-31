@@ -1,11 +1,38 @@
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
 import React, { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { showError, showSuccess, showWarning } from '../services/toastService';
+import { userLogin } from '../Api/api';
 
 const Login = () => {
+    const nav = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            showWarning("Please enter both email and password");
+            return;
+        }
+        try {
+            setLoading(true);
+            const res = await userLogin(email, password)
+            showSuccess(res.data.message || "Login successful");
+            nav('/');
+        } catch (error) {
+            const {message} = error;
+            console.log(message);
+            showError(message);
+        }
+        finally {
+            setLoading(false)
+        }
+    };
+
     return (
         <div className='w-full flex justify-center items-center'>
             <div className='xl:w-[35%] lg:w-[50%] sm:w-[60%] w-[95%] border border-gray-200 my-[25px] p-[15px] py-[25px] shadow-lg rounded-lg items-center flex flex-col gap-[15px]'>
@@ -15,6 +42,8 @@ const Login = () => {
                     type="email"
                     id="email"
                     name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     className="p-3 w-[80%] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-amber-500 focus:border-blue-500 transition-all"
                     required
@@ -25,6 +54,8 @@ const Login = () => {
                         type={`${showPassword ? "text" : "password"}`}
                         id="password"
                         name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
                         className="p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-amber-500 focus:border-blue-500 transition-all"
                         required
@@ -37,7 +68,13 @@ const Login = () => {
                     </div>
                 </div>
                 <p className='w-[80%] hover:text-red-400 cursor-pointer'>Forgot password ?</p>
-                <Button className='!text-white !bg-orange-400 !w-[80%] !p-2 !text-lg'>Login</Button>
+                <Button
+                    onClick={handleLogin}
+                    disabled={loading}
+                    className='!text-white !bg-amber-600 !w-[80%] !p-2 !text-lg !cursor-pointer hover:!bg-amber-700'
+                >
+                    {loading ? <CircularProgress size={20} color="inherit" /> : 'Login'}
+                </Button>
                 <p className='w-[80%] mt-2 text-center'>
                     <span>Not Registered ? </span>
                     <Link to="/register">

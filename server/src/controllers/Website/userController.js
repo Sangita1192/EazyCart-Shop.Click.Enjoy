@@ -152,7 +152,7 @@ const resendOTP = async (req, res) => {
 
         // Generate a new OTP and set the expiry time
         const newOtp = generateOtp();
-        const otpExpiry = Date.now() + 2 * 60 * 1000; // 2 minutes expiry
+        const otpExpiry = Date.now() + (2 * 60 * 1000); 
 
         // Update OTP and expiry in the database
         user.otp = newOtp;
@@ -191,7 +191,7 @@ const resendOTP = async (req, res) => {
     }
 }
 
-
+//Login controller
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -212,7 +212,7 @@ const userLogin = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return sendErrorResponse(res, "Password is incorrect", 400)
+            return sendErrorResponse(res, "Password is Incorrect", 400)
         }
 
         const accessToken = await getAccessToken(user._id);
@@ -226,19 +226,17 @@ const userLogin = async (req, res) => {
         const cookieOption = {
             httpOnly: true,
             secure: true,
-            sameSite: "None"
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         }
 
         res.cookie('accessToken', accessToken, cookieOption);
         res.cookie('refreshToken', refreshToken, cookieOption);
 
         return res.status(200).json({
-            message: "Login successfully",
+            message: "Login successfull",
             error: false,
             success: true,
-            data: {
-                accessToken, refreshToken
-            }
         });
     }
     catch (error) {

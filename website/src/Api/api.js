@@ -6,3 +6,4 @@ export const verfiyUser = ({otp, email}) => axios.post(`user/verify-email`, {otp
 
 export const resendOtpApi = ({email}) => axios.post(`user/resend-otp`, {email});
 
+export const userLogin = (email, password) => axios.post(`user/login`, {email,password});
