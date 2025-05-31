@@ -2,11 +2,12 @@ import { Button, CircularProgress } from '@mui/material';
 import React, { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../services/toastService';
 import { userRegister } from '../Api/api';
 
 const Register = () => {
+    const nav = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -37,17 +38,18 @@ const Register = () => {
             payload.append("confirm_password", formData.confirm_password);
 
             await userRegister(payload);
-
+            const sendEmail = formData.email;
             setFormData({
                 name: "",
                 email: "",
                 password: "",
                 confirm_password: ""
             });
-            showSuccess("Registration Successful, Please verfiy your email");
+            showSuccess("Please verfiy your email");
+            nav('/verify-email', {state:{email: sendEmail}});
+
         } catch (error) {
             const { message, errors, status } = error;
-            console.log(message, errors, status);
             if (status === 404) {
                 // Navigate('/not-found');
                 console.log("notfound");
@@ -58,7 +60,6 @@ const Register = () => {
                 return;
             }
             showError(message || "Something went wrong.");
-
         } finally {
             setLoading(false);
         }

@@ -14,7 +14,7 @@ import fs from 'fs';
 import removeImg from "../../helperFunction/removeImgFromCloudinary.js";
 
 
-
+//register new user and send verfication email
 const registerUserController = async (req, res) => {
     try {
         const { name, email, password, confirm_password } = req.body;
@@ -98,20 +98,22 @@ const registerUserController = async (req, res) => {
     }
 };
 
+//verifiy user account by otp
 const verifyUserAccount = async (req, res) => {
     try {
-        const { email, otp } = req.body;
+        const { otp, email } = req.body;
 
         const user = await UserModel.findOne({ email: email });
 
         if (!user) {
-            sendErrorResponse(res, "User not found", 401);
+            return sendErrorResponse(res, "User not found", 401);
         };
 
-        const isValidOtp = user.otp === otp;
-        const isOtpExpired = user.otpExpiry > Date.now();
+        const isValidOtp = user.otp === Number(otp);
 
-        if (isOtpExpired && isValidOtp) {
+        const isOtpStillValid = user.otpExpiry && user.otpExpiry > Date.now();
+
+        if (isValidOtp && isOtpStillValid) {
             user.verifyEmail = true;
             user.otp = null;
             user.otpExpiry = null;
@@ -123,9 +125,9 @@ const verifyUserAccount = async (req, res) => {
                 success: true,
             })
         } else if (!isValidOtp) {
-            sendErrorResponse(res, "Invalid OTP", 401);
+            return sendErrorResponse(res, "Invalid OTP", 401);
         } else {
-            sendErrorResponse(res, "OTP Expired", 401);
+            return sendErrorResponse(res, "OTP Expired", 401);
         }
     }
     catch (error) {
@@ -133,19 +135,19 @@ const verifyUserAccount = async (req, res) => {
     }
 }
 
-
+//resend otp controller function
 const resendOTP = async (req, res) => {
     try {
         const { email } = req.body;
 
         if (!email) {
-            sendErrorResponse(res, "Email is required", 400);
+            return sendErrorResponse(res, "Email is required", 400);
         }
 
         // Check if the user exists
         const user = await UserModel.findOne({ email: email });
         if (!user) {
-            sendErrorResponse(res, "User not found", 404);
+            return sendErrorResponse(res, "User not found", 404);
         }
 
         // Generate a new OTP and set the expiry time
@@ -158,12 +160,24 @@ const resendOTP = async (req, res) => {
         await user.save();
 
         // Send the new OTP to the user's email
-        const verificationEmail = await sendEmailFun(
-            email,
-            "Your EazyCart OTP Code",
-            "",
-            emailTemplate(user.name, newOtp)
-        );
+        try {
+            const emailSent = await sendEmailFun(
+                email,
+                "Your EazyCart OTP Code",
+                "",
+                emailTemplate(name, otpCode)
+            );
+
+            if (!emailSent) {
+                console.error("Email sending failed - deleting user");
+                await UserModel.findByIdAndDelete(savedUser._id);
+                return sendErrorResponse(res, "Failed to send verification email", 500);
+            }
+        } catch (emailError) {
+            console.error("Unexpected email error:", emailError.message);
+            await UserModel.findByIdAndDelete(savedUser._id);
+            return sendErrorResponse(res, "Email sending error", 500);
+        }
 
         return res.status(200).json({
             message: "OTP resent successfully. Please check your email.",

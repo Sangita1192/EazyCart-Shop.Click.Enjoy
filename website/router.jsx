@@ -13,6 +13,7 @@ import Address from './src/Components/Account/Address'
 import Wishlist from './src/Components/Account/Wishlist'
 import Order from './src/Components/Account/Order'
 import CheckOut from './src/Pages/CheckOut';
+import VerifyUserAccount from './src/Pages/VerfiyUserAccount';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
+      { path: 'verify-email', element: <VerifyUserAccount /> },
       { path: 'products', element: <ProductListing /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <CartPage /> },
