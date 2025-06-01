@@ -5,9 +5,12 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showWarning } from '../services/toastService';
 import { userLogin } from '../Api/api';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../redux/slices/authSlice';
 
 const Login = () => {
     const nav = useNavigate();
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -20,13 +23,13 @@ const Login = () => {
         }
         try {
             setLoading(true);
-            const res = await userLogin(email, password)
+            const res = await userLogin(email, password);
+            dispatch(loginSuccess(res.data.user));
             showSuccess(res.data.message || "Login successful");
+
             nav('/');
         } catch (error) {
-            const {message} = error;
-            console.log(message);
-            showError(message);
+            showError(error?.message || "Invalid email or password");
         }
         finally {
             setLoading(false)

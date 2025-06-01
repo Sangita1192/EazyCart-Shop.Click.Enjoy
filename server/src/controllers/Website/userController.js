@@ -152,7 +152,7 @@ const resendOTP = async (req, res) => {
 
         // Generate a new OTP and set the expiry time
         const newOtp = generateOtp();
-        const otpExpiry = Date.now() + (2 * 60 * 1000); 
+        const otpExpiry = Date.now() + (2 * 60 * 1000);
 
         // Update OTP and expiry in the database
         user.otp = newOtp;
@@ -234,9 +234,17 @@ const userLogin = async (req, res) => {
         res.cookie('refreshToken', refreshToken, cookieOption);
 
         return res.status(200).json({
-            message: "Login successfull",
+            message: "Login successful",
             error: false,
             success: true,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                status: user.status,
+                profilePicture: user.profilePicture,
+            }
         });
     }
     catch (error) {

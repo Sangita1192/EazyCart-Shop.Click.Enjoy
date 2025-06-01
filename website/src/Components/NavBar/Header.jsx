@@ -8,10 +8,11 @@ import { IoCartOutline } from "react-icons/io5";
 import Button from '@mui/material/Button';
 import MenuBar from './MenuBar';
 import Cart from '../Cart';
+import { useSelector } from 'react-redux';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
+    const { isLoggedIn, user } = useSelector((state) => state.auth)
     const [isCartOpen, setIsCartOpen] = useState(false);
-    const [login, setLogin] = useState(true)
     return (
         <>
             <header className='w-full bg-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]'>
@@ -43,31 +44,37 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                             </div>
                             <div className='w-[35%] lg:flex gap-[20px] justify-center items-center hidden'>
                                 {
-                                    login ?
+                                    isLoggedIn && user ?
                                         <Button className="flex gap-[10px] items-center !text-black !text-[14px] !text-left !normal-case">
                                             <div className="!w-[35px] !h-[35px] !rounded-full flex items-center justify-center bg-gray-200">
                                                 <FaRegUser size={24} className="text-black" />
                                             </div>
                                             <div className="flex flex-col justify-center">
-                                                <p >Sangeeta</p>
-                                                <p >sangita@gmail.com</p>
+                                                <p >{user.name}</p>
+                                                <p >{user.email}</p>
                                             </div>
                                         </Button>
 
                                         :
-                                        <p>Login/Register</p>
+                                        (
+                                            <div className="flex gap-2 text-sm font-semibold text-amber-600">
+                                                <Link to="/login" className="hover:text-amber-700">Login</Link>
+                                                <span>/</span>
+                                                <Link to="/register" className="hover:text-amber-700">Register</Link>
+                                            </div>
+                                        )
 
                                 }
 
                                 <FaRegHeart className='text-[22px]' />
                                 <Badge badgeContent={4} color="success">
-                                    <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)} />
+                                    <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
                             <div className='flex sm:gap-4 gap-2 lg:hidden'>
                                 <FaRegHeart className='text-[22px]' />
                                 <Badge badgeContent={4} color="success" >
-                                    <IoCartOutline className='text-[24px]' onClick={()=>setIsCartOpen(true)}/>
+                                    <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
                         </div>
@@ -76,9 +83,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                 </div>
                 <div className='w-full border-t border-b border-gray-100'>
                     <MenuBar setIsSidebarOpen={setIsSidebarOpen} />
-                </div>          
+                </div>
             </header>
-             <Cart isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
+            <Cart isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
 
 
         </>
