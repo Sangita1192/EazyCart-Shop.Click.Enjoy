@@ -11,7 +11,7 @@ import Cart from '../Cart';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingSpinner from '../LoadingSpinner';
 import { MdOutlineManageAccounts } from 'react-icons/md';
-import { logoutUserThunk } from '../../redux/slices/authSlice';
+import { logout, logoutUserThunk } from '../../redux/slices/authSlice';
 import { showError, showSuccess } from '../../services/toastService';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
@@ -22,17 +22,22 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setShowAccount(false);
-        const res = dispatch(logoutUserThunk());
-        if (res.meta.requestStatus === "fulfilled") {
-            showSuccess("logged out successfully");
-            localStorage.setItem('EazyCartUser', false)
-            nav('/')
-        } else {
-            showError("Logout failed");
+        try {
+            const res = await dispatch(logoutUserThunk());
+            if (res?.meta?.requestStatus === "fulfilled") {
+                showSuccess("Logged out successfully");
+                localStorage.removeItem("EazyCartUser");
+                nav('/');
+            } else {
+                showError("Logout failed");
+            }
+        } catch (error) {
+            showError("Something went wrong during logout");
         }
-    }
+    };
+
     return (
         <>
             <header className='w-full bg-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] z-[999]'>
@@ -80,7 +85,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                             className={`w-full z-[1000] rounded-md absolute top-full bg-gray-200 left-0 ${showAccount ? 'block' : 'hidden'
                                                 }`}
                                         >
-                                            <li onClick={()=>setShowAccount(false)} className='cursor-pointer'>
+                                            <li onClick={() => setShowAccount(false)} className='cursor-pointer'>
                                                 <NavLink
                                                     to="/my-account"
                                                     end
@@ -93,7 +98,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                                     <span>My Account</span>
                                                 </NavLink>
                                             </li>
-                                            <li onClick={()=>setShowAccount(false)} className='cursor-pointer'>
+                                            <li onClick={() => setShowAccount(false)} className='cursor-pointer'>
                                                 <NavLink
                                                     to="/my-account/wishlist"
                                                     className={({ isActive }) =>
@@ -105,9 +110,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                                     My Wishlist
                                                 </NavLink>
                                             </li>
-                                            <li onClick={handleLogout} className={`pl-2 cursor-pointer flex items-center gap-3 py-3 border-b border-gray-300 hover:text-amber-600`}>             
-                                                    <IoLogOut size={22} />
-                                                    Logout
+                                            <li onClick={handleLogout} className={`pl-2 cursor-pointer flex items-center gap-3 py-3 border-b border-gray-300 hover:text-amber-600`}>
+                                                <IoLogOut size={22} />
+                                                Logout
                                             </li>
                                         </ul>
                                     </div>

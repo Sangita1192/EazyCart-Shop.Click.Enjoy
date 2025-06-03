@@ -8,6 +8,15 @@ export const loadUserFromCookies = createAsyncThunk(
             const res = await getUser();
             return res.data.user;
         } catch (error) {
+            const status = error?.status;
+            const message = error?.message;
+
+            //Only remove localStorage and logout if token expired or unauthorized
+            if (status === 401 || message === "Token expired" || message === "unauthorized access") {
+                localStorage.removeItem("EazyCartUser");
+                thunkAPI.dispatch(logout());
+            }
+
             return thunkAPI.rejectWithValue(null);
         }
     }
@@ -29,7 +38,7 @@ const initialState = {
     isLoggedIn: false,
     user: null,
     loading: false,
-    error:null,
+    error: null,
 };
 
 const authSlice = createSlice({

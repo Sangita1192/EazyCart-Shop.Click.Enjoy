@@ -4,7 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showWarning } from '../services/toastService';
-import { userLogin } from '../Api/api';
+import { forgotPassword, userLogin } from '../Api/api';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../redux/slices/authSlice';
 
@@ -35,6 +35,24 @@ const Login = () => {
             setLoading(false)
         }
     };
+
+    const handleForgotPassword = async () => {
+        if (!email) {
+           return showError("Email is required!");
+        }
+        try {
+            const res = await forgotPassword(email);
+            if (res.data?.success) {
+                showSuccess(res.data.message || "Reset Link sent to your email");
+                nav('/')
+            }else{
+                showError(res.data.message || "Something went wrong");
+            }
+        }
+        catch (error) {
+            showError(error?.message || "Failed to send reset link");
+        }
+    }
 
     return (
         <div className='w-full flex justify-center items-center'>
@@ -70,7 +88,7 @@ const Login = () => {
                         {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
                     </div>
                 </div>
-                <p className='w-[80%] hover:text-red-400 cursor-pointer'>Forgot password ?</p>
+                <p className='w-[80%] hover:text-red-400 cursor-pointer' onClick={handleForgotPassword}>Forgot password ?</p>
                 <Button
                     onClick={handleLogin}
                     disabled={loading}

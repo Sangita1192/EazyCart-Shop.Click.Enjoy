@@ -484,7 +484,7 @@ const forgotPassword = async (req, res) => {
 
         //Generate token valid for 15 minutes
         const resetToken = jwt.sign(
-            { id: user, _id },
+            { id: user._id },
             process.env.RESET_PASSWORD_SECRET,
             { expiresIn: '15m' }
         );
@@ -506,6 +506,7 @@ const forgotPassword = async (req, res) => {
             message: "Password reset link has been sent to your email",
             error: false,
             success: true,
+            resetToken
         })
     }
     catch (error) {
@@ -514,5 +515,55 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+//reset password
+const resetPassword = async (req, res) => {
+    try {
+        const { token, password, confirm_password } = req.body;
+        if (!token) {
+            return sendErrorResponse(res, "Token is required", 400);
+        }
+        if (!password || !confirm_password) {
+            return sendErrorResponse(res, "Password and confirm password are required", 400);
+        }
 
-export { registerUserController, verifyUserAccount, resendOTP, userLogin, logoutUser, userProfileUpload, removeImageFromCloudinary, updateUserDetails, forgotPassword, getUser }
+        if (password !== confirm_password) {
+            return sendErrorResponse(res, "Passwords do not match", 400);
+        }
+
+        //verify token
+        let decode;
+        try {
+            decode = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
+        } catch (err) {
+            return sendErrorResponse(res, "Invalid or expired token", 400);
+        }
+
+        const userId = decode?.id;
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return sendErrorResponse(res, "User not found", 404);
+        }
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Password has been reset successfully",
+        });
+
+
+    }
+    catch (error) {
+        console.error("Update User Error:", error);
+        return sendErrorResponse(res, "Internal server error", 500);
+    }
+}
+
+
+export { registerUserController, verifyUserAccount, resendOTP, userLogin, logoutUser, userProfileUpload, removeImageFromCloudinary, updateUserDetails, forgotPassword, getUser, resetPassword }
