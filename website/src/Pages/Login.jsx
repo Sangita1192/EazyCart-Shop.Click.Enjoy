@@ -26,7 +26,7 @@ const Login = () => {
             const res = await userLogin(email, password);
             dispatch(loginSuccess(res.data.user));
             showSuccess(res.data.message || "Login successful");
-
+            localStorage.setItem("EazyCartUser", true);
             nav('/');
         } catch (error) {
             showError(error?.message || "Invalid email or password");

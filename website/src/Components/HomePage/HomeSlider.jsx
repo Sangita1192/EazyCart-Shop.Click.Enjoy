@@ -18,9 +18,9 @@ const HomeSlider = () => {
                         autoplay={{
                             delay: 2500,
                             disableOnInteraction: false,
-                          }}
+                        }}
                         navigation={true}
-                        modules={[Navigation,Autoplay]}
+                        modules={[Navigation, Autoplay]}
                         className="!w-auto lg:h-[400px] md:h-[300px] h-[250px] sliderHome"
                     >
                         <SwiperSlide className='border border-1 border-gray-300 rounded-[12px]'>

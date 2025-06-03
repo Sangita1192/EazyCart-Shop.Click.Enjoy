@@ -14,6 +14,8 @@ import Wishlist from './src/Components/Account/Wishlist'
 import Order from './src/Components/Account/Order'
 import CheckOut from './src/Pages/CheckOut';
 import VerifyUserAccount from './src/Pages/VerfiyUserAccount';
+import PublicRoute from './src/Components/Routes/PublicRoute';
+import PrivateRoute from './src/Components/Routes/PrivateRoute';
 
 const router = createBrowserRouter([
   {
@@ -21,23 +23,33 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
+      {
+        element: <PublicRoute />,
+        children: [
+          { path: 'login', element: <Login /> },
+          { path: 'register', element: <Register /> },
+        ],
+      },
       { path: 'verify-email', element: <VerifyUserAccount /> },
       { path: 'products', element: <ProductListing /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <CartPage /> },
-        { path: 'checkout', element: <CheckOut/> },
       {
-        path: 'my-account',
-        element: <Account />,
-        children:[
-          {index: true, element: <Profile/>},
-          {path: "address", element: <Address/>},
-          {path: "wishlist", element: <Wishlist/>},
-          {path: "orders", element: <Order/>},   
-        ]
-      }
+        element: <PrivateRoute />,
+        children: [
+          { path: 'checkout', element: <CheckOut /> },
+          {
+            path: 'my-account',
+            element: <Account />,
+            children: [
+              { index: true, element: <Profile /> },
+              { path: 'address', element: <Address /> },
+              { path: 'wishlist', element: <Wishlist /> },
+              { path: 'orders', element: <Order /> },
+            ],
+          },
+        ],
+      },
       // { path: '*', element: <NotFound /> },
     ],
   },

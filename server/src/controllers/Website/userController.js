@@ -253,10 +253,14 @@ const userLogin = async (req, res) => {
     }
 }
 
-
+//logout controller
 const logoutUser = async (req, res) => {
     try {
         const userId = req.userId;  //auth middleware
+
+        if (!userId) {
+            return sendErrorResponse(res, "Unauthorized", 401);
+        }
 
         const cookieOption = {
             httpOnly: true,
@@ -268,6 +272,7 @@ const logoutUser = async (req, res) => {
         res.clearCookie('refreshToken', cookieOption);
 
         const removeRefreshToken = await UserModel.findByIdAndUpdate(userId, {
+            accessToken: "",
             refreshToken: ""
         });
 
@@ -279,6 +284,21 @@ const logoutUser = async (req, res) => {
 
     }
     catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, "Internal Server Error", 500)
+    }
+}
+
+//get User from token controller
+const getUser = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId).select('-password');
+        if (!user) {
+            return sendErrorResponse(res, "User not found", 404)
+        }
+        res.status(200).json({ user });
+
+    } catch (error) {
         console.log(error);
         return sendErrorResponse(res, "Internal Server Error", 500)
     }
@@ -335,7 +355,6 @@ const userProfileUpload = async (req, res) => {
     }
 }
 
-
 const removeImageFromCloudinary = async (req, res) => {
     try {
         const imgUrl = req.query.img;
@@ -369,7 +388,6 @@ const removeImageFromCloudinary = async (req, res) => {
         return sendErrorResponse(res, "internal server error", 500)
     }
 }
-
 
 //update user details
 const updateUserDetails = async (req, res) => {
@@ -457,31 +475,35 @@ const updateUserDetails = async (req, res) => {
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        const userId = req.userId;
 
-        const user = await UserModel.findOne({ _id: userId });
+        const user = await UserModel.findOne({ email });
 
         if (!user) {
             return sendErrorResponse(res, "User not found", 404);
         }
 
-        let otpCode = generateOtp();
-        user.otp = otpCode;
-        user.otpExpiry = Date.now() + 60000;
+        //Generate token valid for 15 minutes
+        const resetToken = jwt.sign(
+            { id: user, _id },
+            process.env.RESET_PASSWORD_SECRET,
+            { expiresIn: '15m' }
+        );
 
-        await user.save();
+        const resetLink = `https://localhost:5173/reset-password?token=${resetToken}`;
 
         await sendEmailFun(
             email,
-            "otp has been send to your email",
+            "Reset Your Password",
             "",
-            emailTemplate(user?.name, otpCode)
-        )
-
-        await user.save();
+            `<p>Hi ${user.name},</p>
+            <p>You requested to reset your password.</p>
+            <p>Click the link below to set a new password:</p>
+            <a href="${resetLink}" target="_blank">${resetLink}</a>
+            <p>This link will expire in 15 minutes.</p>`
+        );
 
         return res.status(200).json({
-            message: "link has been sent to your email",
+            message: "Password reset link has been sent to your email",
             error: false,
             success: true,
         })
@@ -493,4 +515,4 @@ const forgotPassword = async (req, res) => {
 }
 
 
-export { registerUserController, verifyUserAccount, resendOTP, userLogin, logoutUser, userProfileUpload, removeImageFromCloudinary, updateUserDetails, forgotPassword }
+export { registerUserController, verifyUserAccount, resendOTP, userLogin, logoutUser, userProfileUpload, removeImageFromCloudinary, updateUserDetails, forgotPassword, getUser }
