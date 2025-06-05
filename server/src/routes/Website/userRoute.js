@@ -15,7 +15,6 @@ userRouter.get('/me', auth(), getUser);
 userRouter.post('/forgot-password', forgotPassword);
 userRouter.post('/reset-password', resetPassword);
 userRouter.post('/logout', auth(), logoutUser);
-userRouter.put('/upload-profile', auth, upload.array('profilePicture'), userProfileUpload);
 userRouter.delete('/remove-img',auth, removeImageFromCloudinary);
-userRouter.put('/update-detail/:id', auth,  updateUserDetails);
+userRouter.put('/update/:id', auth(),upload.single('profilePicture'), updateUserDetails);
 export default userRouter;

@@ -12,6 +12,9 @@ import generateRefreshToken from "../../utils/refreshJwtToken.js";
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import removeImg from "../../helperFunction/removeImgFromCloudinary.js";
+import mongoose from "mongoose";
+import extractPublicId from "../../utils/Cloudinary/extractPublicId.js";
+import { uploadImageToCloudinary } from "../../utils/Cloudinary/uploadImgCloudinary.js";
 
 
 //register new user and send verfication email
@@ -292,11 +295,23 @@ const logoutUser = async (req, res) => {
 //get User from token controller
 const getUser = async (req, res) => {
     try {
-        const user = await UserModel.findById(req.userId).select('-password');
+        const user = await UserModel.findById(req.userId);
         if (!user) {
             return sendErrorResponse(res, "User not found", 404)
         }
-        res.status(200).json({ user });
+
+        const safeUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            profilePicture: user.profilePicture,
+            role: user.role,
+            status: user.status,
+            verifyEmail: user.verifyEmail
+        };
+
+        res.status(200).json({ user: safeUser });
 
     } catch (error) {
         console.log(error);
@@ -390,66 +405,80 @@ const removeImageFromCloudinary = async (req, res) => {
 }
 
 //update user details
+
 const updateUserDetails = async (req, res) => {
+    console.log(req.body);
+    console.log(req.userId);
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         const userId = req.userId;
-        const { name, email, phone, password } = req.body;
+        const { name, email, phone } = req.body;
+        const profileImage = req.file;
 
-        const user = await UserModel.findById(userId);
+        const user = await UserModel.findById(userId).session(session);
         if (!user) {
+            await session.abortTransaction();
+
             return sendErrorResponse(res, "User not found", 404);
         }
 
-        let otpCode = null;
-        let otpExpiry = null;
-        let sendEmail = false;
+        let sendVerificationEmail = false;
 
-        // Update name if provided
-        if (name) {
-            user.name = name;
-        }
-
-        // Update phone if provided
-        if (phone) {
-            user.phone = phone;
-        }
+        // Update user if provided
+        if (name?.trim()) user.name = name.trim();
+        if (phone?.trim()) user.phone = phone.trim();
 
         // Handle email change
         if (email && email !== user.email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
+                await session.abortTransaction();
+
                 return sendErrorResponse(res, "Invalid email format", 400);
             }
 
-            otpCode = generateOtp();
-            otpExpiry = Date.now() + 5 * 60 * 1000;
+            //if email already exists
+            const existingEmailUser = await UserModel.findOne({ email }).session(session);
+            if (existingEmailUser) {
+                await session.abortTransaction();
+
+                return sendErrorResponse(res, "Email already in use", 409);
+            }
 
             user.email = email;
             user.verifyEmail = false;
-            user.otp = otpCode;
-            user.otpExpiry = otpExpiry;
-            sendEmail = true;
+
+            user.otp = generateOtp();
+            user.otpExpiry = Date.now() + 5 * 60 * 1000;
+            sendVerificationEmail = true;
         }
 
-        // Handle password change
-        if (password) {
-            if (password.length < 6) {
-                return sendErrorResponse(res, "Password must be at least 6 characters", 400);
+        if (profileImage?.path) {
+            if (user?.profilePicture) {
+                const publicId = extractPublicId(user.profilePicture);
+                await removeImageFromCloudinary(publicId);
             }
+            const result = await uploadImageToCloudinary(profileImage.path);
+            if (!result.success) {
+                await session.abortTransaction();
 
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
+                return sendErrorResponse(res, result.message, 500);
+            }
+            user.profilePicture = result.url;
         }
+        await user.save({ session });
 
-        await user.save();
+        // Commit the transaction
+        await session.commitTransaction();
 
         // Send verification email if needed
-        if (sendEmail) {
+        if (sendVerificationEmail) {
             await sendEmailFun(
                 user.email,
                 "Verification Email from EazyCart",
                 "",
-                emailTemplate(user.name, otpCode)
+                emailTemplate(user.name, user.otp)
             );
 
             return res.status(200).json({
@@ -467,7 +496,10 @@ const updateUserDetails = async (req, res) => {
 
     } catch (error) {
         console.error("Update User Error:", error);
+        await session.abortTransaction();
         return sendErrorResponse(res, "Internal server error", 500);
+    } finally {
+        session.endSession();
     }
 };
 
