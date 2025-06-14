@@ -8,7 +8,8 @@ const addAddress = async (req, res) => {
     session.startTransaction();
     try {
         const userId = req.userId;
-        const { addressLine, city, state, pincode, country, mobile, status } = req.body;
+        console.log(userId);
+        const { address_line, city, state, pincode, country, mobile, address_type } = req.body;
 
         //userId requried
         if (!userId) {
@@ -17,7 +18,7 @@ const addAddress = async (req, res) => {
         }
 
         const newAddress = new AddressModel({
-            addressLine, city, state, pincode, country, mobile, status,
+            address_line, city, state, pincode, country, mobile, address_type,
             user_id: userId
         });
 

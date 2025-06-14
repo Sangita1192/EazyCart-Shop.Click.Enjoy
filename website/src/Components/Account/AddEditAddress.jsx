@@ -1,14 +1,18 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { addAddress } from '../../Api/api';
 import { showError, showSuccess } from '../../services/toastService';
-import { CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { loadUserFromCookies } from '../../redux/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 const AddEditAddress = ({ existingData = null, }) => {
     const isEdit = !!existingData;
-    const [phone, setPhone] = useState();
+    const dispatch = useDispatch();
+    const nav = useNavigate();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({})
     const [formData, setFormData] = useState({
@@ -43,9 +47,11 @@ const AddEditAddress = ({ existingData = null, }) => {
                 pincode: formData.pincode,
                 country: formData.country,
                 phone: formData.phone,
-                status: formData.address_type,
+                address_type: formData.address_type,
             };
             const res = await addAddress(payload);
+            dispatch(loadUserFromCookies());
+            nav("/my-account/address")
             showSuccess(res.data?.message || "Address added successfully");
         }
         catch (error) {
@@ -73,7 +79,8 @@ const AddEditAddress = ({ existingData = null, }) => {
                 />
                 <label
                     htmlFor="address_line"
-                    className="absolute left-3 top-3 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
+                    className={`absolute left-3 text-gray-500 text-sm bg-white px-1 transition-all
+      ${formData.address_line ? '-top-2 text-sm text-blue-600' : 'top-3 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-600'}`}
                 >
                     Address Line
                 </label>
@@ -89,7 +96,8 @@ const AddEditAddress = ({ existingData = null, }) => {
                 />
                 <label
                     htmlFor="city"
-                    className="absolute left-3 top-3 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
+                    className={`absolute left-3 text-gray-500 text-sm bg-white px-1 transition-all
+      ${formData.city ? '-top-2 text-sm text-blue-600' : 'top-3 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-600'}`}
                 >
                     City
                 </label>
@@ -106,7 +114,8 @@ const AddEditAddress = ({ existingData = null, }) => {
                 />
                 <label
                     htmlFor="state"
-                    className="absolute left-3 top-3 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
+                    className={`absolute left-3 text-gray-500 text-sm bg-white px-1 transition-all
+      ${formData.state ? '-top-2 text-sm text-blue-600' : 'top-3 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-600'}`}
                 >
                     State
                 </label>
@@ -123,7 +132,8 @@ const AddEditAddress = ({ existingData = null, }) => {
                 />
                 <label
                     htmlFor="pincode"
-                    className="absolute left-3 top-3 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
+                    className={`absolute left-3 text-gray-500 text-sm bg-white px-1 transition-all
+      ${formData.pincode ? '-top-2 text-sm text-blue-600' : 'top-3 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-600'}`}
                 >
                     Pincode
                 </label>
@@ -140,7 +150,8 @@ const AddEditAddress = ({ existingData = null, }) => {
                 />
                 <label
                     htmlFor="country"
-                    className="absolute left-3 top-3 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
+                    className={`absolute left-3 text-gray-500 text-sm bg-white px-1 transition-all
+      ${formData.country ? '-top-2 text-sm text-blue-600' : 'top-3 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-600'}`}
                 >
                     Country
                 </label>
