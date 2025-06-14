@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showWarning } from '../services/toastService';
 import { forgotPassword, userLogin } from '../Api/api';
 import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../redux/slices/authSlice';
+import { loadUserFromCookies, loginSuccess } from '../redux/slices/authSlice';
 
 const Login = () => {
     const nav = useNavigate();
@@ -25,6 +25,7 @@ const Login = () => {
             setLoading(true);
             const res = await userLogin(email, password);
             dispatch(loginSuccess(res.data.user));
+            dispatch(loadUserFromCookies());
             showSuccess(res.data.message || "Login successful");
             localStorage.setItem("EazyCartUser", true);
             nav('/');

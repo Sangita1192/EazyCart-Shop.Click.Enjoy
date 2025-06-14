@@ -34,8 +34,16 @@ const auth = (allowedRoles = []) => {
 
         }
         catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                return sendErrorResponse(res, "Access token expired", 401);
+            }
+
+            if (error.name === 'JsonWebTokenError') {
+                return sendErrorResponse(res, "Invalid token", 401);
+            }
             console.log(error);
-            return sendErrorResponse(res, "You are not logged in", 500)
+
+            return sendErrorResponse(res, "You are not logged in", 500);
         }
     }
 }

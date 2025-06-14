@@ -308,7 +308,8 @@ const getUser = async (req, res) => {
             profilePicture: user.profilePicture,
             role: user.role,
             status: user.status,
-            verifyEmail: user.verifyEmail
+            verifyEmail: user.verifyEmail,
+            address: user.addressDetail
         };
 
         res.status(200).json({ user: safeUser });

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         children: [
           { path: 'login', element: <Login /> },
           { path: 'register', element: <Register /> },
-          { path: 'reset-password', element: <ResetPassword /> },
+          { path: 'reset-password', element: <ResetPassword  /> },
         ],
       },
       { path: 'verify-email', element: <VerifyUserAccount /> },
