@@ -8,7 +8,6 @@ const addAddress = async (req, res) => {
     session.startTransaction();
     try {
         const userId = req.userId;
-        console.log(userId);
         const { address_line, city, state, pincode, country, mobile, address_type } = req.body;
 
         //userId requried
@@ -79,4 +78,24 @@ const getAddressById = async (req, res) => {
     }
 }
 
-export {addAddress, getAddressById}
+//fetch all address of User
+const getAllAddress = async(req,res)=>{
+   try{
+        const userId = req.userId;
+         if (!userId) {
+            return sendErrorResponse(res, "User Id required or User not logged In", 400);
+        }
+
+        const addresses = await AddressModel.find({user_id:userId});
+        return res.status(200).json({
+            error:false,
+            success:true,
+            addresses
+        })
+   }
+    catch (error) {
+        return sendErrorResponse(res, "internal server error", 500);
+    }
+}
+
+export {addAddress, getAllAddress, getAddressById}

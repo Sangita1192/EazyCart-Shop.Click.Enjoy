@@ -14,5 +14,6 @@ export const resetPassword = (token, password, confirm_password) => axios.post(`
 export const updateUserProfile = (formData, id) => axios.put(`user/update/${id}`, formData);
 //add new address
 export const addAddress = (formData) => axios.post(`address`,formData);
+export const getAllAddress = ()=> axios.get('address');
 
 

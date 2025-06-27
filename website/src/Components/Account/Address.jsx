@@ -5,6 +5,8 @@ import AddressItem from './AddressItem';
 import { useOutletContext } from 'react-router-dom';
 import AddEditAddress from './AddEditAddress';
 import { useEffect } from 'react';
+import { getAllAddress } from '../../Api/api';
+import { showError } from '../../services/toastService';
 
 const Address = () => {
     const { user } = useOutletContext() || {};
@@ -13,13 +15,20 @@ const Address = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
 
     useEffect(()=>{
+        console.log(user);
         if(user.address?.length > 0){
             fetchAddresses();
         }
     },[user?.address]);
 
     const fetchAddresses = async () =>{
-
+        try{
+            const response = await getAllAddress();
+            setAddressList(response.data.addresses)
+        }
+        catch(error){
+            showError(error.message);
+        }
     }
 
     const handleCloseForm = () => {
@@ -44,7 +53,7 @@ const Address = () => {
                 </Button>
                 {
                     (addressList.length > 0) &&
-                    <div className='w-full p-2 rounded-md bg-gray-100/50 my-2'>
+                    <div className='w-full p-2'>
                         {addressList.map((address) => (
                             <AddressItem
                                 key={address._id}
