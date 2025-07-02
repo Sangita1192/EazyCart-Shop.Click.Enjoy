@@ -67,7 +67,6 @@ const AddEditAddress = ({ existingData = null, }) => {
     }
     return (
         <div className='my-3 pt-3'>
-            <h1 className='text-xl font-semibold mb-5'> {isEdit ? "Edit Address" : "Add New Address"}</h1>
             <div className="relative mb-4">
                 <input
                     type="text"

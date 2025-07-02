@@ -79,23 +79,55 @@ const getAddressById = async (req, res) => {
 }
 
 //fetch all address of User
-const getAllAddress = async(req,res)=>{
-   try{
+const getAllAddress = async (req, res) => {
+    try {
         const userId = req.userId;
-         if (!userId) {
+        if (!userId) {
             return sendErrorResponse(res, "User Id required or User not logged In", 400);
         }
 
-        const addresses = await AddressModel.find({user_id:userId});
+        const addresses = await AddressModel.find({ user_id: userId });
         return res.status(200).json({
-            error:false,
-            success:true,
+            error: false,
+            success: true,
             addresses
         })
-   }
+    }
     catch (error) {
         return sendErrorResponse(res, "internal server error", 500);
     }
 }
 
-export {addAddress, getAllAddress, getAddressById}
+//delete address
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const addressId  = req.params.id;
+
+        if (!addressId) {
+            return sendErrorResponse(res, "Address ID is required", 400);
+        }
+
+        const removedAddress = await AddressModel.findOneAndDelete({_id:addressId});
+
+        if (removedAddress) {
+            await UserModel.updateOne(
+                { _id: userId },
+                { $pull: { addressDetail: addressId } }
+            );
+
+            return res.status(200).json({
+                message: "address removed successfully",
+                success: true,
+                error: false
+            });
+        } else {
+            return sendErrorResponse(res, "Address not found", 404);
+        }
+    }
+    catch (error) {
+            return sendErrorResponse(res, "internal server error", 500);
+        }
+    }
+
+export { addAddress, getAllAddress, getAddressById, deleteAddress }

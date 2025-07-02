@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
-import { Button } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import AddressItem from './AddressItem';
 import { useOutletContext } from 'react-router-dom';
 import AddEditAddress from './AddEditAddress';
@@ -14,19 +14,19 @@ const Address = () => {
     const [addressList, setAddressList] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(user);
-        if(user.address?.length > 0){
+        if (user.address?.length > 0) {
             fetchAddresses();
         }
-    },[user?.address]);
+    }, [user?.address]);
 
-    const fetchAddresses = async () =>{
-        try{
+    const fetchAddresses = async () => {
+        try {
             const response = await getAllAddress();
             setAddressList(response.data.addresses)
         }
-        catch(error){
+        catch (error) {
             showError(error.message);
         }
     }
@@ -58,20 +58,27 @@ const Address = () => {
                             <AddressItem
                                 key={address._id}
                                 address={address}
-                                onEdit={()=>handleEdit(address)}
+                                onEdit={() => handleEdit(address)}
                             />
                         ))}
 
                     </div>
                 }
-                {
-                    isAddresFormVisible && (
+                <Dialog
+                    open={isAddresFormVisible}
+                    onClose={handleCloseForm}
+                    fullWidth
+                    maxWidth="sm"
+                >
+                    <DialogTitle>{selectedAddress ? "Edit Address" : "Add Address"}</DialogTitle>
+                    <DialogContent>
                         <AddEditAddress
                             existingData={selectedAddress}
+                            onClose={handleCloseForm}
+                            refreshAddressList={fetchAddresses}
                         />
-                    )
-
-                }
+                    </DialogContent>
+                </Dialog>
 
             </div>
 

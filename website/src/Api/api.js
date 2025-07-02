@@ -15,5 +15,7 @@ export const updateUserProfile = (formData, id) => axios.put(`user/update/${id}`
 //add new address
 export const addAddress = (formData) => axios.post(`address`,formData);
 export const getAllAddress = ()=> axios.get('address');
+//delete particular address
+export const deleteAddress = (addressId) => axios.delete(`address/${addressId}`)
 
 
