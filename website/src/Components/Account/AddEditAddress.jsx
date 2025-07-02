@@ -7,12 +7,10 @@ import { showError, showSuccess } from '../../services/toastService';
 import { Button, CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { loadUserFromCookies } from '../../redux/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
 
-const AddEditAddress = ({ existingData = null, }) => {
+const AddEditAddress = ({ existingData = null,onClose, refreshAddressList }) => {
     const isEdit = !!existingData;
     const dispatch = useDispatch();
-    const nav = useNavigate();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({})
     const [formData, setFormData] = useState({
@@ -51,8 +49,9 @@ const AddEditAddress = ({ existingData = null, }) => {
             };
             const res = await addAddress(payload);
             dispatch(loadUserFromCookies());
-            nav("/my-account/address")
+            await refreshAddressList?.();
             showSuccess(res.data?.message || "Address added successfully");
+            onClose?.();
         }
         catch (error) {
             const { message, errors } = error;

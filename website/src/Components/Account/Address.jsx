@@ -59,6 +59,9 @@ const Address = () => {
                                 key={address._id}
                                 address={address}
                                 onEdit={() => handleEdit(address)}
+                                onDelete={(deletedId) => {
+                                    setAddressList(prev => prev.filter(addr => addr._id !== deletedId));
+                                }}
                             />
                         ))}
 

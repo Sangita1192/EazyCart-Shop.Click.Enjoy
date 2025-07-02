@@ -4,20 +4,22 @@ import { showError, showSuccess } from '../../services/toastService';
 import { confirmDelete } from '../../utils/confirmDelete';
 import { deleteAddress } from '../../Api/api';
 
-const AddressItem = ({ address, onEdit }) => {
+const AddressItem = ({ address, onEdit, onDelete }) => {
     const [showMenu, setShowMenu] = useState(false);
 
     const handleDelete = async () => {
         setShowMenu(false);
         const confirmedDelete = await confirmDelete();
         if (confirmedDelete.isConfirmed) {
-            try{
+            try {
                 const response = await deleteAddress(address?._id);
-                console.log(response);
                 showSuccess(response.data.message || "Address removed Successfully");
+                if (onDelete) {
+                    onDelete(address._id);
+                }
             }
-            catch(error){
-                showError(error.message || "Something went wrong.")
+            catch (error) {
+                showError(error?.response?.data?.message || error.message || "Something went wrong.");
             }
         }
 
