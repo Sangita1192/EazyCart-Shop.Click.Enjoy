@@ -26,10 +26,10 @@ const AddressItem = ({ address, onEdit, onDelete }) => {
     }
 
     return (
-        <div className='relative p-3 flex gap-2 items-start bg-gray-100/80 rounded-md my-3'>
+        <div className='relative p-3 flex gap-2 items-start bg-orange-50 rounded-md my-3'>
             <div className='flex-1'>
                 <div className='flex gap-2 items-center'>
-                    <p className='px-2 py-1 bg-gray-200 rounded-md text-gray-600'>{address.address_type}</p>
+                    <p className='px-2 py-1 bg-amber-400/50 rounded-md '>{address.address_type}</p>
                 </div>
                 <div className='mt-1 py-1'>
                     <p>{`${address.address_line} ${address.city}, ${address.state}, ${address.pincode}`}</p>

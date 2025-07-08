@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { addAddress } from '../../Api/api';
-import { showError, showSuccess } from '../../services/toastService';
+import { addAddress, updateAddrss } from '../../Api/api';
+import { showError, showSuccess, showWarning } from '../../services/toastService';
 import { Button, CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { loadUserFromCookies } from '../../redux/slices/authSlice';
 
-const AddEditAddress = ({ existingData = null,onClose, refreshAddressList }) => {
+const AddEditAddress = ({ existingData = null, onClose, refreshAddressList }) => {
     const isEdit = !!existingData;
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
@@ -35,6 +35,17 @@ const AddEditAddress = ({ existingData = null,onClose, refreshAddressList }) => 
     }
 
     const handleSubmit = async () => {
+        const isDataChanged = () => {
+            if (!isEdit) return true; // New data always submit
+
+            const fields = ['address_line', 'city', 'state', 'pincode', 'country', 'phone', 'address_type'];
+            return fields.some(field => formData[field] !== (existingData ? existingData[field] : ''));
+        };
+        if (isEdit && !isDataChanged()) {
+            showWarning("No changes detected.");
+            onClose?.();
+            return; // no API call
+        }
         setLoading(true);
         setErrors({});
         try {
@@ -47,10 +58,15 @@ const AddEditAddress = ({ existingData = null,onClose, refreshAddressList }) => 
                 phone: formData.phone,
                 address_type: formData.address_type,
             };
-            const res = await addAddress(payload);
+            let res;
+            if (isEdit && existingData?._id) {
+                res = await updateAddrss(existingData._id, payload)
+            } else {
+                res = await addAddress(payload);
+            }
             dispatch(loadUserFromCookies());
             await refreshAddressList?.();
-            showSuccess(res.data?.message || "Address added successfully");
+            showSuccess(res.data?.message || (isEdit ? "Address updated successfully" : "Address added successfully"));
             onClose?.();
         }
         catch (error) {

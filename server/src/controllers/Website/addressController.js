@@ -102,13 +102,13 @@ const getAllAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
     try {
         const userId = req.userId;
-        const addressId  = req.params.id;
+        const addressId = req.params.id;
 
         if (!addressId) {
             return sendErrorResponse(res, "Address ID is required", 400);
         }
 
-        const removedAddress = await AddressModel.findOneAndDelete({_id:addressId});
+        const removedAddress = await AddressModel.findOneAndDelete({ _id: addressId });
 
         if (removedAddress) {
             await UserModel.updateOne(
@@ -126,8 +126,59 @@ const deleteAddress = async (req, res) => {
         }
     }
     catch (error) {
-            return sendErrorResponse(res, "internal server error", 500);
-        }
+        return sendErrorResponse(res, "internal server error", 500);
     }
+}
 
-export { addAddress, getAllAddress, getAddressById, deleteAddress }
+//updateAddress
+const updateAddress = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const addressId = req.params.id;
+        if (!userId) {
+            return sendErrorResponse(res, "user not logged in", 400);
+        }
+
+        if (!addressId) {
+            return sendErrorResponse(res, "Address ID required", 400);
+        }
+
+        const updateFields = {};
+        [
+            "address_line",
+            "city",
+            "state",
+            "pincode",
+            "country",
+            "phone",
+            "address_type"
+        ].forEach(field => {
+            if (req.body[field] !== undefined) {
+                updateFields[field] = req.body[field];
+            }
+        });
+
+        const updatedAddress = await AddressModel.findOneAndUpdate(
+            {_id: addressId, user_id: userId},
+            {$set: updateFields},
+            {new: true, runValidators: true}
+        );
+
+        if(!updatedAddress){
+            return sendErrorResponse(res, "Address not found or unauthorized", 404);
+        }
+
+        return res.status(200).json({
+            success:true,
+            error:false,
+            message: "Address updated successfully",
+            address: updatedAddress
+        })
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, "Internal server error", 500);
+    }
+}
+
+export { addAddress, getAllAddress, getAddressById, deleteAddress, updateAddress }

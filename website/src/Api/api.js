@@ -17,5 +17,5 @@ export const addAddress = (formData) => axios.post(`address`,formData);
 export const getAllAddress = ()=> axios.get('address');
 //delete particular address
 export const deleteAddress = (addressId) => axios.delete(`address/${addressId}`)
-
-
+//update address
+export const updateAddrss = (addressId, payload) => axios.patch(`address/${addressId}`, payload)
