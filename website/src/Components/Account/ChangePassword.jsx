@@ -4,7 +4,7 @@ import React from 'react'
 const ChangePassword = () => {
     return (
         <>
-            <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 lg:w-[70%] w-full">
+            <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 lg:w-[80%] w-full">
                 <div className='w-full mt-[20px]'>
                     <div className='md:grid grid-cols-2 gap-[25px]'>
                         <div className='mb-[15px] flex flex-col'>

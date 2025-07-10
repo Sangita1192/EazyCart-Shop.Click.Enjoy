@@ -111,9 +111,11 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                         <Link to="/register" className="hover:text-amber-700 cursor-pointer">Register</Link>
                                     </div>
                                 )}
+                                <Link to="/my-account/wishlist" className='cursor-pointer hover:text-red-400'>
+                                    <FaRegHeart className='text-[22px]' />
+                                </Link>
 
-                                <FaRegHeart className='text-[22px]' />
-                                <Badge badgeContent={4} color="success">
+                                <Badge badgeContent={4} color="success" className='!cursor-pointer hover:!text-blue-600'>
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
@@ -121,7 +123,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                 <Badge badgeContent={4} color="success" >
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
-                                
+
                             </div>
                         </div>
                     </div>

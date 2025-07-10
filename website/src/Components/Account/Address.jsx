@@ -15,7 +15,6 @@ const Address = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
 
     useEffect(() => {
-        console.log(user);
         if (user.address?.length > 0) {
             fetchAddresses();
         }
