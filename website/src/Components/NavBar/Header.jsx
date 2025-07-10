@@ -11,8 +11,7 @@ import Cart from '../Cart';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingSpinner from '../LoadingSpinner';
 import { MdOutlineManageAccounts } from 'react-icons/md';
-import { logout, logoutUserThunk } from '../../redux/slices/authSlice';
-import { showError, showSuccess } from '../../services/toastService';
+import { handleLogout } from '../../services/authServices';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const dispatch = useDispatch();
@@ -22,20 +21,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
 
-    const handleLogout = async () => {
+    const onLogoutClick = async () => {
         setShowAccount(false);
-        try {
-            const res = await dispatch(logoutUserThunk());
-            if (res?.meta?.requestStatus === "fulfilled") {
-                showSuccess("Logged out successfully");
-                localStorage.removeItem("EazyCartUser");
-                nav('/');
-            } else {
-                showError("Logout failed");
-            }
-        } catch (error) {
-            showError("Something went wrong during logout");
-        }
+        handleLogout({ dispatch, nav })
     };
 
     return (
@@ -67,7 +55,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                             <div className='w-[40%] hidden lg:block'>
                                 <Search />
                             </div>
-                            <div className='w-[35%] lg:flex gap-[20px] justify-center items-center hidden'>
+                            <div className='w-[35%] md:flex gap-[20px] justify-center items-center hidden'>
                                 {loading ? (
                                     <LoadingSpinner />
                                 ) : isLoggedIn && user ? (
@@ -110,7 +98,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                                     My Wishlist
                                                 </NavLink>
                                             </li>
-                                            <li onClick={handleLogout} className={`pl-2 cursor-pointer flex items-center gap-3 py-3 border-b border-gray-300 hover:text-amber-600`}>
+                                            <li onClick={onLogoutClick} className={`pl-2 cursor-pointer flex items-center gap-3 py-3 border-b border-gray-300 hover:text-amber-600`}>
                                                 <IoLogOut size={22} />
                                                 Logout
                                             </li>
@@ -129,10 +117,11 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
-                            <div className='flex sm:gap-4 gap-2 lg:hidden cursor-pointer'>
+                            <div className='flex sm:gap-4 gap-2 md:hidden cursor-pointer'>
                                 <Badge badgeContent={4} color="success" >
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
+                                
                             </div>
                         </div>
                     </div>
