@@ -3,7 +3,6 @@ import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import Cart from "../../models/cartProduct.model.js";
 import UserModel from "../../models/user.model.js";
 
-
 //add product to cart
 const addCartItemController = async (req, res) => {
     // Start a MongoDB session to ensure atomicity between multiple operations.

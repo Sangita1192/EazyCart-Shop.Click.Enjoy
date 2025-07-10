@@ -5,7 +5,7 @@ import auth from "../../middleware/auth.js";
 const cartRouterWeb = express.Router();
 
 cartRouterWeb.get('/',auth(), getAllCartItems);
-cartRouterWeb.post('/add',auth(), addCartItemController);
+cartRouterWeb.post('/',auth(), addCartItemController);
 cartRouterWeb.put('/update-cart',auth(), updateCartItemController);
 // Remove a specific item from cart
 cartRouterWeb.delete('/remove',auth(), removeCartItemController);

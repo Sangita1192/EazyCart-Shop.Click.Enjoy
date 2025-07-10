@@ -18,4 +18,14 @@ export const getAllAddress = ()=> axios.get('address');
 //delete particular address
 export const deleteAddress = (addressId) => axios.delete(`address/${addressId}`)
 //update address
-export const updateAddrss = (addressId, payload) => axios.patch(`address/${addressId}`, payload)
+export const updateAddrss = (addressId, payload) => axios.patch(`address/${addressId}`, payload);
+
+
+// Cart APIs
+export const getCart = async()=> axios.get(`/cart`);
+//add product to cart
+export const addCartItem = async(product)=> axios.post(`/cart`, {product});
+//remove product 
+export const removeCartItem = async(itemId)=>axios.delete(`/cart/${itemId}`);
+// update cart
+export const updateCartItem = async()=>axios.put(`/cart`); 

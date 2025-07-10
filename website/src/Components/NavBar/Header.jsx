@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import logo from './../../../public/logo.png'
 import Search from './Search';
@@ -12,12 +12,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import LoadingSpinner from '../LoadingSpinner';
 import { MdOutlineManageAccounts } from 'react-icons/md';
 import { handleLogout } from '../../services/authServices';
+import { fetchCart } from '../../redux/slices/cartSlice';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const dispatch = useDispatch();
     const nav = useNavigate();
 
     const { isLoggedIn, user, loading } = useSelector((state) => state.auth)
+    console.log('userlogged==>', user)
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
 
@@ -25,6 +27,18 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
         setShowAccount(false);
         handleLogout({ dispatch, nav })
     };
+
+    // const cartCount = useSelector(
+    //     (state) => state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+    // );
+    // console.log('cartcount==>', cartCount)
+
+
+    useEffect(() => {
+        if (isLoggedIn && user) {
+            dispatch(fetchCart());
+        }
+    }, [isLoggedIn, user])
 
     return (
         <>
