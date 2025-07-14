@@ -7,7 +7,8 @@ import { IoMdSearch } from 'react-icons/io';
 import { deleteCategory, getAllCategories, getCategoryList, toggleFeaturedCategory, toggleStatus } from '../api/categoryApi';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import { confirmDelete } from '../../utils/confirmDelete';
-import { showError, showSuccess } from '../../services/toastService';
+import { showError, showSuccess } from '../services/toastService';
+
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);

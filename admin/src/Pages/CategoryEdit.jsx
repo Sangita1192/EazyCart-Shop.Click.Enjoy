@@ -1,11 +1,11 @@
 import { Button, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react'
-import { getCategoryById, getCategoryList, updateCategory } from '../api/categoryApi';
-import { showError, showSuccess } from '../../services/toastService';
+import { getCategoryById, updateCategory } from '../api/categoryApi';
 import { showSuccessAlert } from '../../utils/successAlert';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
+import { showError, showSuccess } from '../services/toastService';
 
 const CategoryEdit = () => {
   const { activeCategories, fetchActiveCategories } = useContext(GlobalContext);

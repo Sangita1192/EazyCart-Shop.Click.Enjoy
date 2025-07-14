@@ -14,6 +14,7 @@ const clientRouter = express.Router(); //handle frontend routes
 adminRouter.use("/categories", categoryRoute);
 adminRouter.use("/products", productRouter);
 
+
 clientRouter.use("/products", ProductRouterWeb);
 clientRouter.use("/cart", cartRouterWeb);
 clientRouter.use('/user', userRouter );

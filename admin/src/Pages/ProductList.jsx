@@ -1,12 +1,35 @@
 import { Button } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaEdit, FaInfo, FaRegStar, FaStar } from 'react-icons/fa';
 import { IoMdSearch } from "react-icons/io";
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import product from "/Images/profile.jpg"
 import { Link } from 'react-router-dom';
+import { fetchAllProducts } from '../api/productApi';
 
 const ProductList = () => {
+    const [products, setProducts] = useState([]);
+    const [selectedProdCategory, setSelectedProdCategory] = useState('all');
+    const [categoryList, setCategoryList] = useState([]);
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const getProducts = async () => {
+        try {
+            const response = await fetchAllProducts({ page, limit: rowsPerPage, search, prodCategory: selectedProdCategory });
+            console.log(response.data);
+            setProducts(response.data.products);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        getProducts();
+    }, [page, search, rowsPerPage, selectedProdCategory])
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
@@ -49,171 +72,64 @@ const ProductList = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            <tr className="hover:bg-gray-50">
-                                <td className="px-4 py-3 flex items-center gap-3">
-                                    <img src={product} alt="" className="w-[50px] h-[50px] rounded object-cover" />
-                                    <div>
-                                        <h2 className="font-bold">Product Name</h2>
-                                        <p className="text-[14px] text-gray-600">
-                                            {`Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae iusto amet ab pariatur nulla natus ipsa harum ratione consectetur saepe quasi, sunt rerum laboriosam veritatis odit voluptates architecto illum earum?`.slice(0, 50)}...
-                                        </p>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3 align-top">Fashion</td>
-                                <td className="px-4 py-3 align-top">Women Jeans</td>
-                                <td className="px-4 py-3 align-top">$250</td>
-                                <td className="px-4 py-3 align-top">
-                                    <div className="flex items-start gap-[2px] text-yellow-500">
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaRegStar className="text-gray-400" />
-                                    </div>
-                                </td>
+                            {!loading ? (
+                                products.length > 0 ? (
+                                    products.map((product) => (
+                                        <tr className="hover:bg-gray-50" key={product._id}>
+                                            <td className="px-4 py-3 flex items-center gap-3">
+                                                <img src={product.images[0]} alt="product Image" className="w-[50px] h-[50px] rounded object-cover" />
+                                                <div>
+                                                    <h2 className="font-bold">{product.name}</h2>
+                                                    <p className="text-[14px] text-gray-600">
+                                                        {`Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae iusto amet ab pariatur nulla natus ipsa harum ratione consectetur saepe quasi, sunt rerum laboriosam veritatis odit voluptates architecto illum earum?`.slice(0, 50)}...
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 align-top">Fashion</td>
+                                            <td className="px-4 py-3 align-top">Women Jeans</td>
+                                            <td className="px-4 py-3 align-top">${product.price}</td>
+                                            <td className="px-4 py-3 align-top">
+                                                <div className="flex items-start gap-[2px] text-yellow-500">
+                                                    <FaStar />
+                                                    <FaStar />
+                                                    <FaStar />
+                                                    <FaStar />
+                                                    <FaRegStar className="text-gray-400" />
+                                                </div>
+                                            </td>
 
-                                <td className="px-4 py-3 whitespace-nowrap align-top">
-                                    <div className="flex items-center gap-2 text-white">
-                                        <Link to={`/products/detail/1234`}>
-                                            <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
-                                                <FaInfo />
-                                            </div>
-                                        </Link>
-                                        <Link to={`/products/edit/1234`}>
-                                            <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
-                                                <FaEdit />
-                                            </div>
-                                        </Link>
-                                        <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
-                                            <MdDelete />
-                                        </div>
-                                    </div>
-                                </td>
+                                            <td className="px-4 py-3 whitespace-nowrap align-top">
+                                                <div className="flex items-center gap-2 text-white">
+                                                    <Link to={`/products/detail/1234`}>
+                                                        <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
+                                                            <FaInfo />
+                                                        </div>
+                                                    </Link>
+                                                    <Link to={`/products/edit/1234`}>
+                                                        <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
+                                                            <FaEdit />
+                                                        </div>
+                                                    </Link>
+                                                    <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
+                                                        <MdDelete />
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                            </tr>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className="text-xl font-semibold text-center py-3">
+                                            No Products found
+                                        </td>
+                                    </tr>
+                                )
+                            ) : null}
 
-                            <tr className="hover:bg-gray-50">
-                                <td className="px-4 py-3 flex items-center gap-3">
-                                    <img src={product} alt="" className="w-[50px] h-[50px] rounded object-cover" />
-                                    <div>
-                                        <h2 className="font-bold">Product Name</h2>
-                                        <p className="text-[14px] text-gray-600">
-                                            {`Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae iusto amet ab pariatur nulla natus ipsa harum ratione consectetur saepe quasi, sunt rerum laboriosam veritatis odit voluptates architecto illum earum?`.slice(0, 50)}...
-                                        </p>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3 align-top">Fashion</td>
-                                <td className="px-4 py-3 align-top">Women Jeans</td>
-                                <td className="px-4 py-3 align-top">$250</td>
-                                <td className="px-4 py-3 align-top">
-                                    <div className="flex items-start gap-[2px] text-yellow-500">
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaRegStar className="text-gray-400" />
-                                    </div>
-                                </td>
 
-                                <td className="px-4 py-3 whitespace-nowrap align-top">
-                                    <div className="flex items-center gap-2 text-white">
-                                        <Link to={`/products/detail/1234`}>
-                                            <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
-                                                <FaInfo />
-                                            </div>
-                                        </Link>
-                                        <Link to={`/products/edit/1234`}>
-                                            <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
-                                                <FaEdit />
-                                            </div>
-                                        </Link>
-                                        <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
-                                            <MdDelete />
-                                        </div>
-                                    </div>
-                                </td>
 
-                            </tr>
-                            <tr className="hover:bg-gray-50">
-                                <td className="px-4 py-3 flex items-center gap-3">
-                                    <img src={product} alt="" className="w-[50px] h-[50px] rounded object-cover" />
-                                    <div>
-                                        <h2 className="font-bold">Product Name</h2>
-                                        <p className="text-[14px] text-gray-600">
-                                            {`Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae iusto amet ab pariatur nulla natus ipsa harum ratione consectetur saepe quasi, sunt rerum laboriosam veritatis odit voluptates architecto illum earum?`.slice(0, 50)}...
-                                        </p>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3 align-top">Fashion</td>
-                                <td className="px-4 py-3 align-top">Women Jeans</td>
-                                <td className="px-4 py-3 align-top">$250</td>
-                                <td className="px-4 py-3 align-top">
-                                    <div className="flex items-start gap-[2px] text-yellow-500">
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaRegStar className="text-gray-400" />
-                                    </div>
-                                </td>
 
-                                <td className="px-4 py-3 whitespace-nowrap align-top">
-                                    <div className="flex items-center gap-2 text-white">
-                                        <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
-                                            <FaInfo />
-                                        </div>
-                                        <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
-                                            <FaEdit />
-                                        </div>
-                                        <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
-                                            <MdDelete />
-                                        </div>
-                                    </div>
-                                </td>
-
-                            </tr>
-                            <tr className="hover:bg-gray-50">
-                                <td className="px-4 py-3 flex items-center gap-3">
-                                    <img src={product} alt="" className="w-[50px] h-[50px] rounded object-cover" />
-                                    <div>
-                                        <h2 className="font-bold">Product Name</h2>
-                                        <p className="text-[14px] text-gray-600">
-                                            {`Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae iusto amet ab pariatur nulla natus ipsa harum ratione consectetur saepe quasi, sunt rerum laboriosam veritatis odit voluptates architecto illum earum?`.slice(0, 50)}...
-                                        </p>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3 align-top">Fashion</td>
-                                <td className="px-4 py-3 align-top">Women Jeans</td>
-                                <td className="px-4 py-3 align-top">$250</td>
-                                <td className="px-4 py-3 align-top">
-                                    <div className="flex items-start gap-[2px] text-yellow-500">
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaStar />
-                                        <FaRegStar className="text-gray-400" />
-                                    </div>
-                                </td>
-
-                                <td className="px-4 py-3 whitespace-nowrap align-top">
-                                    <div className="flex items-center gap-2 text-white">
-                                        <Link to={`/products/detail/1234`}>
-                                            <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
-                                                <FaInfo />
-                                            </div>
-                                        </Link>
-                                        <Link to={`/products/edit/1234`}>
-                                            <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
-                                                <FaEdit />
-                                            </div>
-                                        </Link>
-                                        <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
-                                            <MdDelete />
-                                        </div>
-                                    </div>
-                                </td>
-
-                            </tr>
 
                         </tbody>
                     </table>
