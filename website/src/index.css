@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
+
 body {
-  background-color: #F5F0F0;
+  background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.8);
   overflow-x: hidden !important;
 }
@@ -29,18 +30,86 @@ Button {
 }
 
 .swiper-button-prev,
-.swiper-button-next 
-{
+.swiper-button-next {
   width: 50px !important;
   height: 50px !important;
   background-color: lightgray !important;
   border-radius: 50% !important;
 }
 
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: darkcyan !important;
+}
+
 .swiper-button-prev::after,
-.swiper-button-next::after 
-{
+.swiper-button-next::after {
   font-size: 28px !important;
   font-weight: bold !important;
-  color:darkslategray !important;
+  color: darkslategray !important;
 }
+
+
+/* Offer Banner Slider */
+.offer-banner-swiper .swiper-button-next,
+.offer-banner-swiper .swiper-button-prev {
+  display: none !important;
+}
+
+/* Show only on md+ when hovering the wrapper */
+@media (min-width: 768px) {
+
+  .offer-banner-swiper:hover .swiper-button-next,
+  .offer-banner-swiper:hover .swiper-button-prev {
+    display: flex !important;
+  }
+}
+
+/* Custom Scrollbar for filterSection and Cart */
+.scrollbar-sidebar::-webkit-scrollbar {
+  width: 6px;/* Set the width of the scrollbar */
+  height:4px; 
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  /* Set the background color of the track */
+}
+
+.scrollbar-sidebar::-webkit-scrollbar-thumb {
+  background-color: #FA9C4A;
+  /* Set the color of the thumb */
+}
+
+/* Product Detail Zoom image */
+
+.zoom-full-img > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.zoom-full-img .iiz__img {
+  height: 100%;
+  width: 100%
+}
+
+/* Swiper navigation related products */
+.swiper-navigation-related-products .swiper-prev,
+.swiper-navigation-related-products .swiper-next {
+    width:35px;
+    height:35px;
+    background-color: #E17100;
+    color: white !important;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: color 0.3s ease;
+}
+
+.swiper-prev:hover,
+.swiper-next:hover {
+    background-color: #6F3800;
+}
+
+
+

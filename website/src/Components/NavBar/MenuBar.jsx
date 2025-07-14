@@ -26,8 +26,6 @@ const MenuBar = ({setIsSidebarOpen}) => {
                         <Button className="!font-bold !px-2">Wellness</Button>
                     </div>
                 </div>
-
-
             </div>
         </>
     )
