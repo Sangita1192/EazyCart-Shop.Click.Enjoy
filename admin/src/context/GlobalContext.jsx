@@ -3,7 +3,7 @@ import { getActiveCategories } from '../api/categoryApi';
 
 const GlobalContext = createContext();
 const GlobalProvider = ({ children }) => {
-    const [activeCategories, setActiveCategories] = useState([])
+    const [activeCategories, setActiveCategories] = useState([]);
 
     const fetchActiveCategories = async () => {
         try {

@@ -123,13 +123,6 @@ export const SideBar = () => {
                                     </Button>
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/sub-category">
-                                    <Button className="!py-[10px] !text-[dimgray] w-full !capitalize  flex !justify-start items-center gap-3">
-                                        SubCategory
-                                    </Button>
-                                </Link>
-                            </li>
                         </ul>
                     </li>
                     <li className="px-2 text-start border-b-1 border-b-slate-200">
