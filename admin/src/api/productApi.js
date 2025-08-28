@@ -13,6 +13,18 @@ export const updateProductSize = async(id, newSize)=> axios.put(`product-size/${
 export const deleteSize = async(id) =>axios.delete(`product-size/${id}`);
 
 
+// Product Colors
+export const getColors = async()=> axios.get(`colors`);
+
+export const addColor = async (color) => axios.post(`colors/new`, color);
+
+export const getColor = async(id) =>axios.get(`colors/${id}`);
+
+export const updateColor = async(id, newSize)=> axios.put(`colors/${id}`, newSize);
+
+export const deleteColor = async(id) =>axios.delete(`colors/${id}`);
+
+
 // Product APIs
 
 export const fetchAllProducts = async ({ page = 1, limit = 10, search = '', prodCategory }) => {

@@ -6,10 +6,12 @@ import { MdDelete } from 'react-icons/md';
 import { addSize, deleteSize, getProductSize, getProductSizes, updateProductSize } from '../api/productApi';
 import { showError, showSuccess, showWarning } from '../services/toastService';
 import { confirmDelete } from '../../utils/confirmDelete';
+import { useContext } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
 
 const ProductSize = () => {
+    const { sizes, fetchSizes } = useContext(GlobalContext);
     const [loading, setLoading] = useState(false);
-    const [sizes, setSizes] = useState([]);
     const [newSize, setNewSize] = useState({ name: '', label: '' });
     const [editMode, setEditMode] = useState(false);
     const [editId, setEditId] = useState(null);
@@ -18,17 +20,8 @@ const ProductSize = () => {
         fetchSizes();
     }, []);
 
-    const fetchSizes = async () => {
-        try {
-            const response = await getProductSizes();
-            setSizes(response.data.sizes || []);
-        } catch (err) {
-            showError('Failed to load sizes');
-        }
-    };
-
     const handleAddSize = async () => {
-        if (!newSize.name?.trim() && !newSize.name?.trim()) {
+        if (!newSize.name?.trim() && !newSize.label?.trim()) {
             return showWarning('Please enter a valid size.');
         }
         setLoading(true);
@@ -73,7 +66,7 @@ const ProductSize = () => {
         try {
             const response = await getProductSize(id);
             const sizeData = response.data.size;
-            setNewSize({name:sizeData.name, label: sizeData.label});
+            setNewSize({ name: sizeData.name, label: sizeData.label });
             setEditMode(true);
             setEditId(id);
         }
@@ -134,7 +127,7 @@ const ProductSize = () => {
                         ) : (
                             <>
                                 <IoMdCloudUpload className="text-xl" />
-                                {editMode? "Update Size" : "Publish & View"}
+                                {editMode ? "Update Size" : "Publish & View"}
                             </>
                         )}
                     </Button>
