@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
-import { addSize, getProductSizes } from '../api/productApi';
+import { addSize, deleteSize, getProductSizes } from '../api/productApi';
 import { showError, showSuccess, showWarning } from '../services/toastService';
+import { confirmDelete } from '../../utils/confirmDelete';
 
 const ProductSize = () => {
     const [loading, setLoading] = useState(false);
@@ -41,6 +42,22 @@ const ProductSize = () => {
             setLoading(false);
         }
     };
+
+    const handleDeleteSize = async (id) => {
+        const result = await confirmDelete();
+        if (result.isConfirmed) {
+            try {
+                const response = await deleteSize(id);
+                showSuccess(response.data.message);
+                fetchSizes();
+
+            } catch (err) {
+                const msg = err.response?.data?.message || 'Something went wrong';
+                showError(msg);
+            }
+        }
+
+    }
 
     return (
         <>
@@ -129,7 +146,7 @@ const ProductSize = () => {
                                                     <FaEdit size={16} />
                                                 </div>
                                                 <div className="bg-red-500 text-white p-2 rounded-full hover:bg-red-400 cursor-pointer transition">
-                                                    <MdDelete size={16} />
+                                                    <MdDelete size={16} onClick={() => handleDeleteSize(size._id)} />
                                                 </div>
                                             </div>
                                         </td>

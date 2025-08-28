@@ -6,6 +6,6 @@ const sizeRouter = express.Router();
 sizeRouter.get('/', getAllProductSizes);
 sizeRouter.post('/', createProductSize);
 sizeRouter.put('/:id', updateProductSize);
-sizeRouter.delete('/', deleteProductSize);
+sizeRouter.delete('/:id', deleteProductSize);
 
 export default sizeRouter;

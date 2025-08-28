@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
 
 const sizeSchema = new mongoose.Schema(
   {
@@ -11,6 +11,7 @@ const sizeSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      set: (v)=> v.toUpperCase(),
     },
   },
   { timestamps: true }
