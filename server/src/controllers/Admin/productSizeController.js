@@ -44,21 +44,43 @@ export const createProductSize = async (req, res) => {
     }
 }
 
+//get Single product Size
+export const getProductSize = async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const size = await Size.findById(id);
+        if(!size){
+            return sendErrorResponse(res, "Size not exists", 404);
+        };
+        return res.status(200).json({
+            size,
+            error: false,
+            success: true
+        });
+
+
+    }
+    catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, "Internal Server Error", 500);
+    }
+}
 
 //update Product Size
 export const updateProductSize = async (req, res) => {
     try {
-        const { name } = req.body;
+        console.log(req.body);
+        const { name, label } = req.body;
         const { id } = req.params;
 
-        if (!name || !name.trim()) {
-            return res.status(400).json({ message: "Size name is required." });
+        if (!name || !name.trim() ||!label || !label.trim()) {
+            return res.status(400).json({ message: "Size name or label is required." });
         }
 
         const updatedSize = await Size.findByIdAndUpdate(
             id,
-            { name: name.trim() },
-            { new: true, runValidators: true }  //ensures unique is checked
+            { name: name.trim(), label: label.toUpperCase() },
+            { new: true, runValidators: true }  //ensures validation is checked
         );
 
         if (!updatedSize) {

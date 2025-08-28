@@ -5,26 +5,18 @@ const sizeSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true, 
+      trim: true,
+      set: (v) => v.trim().toLowerCase(),
     },
     label: {
       type: String,
       required: true,
       trim: true,
-      set: (v)=> v.toUpperCase(),
+      set: (v) => v.trim().toUpperCase(),
     },
   },
   { timestamps: true }
 );
-
-// Transform name to lowercase before saving
-sizeSchema.pre("save", function (next) {
-  if (this.isModified("name")) {
-    this.name = this.name.trim().toLowerCase();
-  }
-  next();
-});
-
 
 sizeSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 2 } });
 

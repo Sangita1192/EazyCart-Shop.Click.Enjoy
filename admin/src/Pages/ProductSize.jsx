@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
-import { addSize, deleteSize, getProductSizes } from '../api/productApi';
+import { addSize, deleteSize, getProductSize, getProductSizes, updateProductSize } from '../api/productApi';
 import { showError, showSuccess, showWarning } from '../services/toastService';
 import { confirmDelete } from '../../utils/confirmDelete';
 
@@ -11,6 +11,8 @@ const ProductSize = () => {
     const [loading, setLoading] = useState(false);
     const [sizes, setSizes] = useState([]);
     const [newSize, setNewSize] = useState({ name: '', label: '' });
+    const [editMode, setEditMode] = useState(false);
+    const [editId, setEditId] = useState(null);
 
     useEffect(() => {
         fetchSizes();
@@ -31,9 +33,17 @@ const ProductSize = () => {
         }
         setLoading(true);
         try {
-            await addSize(newSize);
-            showSuccess('Size added successfully');
+            if (editMode) {
+                await updateProductSize(editId, newSize);
+                showSuccess("Size updated successfully")
+
+            } else {
+                await addSize(newSize);
+                showSuccess('Size added successfully');
+            }
             setNewSize({ name: '', label: '' });
+            setEditMode(false);
+            setEditId(null);
             fetchSizes();
         } catch (err) {
             const msg = err.response?.data?.message || 'Something went wrong';
@@ -57,7 +67,23 @@ const ProductSize = () => {
             }
         }
 
+    };
+
+    const fetchProductSize = async (id) => {
+        try {
+            const response = await getProductSize(id);
+            const sizeData = response.data.size;
+            setNewSize({name:sizeData.name, label: sizeData.label});
+            setEditMode(true);
+            setEditId(id);
+        }
+        catch (err) {
+            const msg = err.response?.data?.message || 'Something went wrong';
+            showError(msg);
+        }
     }
+
+
 
     return (
         <>
@@ -110,7 +136,7 @@ const ProductSize = () => {
                         ) : (
                             <>
                                 <IoMdCloudUpload className="text-xl" />
-                                Publish & View
+                                {editMode? "Update Size" : "Publish & View"}
                             </>
                         )}
                     </Button>
@@ -143,7 +169,7 @@ const ProductSize = () => {
                                         <td className="px-4 py-3">
                                             <div className="flex gap-2">
                                                 <div className="bg-yellow-500 text-white p-2 rounded-full hover:bg-yellow-400 cursor-pointer transition">
-                                                    <FaEdit size={16} />
+                                                    <FaEdit size={16} onClick={() => fetchProductSize(size._id)} />
                                                 </div>
                                                 <div className="bg-red-500 text-white p-2 rounded-full hover:bg-red-400 cursor-pointer transition">
                                                     <MdDelete size={16} onClick={() => handleDeleteSize(size._id)} />
