@@ -69,7 +69,6 @@ export const getProductSize = async(req,res)=>{
 //update Product Size
 export const updateProductSize = async (req, res) => {
     try {
-        console.log(req.body);
         const { name, label } = req.body;
         const { id } = req.params;
 

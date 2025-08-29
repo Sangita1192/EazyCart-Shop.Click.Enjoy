@@ -1,15 +1,14 @@
 import express from 'express';
-import { createProductColor, getAllColors } from '../../controllers/Admin/productColorController.js';
+import { createProductColor, deleteColor, getAllColors, getColor, updateColor } from '../../controllers/Admin/productColorController.js';
 
 
 const colorRouter = express.Router();
 
 colorRouter.post('/new', createProductColor);
 colorRouter.get('/', getAllColors);
-// sizeRouter.post('/', createProductSize);
-// sizeRouter.get('/:id', getProductSize);
-// sizeRouter.put('/:id', updateProductSize);
-// sizeRouter.delete('/:id', deleteProductSize);
+colorRouter.get('/:id', getColor);
+colorRouter.put('/:id', updateColor);
+colorRouter.delete('/:id', deleteColor);
 
 
 export default colorRouter;

@@ -5,10 +5,11 @@ import { Button, CircularProgress } from '@mui/material'
 import { IoMdCloudUpload } from 'react-icons/io'
 import namer from 'color-namer';
 import { showError, showSuccess, showWarning } from '../services/toastService'
-import { addColor } from '../api/productApi'
+import { addColor, deleteColor, getColor, updateColor } from '../api/productApi'
 import { useContext } from 'react'
 import { GlobalContext } from '../context/GlobalContext'
 import { useEffect } from 'react'
+import { confirmDelete } from '../../utils/confirmDelete'
 
 
 const ProductColors = () => {
@@ -21,28 +22,70 @@ const ProductColors = () => {
 
     useEffect(() => {
         fetchColors();
-    }, [])
+    }, []);
+
 
     const handleColorChange = (e) => {
-        const colorCode = e.target.value;
-        const named = namer(colorCode);
-        setColor({ name: named.html[0].name, code: colorCode });
+        const { name, value } = e.target;
+        if (name === "code") {
+            const named = namer(value);
+            setColor({ ...color, code: value, name: named.html[0].name });
+        } else if (name === "name") {
+            setColor({ ...color, name: value }); 
+        }
     };
 
+
+
+
+
+
+    const handleDeleteColor = async (id) => {
+        const result = await confirmDelete();
+        if (result.isConfirmed) {
+            try {
+                const response = await deleteColor(id);
+                showSuccess(response.data.message);
+                fetchColors();
+
+            } catch (err) {
+                const msg = err.response?.data?.message || 'Something went wrong';
+                showError(msg);
+            }
+        }
+    }
+
+    const fetchColor = async (id) => {
+        try {
+            const response = await getColor(id);
+            const colorData = response.data.color;
+            setColor({ name: colorData.name, code: colorData.code });
+            setEditMode(true);
+            setColorId(id);
+        }
+        catch (err) {
+            const msg = err.response?.data?.message || 'Something went wrong';
+            showError(msg);
+        }
+    }
+
     const AddandUpdateColor = async () => {
-        if (!color.name?.trim() && !color.name?.trim()) {
+        if (!color.name?.trim() && !color.code?.trim()) {
             return showWarning('Please select color');
         }
         setLoading(true);
         try {
             if (editMode) {
-                console.log("edit mode");
+                await updateColor(colorId, color);
+                showSuccess("Color updated successfully")
             } else {
                 await addColor(color);
                 showSuccess("Color added successfully!")
             }
             setColor({ name: '', code: '' });
-
+            setEditMode(false);
+            setColorId(null);
+            fetchColors();
         }
         catch (err) {
             const msg = err.response?.data?.message || 'Something went wrong';
@@ -75,8 +118,8 @@ const ProductColors = () => {
                     <input
                         type="text"
                         id="colorCode"
-                        name='code'
-                        value={color.code}
+                        name="code"
+                        value={color.code } 
                         onChange={handleColorChange}
                         className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600"
                         placeholder="color code"
@@ -89,7 +132,8 @@ const ProductColors = () => {
                     <input
                         type="color"
                         id="colorPicker"
-                        value={color.colorCode}
+                        name="code"
+                        value={color.code || "#000000"}  // fallback
                         onChange={handleColorChange}
                         className="w-[60px] h-[40px] border border-gray-300 rounded-md p-1 cursor-pointer"
                     />
@@ -139,10 +183,14 @@ const ProductColors = () => {
                                         <td className="px-4 py-3">{color.code}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex gap-2">
-                                                <div className="bg-yellow-500 text-white p-2 rounded-full hover:bg-yellow-400 cursor-pointer transition">
+                                                <div className="bg-yellow-500 text-white p-2 rounded-full hover:bg-yellow-400 cursor-pointer transition"
+                                                    onClick={() => fetchColor(color._id)}
+                                                >
                                                     <FaEdit size={16} />
                                                 </div>
-                                                <div className="bg-red-500 text-white p-2 rounded-full hover:bg-red-400 cursor-pointer transition">
+                                                <div className="bg-red-500 text-white p-2 rounded-full hover:bg-red-400 cursor-pointer transition"
+                                                    onClick={() => handleDeleteColor(color._id)}
+                                                >
                                                     <MdDelete size={16} />
                                                 </div>
                                             </div>
