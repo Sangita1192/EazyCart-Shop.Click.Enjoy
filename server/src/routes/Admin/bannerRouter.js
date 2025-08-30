@@ -1,7 +1,8 @@
 import { createBanner } from "../../controllers/Admin/bannerController.js";
 import express from "express";
+import upload from "../../middleware/multer.js";
 
 export const bannerRouter = express();
 
 
-bannerRouter.post("/new", createBanner);
+bannerRouter.post("/new",upload.single('image'), createBanner);
