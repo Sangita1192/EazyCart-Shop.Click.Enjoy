@@ -66,8 +66,7 @@ const BannerEdit = () => {
             setSubmitting(false);
         }
     }
-
-
+    
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">

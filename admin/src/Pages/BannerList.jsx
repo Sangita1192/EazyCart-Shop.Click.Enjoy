@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom'
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import { FaEdit } from 'react-icons/fa'
 import { IoMdSearch } from 'react-icons/io'
-import { getAllBanners } from '../api/bannerApi'
+import { deleteBanner, getAllBanners } from '../api/bannerApi'
+import { confirmDelete } from '../../utils/confirmDelete'
+import { showError, showSuccess } from '../services/toastService'
 
 const BannerList = () => {
     const [banners, setBanners] = useState([]);
@@ -25,8 +27,24 @@ const BannerList = () => {
             setTotalPages(res.data.totalPages);
         } catch (error) {
             console.error("failed to fetch banners", error);
-        } 
+        }
     }
+
+    // delete banner
+    const handleDelete = async (id) => {
+        const result = await confirmDelete();
+        if (result.isConfirmed) {
+            try {
+                await deleteBanner(id);
+                showSuccess("Banner deleted successfully.");
+                fetchBanners();
+            } catch (err) {
+                showError("Delete Banner Failed");
+            }
+        }
+    }
+
+
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
@@ -116,7 +134,7 @@ const BannerList = () => {
                                                         <FaEdit />
                                                     </div>
                                                 </Link>
-                                                <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
+                                                <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer" onClick={() => handleDelete(banner._id)}>
                                                     <MdDelete />
                                                 </div>
                                             </div>

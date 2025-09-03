@@ -156,7 +156,7 @@ export const updateBanner = async (req, res) => {
             }
 
             // Upload new image
-            const result = await uploadImageToCloudinary(req.file.path); 
+            const result = await uploadImageToCloudinary(req.file.path);
             if (!result.success) {
                 return sendErrorResponse(res, 500, result.message);
             }
@@ -192,3 +192,34 @@ export const updateBanner = async (req, res) => {
         return sendErrorResponse(res, 500, "Internal Server Error");
     }
 };
+
+//delete banner
+export const deleteBanner = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const banner = await Banner.findById(id);
+
+        if (!banner) {
+            return sendErrorResponse(res, 404, "Banner not found");
+        }
+        //remove images from cloudinary
+        if (banner.image) {
+            const publicId = extractPublicId(banner.image);
+            await removeImageFromCloudinary(publicId);
+        }
+
+        await Banner.findByIdAndDelete(id);
+
+        return res.status(200).json({
+            message: "Banner deleted successfully",
+            success: true,
+            error: false,
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, 500, "Failed to delete banner");
+    }
+}
+
