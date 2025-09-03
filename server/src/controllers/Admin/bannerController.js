@@ -2,6 +2,7 @@ import { uploadImageToCloudinary } from "../../utils/Cloudinary/uploadImgCloudin
 import Banner from "../../models/banner.model.js";
 import { removeImageFromCloudinary } from "../../utils/Cloudinary/removeImgCloudinary.js";
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js";
+import extractPublicId from "../../utils/Cloudinary/extractPublicId.js";
 
 //create banner controller
 export const createBanner = async (req, res) => {
@@ -69,8 +70,7 @@ export const createBanner = async (req, res) => {
 //get all banners
 export const getAllBanners = async (req, res) => {
     try {
-        console.log(req.query);
-        const { page = 1, limit = 10, search="", bannerType } = req.query;
+        const { page = 1, limit = 10, search = "", bannerType } = req.query;
 
         const skip = (parseInt(page) - 1) * parseInt(limit)
 
@@ -110,3 +110,85 @@ export const getAllBanners = async (req, res) => {
         return sendErrorResponse(res, "Internal Server Error", 500);
     }
 }
+
+// get single banner
+export const getBannerById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const banner = await Banner.findById(id);
+
+        if (!banner) {
+            return sendErrorResponse(res, 400, "Banner not found");
+        }
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            banner
+        });
+    }
+    catch (error) {
+        return sendErrorResponse(res, 500, "Internal Server Error");
+    }
+}
+
+// update banner
+export const updateBanner = async (req, res) => {
+    let uploadImagePublicId;
+
+    try {
+        const { id } = req.params;
+        const { title, description, link, startDate, endDate, isActive, bannerType, order } = req.body;
+
+        //find existing banner
+        const existingBanner = await Banner.findById(id);
+        if (!existingBanner) {
+            return sendErrorResponse(res, 400, "No banner exists");
+        }
+
+        // Handle image update if a new file is uploaded
+        if (req.file) {
+            const existingImagePublicId = extractPublicId(existingBanner.image);
+
+            // Delete old image from Cloudinary (if exists)
+            if (existingImagePublicId) {
+                await removeImageFromCloudinary(existingImagePublicId);
+            }
+
+            // Upload new image
+            const result = await uploadImageToCloudinary(req.file.path); 
+            if (!result.success) {
+                return sendErrorResponse(res, 500, result.message);
+            }
+
+            existingBanner.image = result.url;
+            uploadImagePublicId = result.public_id;
+        }
+
+        // Update other fields
+        existingBanner.title = title || existingBanner.title;
+        existingBanner.description = description || existingBanner.description;
+        existingBanner.link = link || existingBanner.link;
+        existingBanner.startDate = startDate || existingBanner.startDate;
+        existingBanner.endDate = endDate || existingBanner.endDate;
+        existingBanner.isActive = isActive !== undefined ? isActive : existingBanner.isActive;
+        existingBanner.bannerType = bannerType || existingBanner.bannerType;
+        existingBanner.order = order || existingBanner.order;
+
+        await existingBanner.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Banner updated successfully",
+            banner: existingBanner,
+        });
+    } catch (error) {
+        // Remove uploaded image if DB save fails
+        if (uploadImagePublicId) {
+            await removeImageFromCloudinary(uploadImagePublicId);
+        }
+
+        console.error(error);
+        return sendErrorResponse(res, 500, "Internal Server Error");
+    }
+};

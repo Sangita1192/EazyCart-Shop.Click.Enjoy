@@ -1,12 +1,10 @@
 import { Button } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import product from "/Images/profile.jpg"
 import { Link } from 'react-router-dom'
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import { FaEdit } from 'react-icons/fa'
 import { IoMdSearch } from 'react-icons/io'
 import { getAllBanners } from '../api/bannerApi'
-import LoadingSpinner from '../Components/LoadingSpinner'
 
 const BannerList = () => {
     const [banners, setBanners] = useState([]);
@@ -23,7 +21,6 @@ const BannerList = () => {
     const fetchBanners = async () => {
         try {
             const res = await getAllBanners({ page, limit: rowsPerPage, search, bannerType: selectedBannerType });
-            console.log(res.data);
             setBanners(res.data.banners || []);
             setTotalPages(res.data.totalPages);
         } catch (error) {
@@ -114,7 +111,7 @@ const BannerList = () => {
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap align-top">
                                             <div className="flex items-center gap-2 text-white">
-                                                <Link to={`/banners/edit/1234`}>
+                                                <Link to={`/banners/${banner._id}`}>
                                                     <div className="bg-yellow-600 p-2 rounded-full hover:bg-yellow-500 cursor-pointer">
                                                         <FaEdit />
                                                     </div>

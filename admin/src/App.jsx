@@ -43,7 +43,7 @@ function App() {
         { path: "category/edit/:id", element: <CategoryEdit /> },
         { path: "orders", element: <OrderList /> },
         { path: "banners/add", element: <BannerCreate /> },
-        { path: "banners/edit/:id", element: <BannerEdit /> },
+        { path: "banners/:id", element: <BannerEdit /> },
         { path: "banners/view", element: <BannerList /> },
         { path: "users", element: <Users /> },
         { path: "profile", element: <Profile /> },
