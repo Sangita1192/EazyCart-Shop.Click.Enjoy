@@ -36,6 +36,7 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+
     return (
         <GlobalContext.Provider value={{ activeCategories, fetchActiveCategories, sizes, fetchSizes, colors, fetchColors}}>
             {children}
