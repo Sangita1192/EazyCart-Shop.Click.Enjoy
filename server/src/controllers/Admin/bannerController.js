@@ -218,8 +218,31 @@ export const deleteBanner = async (req, res) => {
 
     }
     catch (error) {
-        console.error(error);
         return sendErrorResponse(res, 500, "Failed to delete banner");
+    }
+}
+
+// toggle status between active/InActive of banner
+export const toggleStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const existingBanner = await Banner.findById(id);
+
+        if (!existingBanner) return sendErrorResponse(res, 404, "Banner not found");
+
+        const newStatus = !existingBanner.isActive;
+
+        await Banner.findByIdAndUpdate(id, { isActive: newStatus }, { runValidators: true, new: true });
+
+        return res.status(200).json({
+            message: "Banner status updated successfully",
+            success: true,
+            error: false,
+        });
+    }
+    catch (error) {
+        return sendErrorResponse(res, 500, "Failed to update banner");
     }
 }
 

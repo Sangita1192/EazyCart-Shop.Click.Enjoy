@@ -1,10 +1,10 @@
-import { Button } from '@mui/material'
+import { Button, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import { FaEdit } from 'react-icons/fa'
 import { IoMdSearch } from 'react-icons/io'
-import { deleteBanner, getAllBanners } from '../api/bannerApi'
+import { deleteBanner, getAllBanners, toggleBannerStaus } from '../api/bannerApi'
 import { confirmDelete } from '../../utils/confirmDelete'
 import { showError, showSuccess } from '../services/toastService'
 
@@ -44,6 +44,16 @@ const BannerList = () => {
         }
     }
 
+    const handleStatus = async (id) => {
+        try {
+            const res = await toggleBannerStaus(id);
+            showSuccess("status updated!")
+            fetchBanners();
+        } catch (err) {
+            showError("Status Updation Failed");
+        }
+    }
+
 
     return (
         <>
@@ -56,7 +66,7 @@ const BannerList = () => {
                 </Link>
             </div>
             <div className="rounded-[8px] border border-gray-200 shadow-lg bg-white p-5">
-                <div className="flex justify-between items-center my-[15px] mb-[25px]">
+                <div className="md:flex justify-between items-center my-[15px] mb-[25px]">
                     <div>
                         <label htmlFor="type" className='font-semibold italic'>Sort by: </label>
                         <select name="type"
@@ -73,7 +83,7 @@ const BannerList = () => {
                             <option value="card">card</option>
                         </select>
                     </div>
-                    <div className="relative">
+                    <div className="relative mt-[10px] md:mt-0 ">
                         <input
                             type="text"
                             value={search}
@@ -123,9 +133,15 @@ const BannerList = () => {
                                         <td className="px-4 py-3 align-top">{new Date(banner.endDate).toISOString().slice(0, 10)}
                                         </td>
                                         <td className="px-4 py-3 align-top">
-                                            <Button className='!bg-[#10B981] !text-white !capitalize'>
-                                                Active
-                                            </Button>
+                                            <Tooltip title={`Click to mark as ${banner.isActive ? "In-Active" : "Active"}`}>
+                                                <button
+                                                    onClick={() => handleStatus(banner._id, banner.isActive)}
+                                                    className={`text-white px-3 py-1 rounded-md capitalize cursor-pointer 
+                                                        ${banner.isActive ? "bg-emerald-500 hover:bg-emerald-600" : "bg-red-500 hover:bg-red-600"}`}
+                                                >
+                                                    {banner.isActive ? "Active" : "In-Active"}
+                                                </button>
+                                            </Tooltip>
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap align-top">
                                             <div className="flex items-center gap-2 text-white">
@@ -146,7 +162,7 @@ const BannerList = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="md:flex justify-between items-center mt-4 text-center">
+                <div className="md:flex justify-between items-center mt-4 ">
                     <div className="flex gap-3 items-center">
                         <span className="text-sm font-medium text-gray-700">Row per page </span>
                         <select

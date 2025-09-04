@@ -13,4 +13,6 @@ export const getBanner = async(id) => axios.get(`banners/${id}`);
 
 export const updateBanner = async(id, updateBanner) => axios.put(`banners/${id}`, updateBanner);
 
+export const toggleBannerStaus = async(id) => axios.put(`banners/status/${id}`);
+
 export const deleteBanner = async(id) => axios.delete(`banners/${id}`);
