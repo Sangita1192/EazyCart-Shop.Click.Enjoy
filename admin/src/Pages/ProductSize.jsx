@@ -109,8 +109,7 @@ const ProductSize = () => {
                 <div className="lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]">
                     <Button
                         className="
-                            !bg-blue-600 
-                            hover:!bg-blue-700 
+                           !bg-[#F66C2B] hover:!bg-[#E55B1C]
                             !text-white 
                             !capitalize 
                             !w-full 
@@ -139,7 +138,7 @@ const ProductSize = () => {
                 <h1 className="text-xl font-semibold mb-5">Product Sizes</h1>
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm text-gray-700 border border-gray-200 rounded-md overflow-hidden">
-                        <thead className="bg-blue-600 text-white text-xs uppercase">
+                        <thead className="bg-[#F3F4F6] text-[#333333]  text-xs uppercase">
                             <tr>
                                 <th className="px-4 py-3 text-left">Size</th>
                                 <th className="px-4 py-3 text-left">Label</th>
@@ -152,7 +151,7 @@ const ProductSize = () => {
                                 sizes.map((size) => (
                                     <tr
                                         key={size._id}
-                                        className="bg-white border-b border-gray-200 hover:bg-gray-50"
+                                        className="bg-white border-b border-gray-200 hover:bg-[#FFF3E8]"
                                     >
                                         <td className="px-4 py-3">{size.name}</td>
                                         <td className="px-4 py-3">{size.label}</td>

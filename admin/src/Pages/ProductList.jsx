@@ -35,7 +35,7 @@ const ProductList = () => {
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
                 <h1 className='text-2xl font-bold'>Product List</h1>
                 <Link to="/products/add">
-                    <Button className='!bg-blue-600 !text-white hover:!bg-blue-800'>
+                    <Button className='!bg-[#3B82F6] !text-white hover:!bg-[#2563EB]'>
                         + Add Product
                     </Button>
                 </Link>
@@ -60,7 +60,7 @@ const ProductList = () => {
                 </div>
                 <div className="overflow-x-auto overflow-y-auto ">
                     <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[10px]">
-                        <thead className="bg-blue-300 text-xs uppercase text-gray-600 sticky top-0 z-10 ">
+                        <thead className="bg-[#F3F4F6] text-[#333333]  text-xs uppercase sticky top-0 z-10 ">
                             <tr>
                                 <th className="px-4 py-3">Product</th>
                                 <th className="px-4 py-3">Category</th>
@@ -75,7 +75,7 @@ const ProductList = () => {
                             {!loading ? (
                                 products.length > 0 ? (
                                     products.map((product) => (
-                                        <tr className="hover:bg-gray-50" key={product._id}>
+                                        <tr className="hover:bg-[#FFF3E8]" key={product._id}>
                                             <td className="px-4 py-3 flex items-center gap-3">
                                                 <img src={product.images[0]} alt="product Image" className="w-[50px] h-[50px] rounded object-cover" />
                                                 <div>
@@ -101,7 +101,7 @@ const ProductList = () => {
                                             <td className="px-4 py-3 whitespace-nowrap align-top">
                                                 <div className="flex items-center gap-2 text-white">
                                                     <Link to={`/products/detail/1234`}>
-                                                        <div className="bg-green-600 p-2 rounded-full hover:bg-green-700 cursor-pointer">
+                                                        <div className="bg-green-500 p-2 rounded-full hover:bg-green-700 cursor-pointer">
                                                             <FaInfo />
                                                         </div>
                                                     </Link>

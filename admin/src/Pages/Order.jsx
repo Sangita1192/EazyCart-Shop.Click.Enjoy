@@ -24,7 +24,7 @@ const OrderList = () => {
                 </div>
                 <div className="overflow-x-auto overflow-y-auto ">
                     <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[10px]">
-                        <thead className="bg-blue-600 text-xs uppercase text-white sticky top-0 z-10 ">
+                        <thead className="bg-[#F3F4F6] text-[#333333] text-xs uppercase sticky top-0 z-10 ">
                             <tr>
                                 <th className="px-4 py-3 break-words">Order Id</th>
                                 <th className="px-4 py-3 break-words">Payment Id</th>
@@ -40,7 +40,7 @@ const OrderList = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            <tr className="hover:bg-gray-50">
+                            <tr className="hover:bg-[#FFF3E8]">
                                 <td className="px-4 py-3 align-top break-words">ohalfjelkj</td>
                                 <td className="px-4 py-3 align-top break-words">lkdjfakfjekj</td>
                                 <td className="px-4 py-3 align-top break-words">

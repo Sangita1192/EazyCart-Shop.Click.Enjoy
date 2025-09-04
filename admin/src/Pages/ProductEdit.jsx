@@ -128,7 +128,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >
-                    <Button className='!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full                        !flex 
+                    <Button className='!bg-[#F66C2B] hover:!bg-[#E55B1C] !text-white !capitalize !w-full                        !flex 
                                 !justify-center !items-center gap-x-2'
                     >
                         <IoMdCloudUpload className='text-xl' />

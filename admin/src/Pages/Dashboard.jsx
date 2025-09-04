@@ -14,7 +14,7 @@ const Dashboard = () => {
                         <h1 className="text-2xl font-bold">Good Morning, <br /> Sangeeta </h1>
                         <p className="py-3 text-xl">Here’s What happening on your store today. See the statistics at once.</p>
                         <Link to="/products/add">
-                            <Button className="!bg-[#3872FA] !text-white !my-[15px] !px-[15px] !capitalize">
+                            <Button className="!bg-[#3B82F6] !text-white hover:!bg-[#2563EB] !my-[15px] !px-[15px] !capitalize">
                                 + Add Products
                             </Button>
                         </Link>

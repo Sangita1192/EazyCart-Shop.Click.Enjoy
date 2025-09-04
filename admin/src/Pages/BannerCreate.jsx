@@ -203,7 +203,7 @@ const BannerCreate = () => {
                     <Button
                         onClick={handleCreateBanner}
                         disabled={submitting}
-                        className="!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full"
+                        className="!bg-[#F66C2B] hover:!bg-[#E55B1C] !text-white !capitalize !w-full"
                     >
                         {submitting ? (
                             <CircularProgress size={20} color="inherit" />

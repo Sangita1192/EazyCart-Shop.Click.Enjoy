@@ -98,7 +98,7 @@ const CategoryList = () => {
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
                 <h1 className="text-2xl font-bold">Category List</h1>
                 <Link to="/category/add">
-                    <Button className="!bg-blue-600 !text-white hover:!bg-blue-800">
+                    <Button className="!bg-[#3B82F6] !text-white hover:!bg-[#2563EB]">
                         + Add Category
                     </Button>
                 </Link>
@@ -145,7 +145,7 @@ const CategoryList = () => {
                         </div>
                     )}
                     <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[10px]">
-                        <thead className="bg-blue-300 text-xs uppercase text-gray-600 sticky top-0 z-10">
+                        <thead className="bg-[#F3F4F6] text-[#333333]  text-xs uppercase sticky top-0 z-10">
                             <tr>
                                 <th className="px-4 py-3">Category</th>
                                 <th className="px-4 py-3">Parent Category</th>
@@ -160,7 +160,7 @@ const CategoryList = () => {
                             {!loading ? (
                                 categories.length > 0 ? (
                                     categories.map((category) => (
-                                        <tr key={category._id} className="hover:bg-gray-50">
+                                        <tr key={category._id} className="hover:bg-[#FFF3E8]">
                                             <td className="px-4 py-3 align-top">{category.name}</td>
                                             <td className="px-4 py-3 align-top">
                                                 {category.parent ? category.parent.name || 'Unnamed' : 'None'}

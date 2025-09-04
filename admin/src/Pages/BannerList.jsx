@@ -89,7 +89,7 @@ const BannerList = () => {
                 </div>
                 <div className="overflow-x-auto overflow-y-auto ">
                     <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[10px]">
-                        <thead className="bg-blue-600 text-xs uppercase text-white sticky top-0 z-10">
+                        <thead className="bg-[#F3F4F6] text-[#333333] text-xs uppercase  sticky top-0 z-10">
                             <tr>
                                 <th className="px-4 py-3">Image</th>
                                 <th className="px-4 py-3">Title</th>
@@ -109,8 +109,8 @@ const BannerList = () => {
 
                                 :
                                 banners.map((banner) => (
-                                    <tr className="hover:bg-gray-50" key={banner._id}>
-                                        <td className="px-4 py-3 align-top">
+                                    <tr className="hover:bg-[#FFF3E8]" key={banner._id}>
+                                        <td className="px-4 py-3 align-top ">
                                             <img src={banner.image} alt="" className="w-[150px] h-[80px] rounded object-cover" />
                                         </td>
                                         <td className="px-4 py-3 align-top"> {banner.title}</td>
@@ -123,7 +123,7 @@ const BannerList = () => {
                                         <td className="px-4 py-3 align-top">{new Date(banner.endDate).toISOString().slice(0, 10)}
                                         </td>
                                         <td className="px-4 py-3 align-top">
-                                            <Button className='!bg-green-600 !text-white !capitalize'>
+                                            <Button className='!bg-[#10B981] !text-white !capitalize'>
                                                 Active
                                             </Button>
                                         </td>
