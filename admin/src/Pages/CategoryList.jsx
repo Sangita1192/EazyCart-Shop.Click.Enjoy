@@ -151,7 +151,7 @@ const CategoryList = () => {
                                 <th className="px-4 py-3">Parent Category</th>
                                 <th className="px-4 py-3">Description</th>
                                 <th className="px-4 py-3">Images</th>
-                                <th className="px-4 py-3">isFeatured</th>
+                                <th className="px-4 py-3">Featured</th>
                                 <th className="px-4 py-3">Status</th>
                                 <th className="px-4 py-3">Action</th>
                             </tr>
@@ -180,13 +180,13 @@ const CategoryList = () => {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3 align-top">
-                                                <Tooltip title={`Click to mark as ${category.isFeatured ? "Not Featured" : "featured"}`}>
+                                                <Tooltip title={`Click to mark as ${category.isFeatured ? "No" : "Yes"}`}>
                                                     <button
                                                         onClick={() => handleFeaturedCat(category._id, category.isFeatured)}
                                                         className={`text-white px-3 py-1 rounded-md capitalize cursor-pointer 
             ${category.isFeatured ? "bg-emerald-500 hover:bg-emerald-600" : "bg-red-500 hover:bg-red-600"}`}
                                                     >
-                                                        {category.isFeatured ? 'Featured' : 'Not Featured'}
+                                                        {category.isFeatured ? 'Yes' : 'No'}
                                                     </button>
                                                 </Tooltip>
                                             </td>

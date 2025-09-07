@@ -27,9 +27,9 @@ export const deleteColor = async(id) =>axios.delete(`colors/${id}`);
 
 // Product APIs
 
-export const fetchAllProducts = async ({ page = 1, limit = 10, search = '', prodCategory }) => {
+export const fetchAllProducts = async ({ page = 1, limit = 10, search = '', categoryId }) => {
   return await axios.get(`products`, {
-    params: { page, limit, search, prodCategory },
+    params: { page, limit, search, categoryId },
   });
 };
 

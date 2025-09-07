@@ -1,8 +1,4 @@
-import slugify from "slugify";
 import mongoose from "mongoose";
-import Category from '../../models/category.model.js';
-import Size from '../../models/size.model.js';
-import Color from '../../models/color.model.js';
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import { uploadImageToCloudinary } from "../../utils/Cloudinary/uploadImgCloudinary.js";
 import Product from "../../models/product.model.js";
@@ -17,7 +13,7 @@ const createProduct = async (req, res) => {
 
         console.log(req.files);
         const imageFiles = req.files || [];
-         uploadedImageUrls = [];
+        uploadedImageUrls = [];
 
         for (let file of imageFiles) {
             const result = await uploadImageToCloudinary(file.path);
@@ -66,36 +62,51 @@ const createProduct = async (req, res) => {
 //get all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find()
-            .populate("category", "name")
-            .populate('subcategory')
-            .populate("size")
-            .populate('color')
-        return res.status(200).json({
-            products,
-            error: false,
-            success: true
-        });
+        const { page = 1, limit = 10, search = "", categoryId } = req.query;
+        console.log(req.query.categoryId);
 
+        const skip = (parseInt(page) - 1) * parseInt(limit)
+
+        const query = search ?
+            {
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { description: { $regex: search, $options: "i" } }
+                ],
+            }
+            : {};
+
+        //filter by category or sub_category
+        if (categoryId) {
+            if (categoryId) {
+                query.$or = query.$or ? [...query.$or, { category: categoryId }, { sub_category: categoryId }]
+                    : [{ category: categoryId }, { sub_category: categoryId }];
+            }
+        }
+
+        const totalProducts = await Product.countDocuments(query);
+
+        const products = await Product.find(query)
+            .populate("category", "name")
+            .skip(skip)
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })   //newest first
+
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            products,
+            totalPages,
+            currentPage: page,
+            totalItems: totalProducts,
+        });
     }
     catch (error) {
-
-        //Schema Validation error
-        if (error.name === "ValidationError") {
-            const fieldErrors = {};
-            for (const field in error.errors) {
-                fieldErrors[field] = error.errors[field].message;
-            }
-            return res.status(400).json({
-                errors: fieldErrors,
-                message: "Validation Error",
-                success: false,
-                error: true
-            });
-        };
-
         console.error('Error fetching products', error);
-        return sendErrorResponse(res, "Internal server error", 500);
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 
