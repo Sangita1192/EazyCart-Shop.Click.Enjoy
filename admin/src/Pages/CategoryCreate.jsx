@@ -20,7 +20,6 @@ const CategoryCreate = () => {
   });
   const [errors, setErrors] = useState({});
   const [selectedImages, setSelectedImages] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
 

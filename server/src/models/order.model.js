@@ -1,44 +1,70 @@
 import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema({
-    userId: {
+    user_id: {
         type: mongoose.Schema.ObjectId,
-        ref : "user"
+        ref: "user",
+        required: true,
     },
-    orderId: {
+    order_id: {
         type: String,
         required: [true, "OrderId is required"],
         unique: true
     },
-    productId: {
-        type: mongoose.Schema.ObjectId,
-        ref: "product"
-    },
-    productDetails: {
-        name: String,
-        image: Array
-    },
-    paymentId : {
+    products: [
+        {
+            product_id: {
+                type: mongoose.Schema.ObjectId,
+                ref: "product",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true,
+                default: 1
+            },
+            price: {
+                type: Number,
+                required: true,
+            },
+            product_details: {
+                name: { type: String, required: true },
+                image: { type: [String], default: [] },
+            },
+        }],
+    payment_id: {
         type: String,
         default: ""
     },
-    paymentStatus:{
+    payment_status: {
         type: String,
-        default: ""
+        default: "pending",
+        enum: ["pending", "paid", "failed", "refunded"]
     },
-    deliveryAddress : {
+    delivery_address: {
         type: mongoose.Schema.ObjectId,
         ref: 'address'
     },
-    subTotalAmt: {
+    tax_amt: {
         type: Number,
-        default: 0
+        default: 0,
     },
-    totalAmt: {
+
+    discount_amt: {
         type: Number,
-        default: 0
-    }
-},{
+        default: 0,
+    },
+
+    shipping_fee: {
+        type: Number,
+        default: 0,
+    },
+
+    total_amt: {
+        type: Number,
+        default: 0,
+    },
+}, {
     timestamps: true
 });
 

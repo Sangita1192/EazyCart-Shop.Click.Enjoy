@@ -32,3 +32,5 @@ export const fetchAllProducts = async ({ page = 1, limit = 10, search = '', prod
     params: { page, limit, search, prodCategory },
   });
 };
+
+export const addProduct = (formData) => axios.post('products/new', formData);

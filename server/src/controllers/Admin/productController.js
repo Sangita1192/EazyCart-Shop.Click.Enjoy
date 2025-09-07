@@ -11,46 +11,37 @@ import extractPublicId from "../../utils/Cloudinary/extractPublicId.js";
 
 //create Product
 const createProduct = async (req, res) => {
+    let uploadedImageUrls;
     try {
-        console.log(req.body);
-        const { name, description, category, subcategory, price, stock, discount, color, size, weight, isFeatured } = req.body;
+        const { name, description, category, sub_category, price, stock, discount, color, size, is_featured } = req.body;
 
-        // Ensure required fields are present
-        if (!name || !description || !category || !price) {
-            return res.status(400).json({ message: 'Required fields missing' });
-        };
+        console.log(req.files);
+        const imageFiles = req.files || [];
+         uploadedImageUrls = [];
 
-        // Upload images to Cloudinary
-        const files = req.files || [];
-        const uploadedImageUrls = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const result = await uploadImageToCloudinary(files[i].path);
-
+        for (let file of imageFiles) {
+            const result = await uploadImageToCloudinary(file.path);
             if (!result.success) {
-                return sendErrorResponse(res, `${result.message}`, 500)
+                return sendErrorResponse(res, 500, result.message);
             }
-
-            uploadedImageUrls.push(result.url);
+            uploadedImageUrls.push({
+                url: result.url,
+                public_id: result.public_id
+            });
         }
-
-        //create slug
-        const slug = slugify(name, { lower: true, strict: true });
 
         const product = new Product({
             name,
             description,
-            slug,
-            images: uploadedImageUrls,
+            images: uploadedImageUrls.map((img) => img.url),
             category,
-            subcategory,
+            sub_category,
             price,
-            stock,
-            discount,
-            color,
-            size,
-            weight,
-            isFeatured,
+            stock: stock || 0,
+            discount: discount || 0,
+            size: size || [],
+            color: color || [],
+            is_featured,
         });
 
         await product.save();
@@ -62,6 +53,11 @@ const createProduct = async (req, res) => {
 
     }
     catch (error) {
+        // Remove uploaded images from Cloudinary if save fails
+        for (let img of uploadedImageUrls) {
+            await removeImageFromCloudinary(img.public_id);
+        }
+
         console.error('Error creating product:', error);
         return sendErrorResponse(res, "Internal server error", 500);
     }
@@ -79,10 +75,25 @@ const getAllProducts = async (req, res) => {
             products,
             error: false,
             success: true
-        })
+        });
 
     }
     catch (error) {
+
+        //Schema Validation error
+        if (error.name === "ValidationError") {
+            const fieldErrors = {};
+            for (const field in error.errors) {
+                fieldErrors[field] = error.errors[field].message;
+            }
+            return res.status(400).json({
+                errors: fieldErrors,
+                message: "Validation Error",
+                success: false,
+                error: true
+            });
+        };
+
         console.error('Error fetching products', error);
         return sendErrorResponse(res, "Internal server error", 500);
     }
@@ -252,52 +263,52 @@ const getFeaturedProducts = async (req, res) => {
 
 //searched & Filter Products products
 const searchAndFilterProducts = async (req, res) => {
-  try {
-    const { search, category, minPrice, maxPrice, sortBy, order = 'asc', page = 1, limit = 10 } = req.query;
-    const query = {};
+    try {
+        const { search, category, minPrice, maxPrice, sortBy, order = 'asc', page = 1, limit = 10 } = req.query;
+        const query = {};
 
-    if (search) {
-      query.name = { $regex: search, $options: "i" };
+        if (search) {
+            query.name = { $regex: search, $options: "i" };
+        }
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = parseFloat(minPrice);
+            if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+        }
+
+        const sortOptions = {};
+        if (sortBy) {
+            sortOptions[sortBy] = order === 'desc' ? -1 : 1;
+        }
+
+        const total = await Product.countDocuments(query);
+
+        const products = await Product.find(query)
+            .populate("category", "name")
+            .populate("subcategory", "name")
+            .populate("size", "name")
+            .populate("color", "name")
+            .sort(sortOptions)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        return res.status(200).json({
+            products,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / limit),
+            success: true,
+            error: false
+        });
+    } catch (error) {
+        console.error("Error filtering products", error);
+        return sendErrorResponse(res, "Internal server error", 500);
     }
-
-    if (category) {
-      query.category = category;
-    }
-
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = parseFloat(minPrice);
-      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
-    }
-
-    const sortOptions = {};
-    if (sortBy) {
-      sortOptions[sortBy] = order === 'desc' ? -1 : 1;
-    }
-
-    const total = await Product.countDocuments(query);
-
-    const products = await Product.find(query)
-      .populate("category", "name")
-      .populate("subcategory", "name")
-      .populate("size", "name")
-      .populate("color", "name")
-      .sort(sortOptions)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    return res.status(200).json({
-      products,
-      total,
-      page: parseInt(page),
-      pages: Math.ceil(total / limit),
-      success: true,
-      error: false
-    });
-  } catch (error) {
-    console.error("Error filtering products", error);
-    return sendErrorResponse(res, "Internal server error", 500);
-  }
 };
 
 
