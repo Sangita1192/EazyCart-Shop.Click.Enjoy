@@ -6,6 +6,7 @@ import { GlobalContext } from '../context/GlobalContext';
 import { addProduct } from '../api/productApi';
 import { showError, showSuccess } from '../services/toastService';
 import { useNavigate } from 'react-router-dom';
+import { showSuccessAlert } from '../../utils/successAlert';
 
 const ProductCreate = () => {
     const nav = useNavigate();
@@ -110,9 +111,7 @@ const ProductCreate = () => {
             selectedImages.forEach(img => {
                 form.append("images", img.file);
             });
-            const res = await addProduct(form);
-            if (res?.data?.success) showSuccess(res.data.message || "Product created Successfully");
-
+            await addProduct(form);
             setFormData({
                 name: "",
                 description: "",
@@ -126,6 +125,7 @@ const ProductCreate = () => {
                 color: [],
             });
             setSelectedImages([]);
+            await showSuccessAlert("Success", "The product was successfully created.");
             nav("/products/list");
         } catch (error) {
             const apiErrors = error?.response?.data?.errors;

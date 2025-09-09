@@ -5,7 +5,9 @@ import { IoMdSearch } from "react-icons/io";
 import { GlobalContext } from '../context/GlobalContext';
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { fetchAllProducts } from '../api/productApi';
+import { deleteProduct, fetchAllProducts, fetchProduct } from '../api/productApi';
+import { confirmDelete } from '../../utils/confirmDelete';
+import { showError, showSuccess } from '../services/toastService';
 
 const ProductList = () => {
     const { activeCategories, fetchActiveCategories } = useContext(GlobalContext);
@@ -18,10 +20,12 @@ const ProductList = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => { fetchActiveCategories() }, [])
+    useEffect(() => {
+        getProducts();
+    }, [page, search, rowsPerPage, selectedProdCategory]);
 
     const getProducts = async () => {
         try {
-            console.log(selectedProdCategory);
             const response = await fetchAllProducts({ page, limit: rowsPerPage, search, categoryId: selectedProdCategory });
             setProducts(response.data.products);
             setPage(response?.data?.curentPage);
@@ -31,9 +35,22 @@ const ProductList = () => {
         }
     }
 
-    useEffect(() => {
-        getProducts();
-    }, [page, search, rowsPerPage, selectedProdCategory])
+    const handleDelete = async (id) => {
+        const result = await confirmDelete();
+        if (result.isConfirmed) {
+            try {
+                setLoading(true);
+                await deleteProduct(id);
+                showSuccess("Product deleted successfully.");
+                getProducts();
+            } catch (err) {
+                showError(err.message || "Delete Failed");
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
@@ -128,7 +145,7 @@ const ProductList = () => {
 
                                             <td className="px-4 py-3 whitespace-nowrap align-top">
                                                 <div className="flex items-center gap-2 text-white">
-                                                    <Link to={`/products/detail/1234`}>
+                                                    <Link to={`/products/detail/${product._id}`}>
                                                         <div className="bg-green-500 p-2 rounded-full hover:bg-green-700 cursor-pointer">
                                                             <FaInfo />
                                                         </div>
@@ -138,9 +155,14 @@ const ProductList = () => {
                                                             <FaEdit />
                                                         </div>
                                                     </Link>
-                                                    <div className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer">
+                                                    <button
+                                                        className="bg-red-600 p-2 rounded-full hover:bg-red-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        onClick={() => handleDelete(product._id)}
+                                                        disabled={loading}
+                                                        title={loading ? 'Please wait...' : 'Delete'}
+                                                    >
                                                         <MdDelete />
-                                                    </div>
+                                                    </button>
                                                 </div>
                                             </td>
 

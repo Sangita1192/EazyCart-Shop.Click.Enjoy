@@ -5,12 +5,13 @@ import { createProduct, deleteProduct, getAllProducts, getProductById, updatePro
 
 const productRouter = express.Router();
 
-productRouter.post('/new', upload.array("images", 5), createProduct);
+productRouter.post('/', upload.array("images", 5), createProduct);
 productRouter.get('/', getAllProducts);
-productRouter.get('/product/:id', auth(["ADMIN"]), getProductById);
+productRouter.get('/:id', getProductById);
+productRouter.delete('/:id', deleteProduct);
 
 productRouter.put('/update/:id', auth(["ADMIN"]),upload.array("images", 5),updateProduct);
-productRouter.delete('/delete/:id', auth(["ADMIN"]),deleteProduct);
+
 
 // productRouter.post('/create', auth(["ADMIN"]), upload.array("images", 5), createProduct);
 // productRouter.get('/', auth(["ADMIN"]), getAllProducts);

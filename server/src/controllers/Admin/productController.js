@@ -113,21 +113,20 @@ const getAllProducts = async (req, res) => {
 //get product by Id
 const getProductById = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
 
-    // Validate ObjectId format first
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return sendErrorResponse(res, "Invalid Product Id format", 400)
-    }
     try {
         const product = await Product.findById(id)
             .populate("category", "name")
-            .populate('subcategory')
             .populate("size")
-            .populate('color')
+            .populate('color');
+
         if (!product) {
-            return sendErrorResponse(res, "Product not found", 404);
+            return sendErrorResponse(res,404, "Product not found");
         }
-        product.viewCount += 1;
+
+        product.view_count += 1;
+
         await product.save();
         return res.status(200).json({
             product,
@@ -138,7 +137,7 @@ const getProductById = async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching product', error);
-        return sendErrorResponse(res, "Internal server error", 500);
+        return sendErrorResponse(res, 500,"Internal server error");
     }
 }
 
@@ -219,6 +218,7 @@ const updateProduct = async (req, res) => {
     }
 }
 
+// delete Product
 const deleteProduct = async (req, res) => {
     const { id } = req.params;
 
