@@ -103,7 +103,6 @@ const CategoryList = () => {
                     </Button>
                 </Link>
             </div>
-
             <div className="rounded-[8px] border border-gray-200 shadow-lg bg-white p-5">
                 <div className="flex justify-between items-center my-[15px] mb-[25px]">
                     <div>

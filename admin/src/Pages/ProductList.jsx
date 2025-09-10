@@ -5,7 +5,7 @@ import { IoMdSearch } from "react-icons/io";
 import { GlobalContext } from '../context/GlobalContext';
 import { MdDelete, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { deleteProduct, fetchAllProducts, fetchProduct, toggleFeaturedProduct } from '../api/productApi';
+import { deleteProduct, fetchAllProducts, toggleFeaturedProduct} from '../api/productApi';
 import { confirmDelete } from '../../utils/confirmDelete';
 import { showError, showSuccess } from '../services/toastService';
 

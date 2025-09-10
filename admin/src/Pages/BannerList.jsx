@@ -127,7 +127,7 @@ const BannerList = () => {
                                         <td className='px-4 py-3 align-top'>
                                             {banner.description.slice(0, 50)}...
                                         </td>
-                                        <td className="px-4 py-3 align-top"> {banner.link}</td>
+                                        <td className="px-4 py-3 align-top"> {banner.image}</td>
                                         <td className="px-4 py-3 align-top">{new Date(banner.startDate).toISOString().slice(0, 10)}
                                         </td>
                                         <td className="px-4 py-3 align-top">{new Date(banner.endDate).toISOString().slice(0, 10)}

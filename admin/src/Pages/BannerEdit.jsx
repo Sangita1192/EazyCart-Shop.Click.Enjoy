@@ -23,7 +23,7 @@ const BannerEdit = () => {
         const file = e.target.files[0];
         if (file) {
             const fileUrl = URL.createObjectURL(file);
-            setBanner({ ...banner, image: fileUrl });
+            setBanner({ ...banner, image: fileUrl, imageFile: file });
         }
     };
 
@@ -48,9 +48,19 @@ const BannerEdit = () => {
         try {
             setSubmitting(true);
             setErrors({});
+            const formData = new FormData();
+            formData.append("title", banner.title);
+            formData.append("description", banner.description);
+            formData.append("startDate", banner.startDate);
+            formData.append("endDate", banner.endDate);
+            formData.append("isActive", banner.isActive);
+            formData.append("bannerType", banner.bannerType);
+            formData.append("link", banner.link);
 
-            const res = await updateBanner(id, banner);
-            console.log(res);
+            if (banner.imageFile) {
+                formData.append("image", banner.imageFile);
+            }
+            const res = await updateBanner(id, formData);
             await showSuccessAlert("Success, The banner was updated")
             nav("/banners/view")
         } catch (error) {
@@ -66,7 +76,7 @@ const BannerEdit = () => {
             setSubmitting(false);
         }
     }
-    
+
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
@@ -179,7 +189,7 @@ const BannerEdit = () => {
                         </div>
                     )}
                 </div>
-                
+
 
 
                 <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >

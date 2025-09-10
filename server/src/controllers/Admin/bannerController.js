@@ -135,7 +135,6 @@ export const getBannerById = async (req, res) => {
 // update banner
 export const updateBanner = async (req, res) => {
     let uploadImagePublicId;
-
     try {
         const { id } = req.params;
         const { title, description, link, startDate, endDate, isActive, bannerType, order } = req.body;
