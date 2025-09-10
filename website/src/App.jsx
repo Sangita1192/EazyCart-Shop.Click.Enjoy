@@ -5,6 +5,7 @@ import SideBar from './Components/NavBar/SideBar';
 import Footer from './Components/Footer/Footer';
 import { useDispatch} from 'react-redux';
 import { loadUserFromCookies } from './redux/slices/authSlice';
+import { fetchActiveCategories } from './redux/slices/categorySlice';
 
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
     if (isUserLoggedIn) {
       dispatch(loadUserFromCookies());
     }
+    dispatch(fetchActiveCategories());
   }, [dispatch]);
 
   return (

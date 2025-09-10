@@ -18,7 +18,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const dispatch = useDispatch();
     const nav = useNavigate();
 
-    const { isLoggedIn, user, loading } = useSelector((state) => state.auth)
+    const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
     console.log('userlogged==>', user)
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
@@ -38,7 +38,7 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
         if (isLoggedIn && user) {
             dispatch(fetchCart());
         }
-    }, [isLoggedIn, user])
+    }, [isLoggedIn, user]);
 
     return (
         <>

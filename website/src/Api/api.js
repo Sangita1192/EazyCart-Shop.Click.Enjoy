@@ -29,3 +29,8 @@ export const addCartItem = async(product)=> axios.post(`/cart`, {product});
 export const removeCartItem = async(itemId)=>axios.delete(`/cart/${itemId}`);
 // update cart
 export const updateCartItem = async()=>axios.put(`/cart`); 
+
+
+
+// Categroies API
+export const getAllActiveCategories = ()=>axios.get(`/categories/active-category`);
