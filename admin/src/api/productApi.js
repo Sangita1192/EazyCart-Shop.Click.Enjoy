@@ -36,3 +36,4 @@ export const fetchAllProducts = async ({ page = 1, limit = 10, search = '', cate
 export const addProduct = (formData) => axios.post('products', formData);
 export const fetchProduct = (id) => axios.get(`products/${id}`);
 export const deleteProduct = (id) =>axios.delete(`products/${id}`);
+export const toggleFeaturedProduct = (id) => axios.put(`products/${id}/featured`);

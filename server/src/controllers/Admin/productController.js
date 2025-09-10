@@ -122,7 +122,7 @@ const getProductById = async (req, res) => {
             .populate('color');
 
         if (!product) {
-            return sendErrorResponse(res,404, "Product not found");
+            return sendErrorResponse(res, 404, "Product not found");
         }
 
         product.view_count += 1;
@@ -137,7 +137,7 @@ const getProductById = async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching product', error);
-        return sendErrorResponse(res, 500,"Internal server error");
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 
@@ -252,6 +252,32 @@ const deleteProduct = async (req, res) => {
 
 }
 
+//toggle Featured Product
+const toggleFeaturedProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            [
+                { $set: { is_featured: { $not: "$is" } } } // <-- toggle boolean
+            ],
+            { new: true }
+        );
+
+        return res.status(200).json({
+            message: `Product featured toggled`,
+            success: true,
+            error: false,
+            updatedProduct
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, 500, "Failed to update featured product");
+    }
+}
+
 //get featured Products
 const getFeaturedProducts = async (req, res) => {
     try {
@@ -323,4 +349,4 @@ const searchAndFilterProducts = async (req, res) => {
 };
 
 
-export { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct }
+export { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, toggleFeaturedProduct }
