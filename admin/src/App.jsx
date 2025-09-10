@@ -12,7 +12,6 @@ import ProductSize from './Pages/ProductSize'
 import ProductColors from './Pages/ProductColors'
 import CategoryCreate from './Pages/CategoryCreate'
 import CategoryList from './Pages/CategoryList'
-import SubCategory from './Pages/SubCategory'
 import OrderList from './Pages/Order'
 import ProductEdit from './Pages/ProductEdit'
 import ProductDetail from './Pages/ProductDetail'
@@ -42,10 +41,9 @@ function App() {
         { path: "category/add", element: <CategoryCreate /> },
         { path: "category/list", element: <CategoryList /> },
         { path: "category/edit/:id", element: <CategoryEdit /> },
-        { path: "sub-category", element: <SubCategory /> },
         { path: "orders", element: <OrderList /> },
         { path: "banners/add", element: <BannerCreate /> },
-        { path: "banners/edit/:id", element: <BannerEdit /> },
+        { path: "banners/:id", element: <BannerEdit /> },
         { path: "banners/view", element: <BannerList /> },
         { path: "users", element: <Users /> },
         { path: "profile", element: <Profile /> },

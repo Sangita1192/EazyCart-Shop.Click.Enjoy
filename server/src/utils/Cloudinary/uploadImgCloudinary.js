@@ -20,8 +20,6 @@ export const uploadImageToCloudinary = async (localFilePath) => {
       };
 
     }
-    
-
     return {
       success: true,
       url: result.secure_url,

@@ -57,7 +57,7 @@ const SignUp = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button className="!w-full !bg-blue-600 !mt-[20px] !text-white hover:!bg-blue-700 !capitalize">
+                        <Button className="!w-full !bg-[#F66C2B] hover:!bg-[#E55B1C] !mt-[20px] !text-white !capitalize">
                             Register
                         </Button>
 
@@ -66,7 +66,7 @@ const SignUp = () => {
                     <div className="mt-[10px] mb-[20px] p-[15px] rounded-md flex gap-[10px] items-center justify-center cursor-pointer">
                         <p className="font-semibold font-[20px]">Already have account ?
                             <Link to="/login">
-                                <span className="cursor-pointer hover:!text-blue-800"> Login</span>
+                                <span className="cursor-pointer hover:!text-[#3B82F6]"> Login</span>
                             </Link>
 
                         </p>

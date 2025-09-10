@@ -1,8 +1,4 @@
-import slugify from "slugify";
 import mongoose from "mongoose";
-import Category from '../../models/category.model.js';
-import Size from '../../models/size.model.js';
-import Color from '../../models/color.model.js';
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import { uploadImageToCloudinary } from "../../utils/Cloudinary/uploadImgCloudinary.js";
 import Product from "../../models/product.model.js";
@@ -11,46 +7,37 @@ import extractPublicId from "../../utils/Cloudinary/extractPublicId.js";
 
 //create Product
 const createProduct = async (req, res) => {
+    let uploadedImageUrls;
     try {
-        console.log(req.body);
-        const { name, description, category, subcategory, price, stock, discount, color, size, weight, isFeatured } = req.body;
+        const { name, description, category, sub_category, price, stock, discount, color, size, is_featured } = req.body;
 
-        // Ensure required fields are present
-        if (!name || !description || !category || !price) {
-            return res.status(400).json({ message: 'Required fields missing' });
-        };
+        console.log(req.files);
+        const imageFiles = req.files || [];
+        uploadedImageUrls = [];
 
-        // Upload images to Cloudinary
-        const files = req.files || [];
-        const uploadedImageUrls = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const result = await uploadImageToCloudinary(files[i].path);
-
+        for (let file of imageFiles) {
+            const result = await uploadImageToCloudinary(file.path);
             if (!result.success) {
-                return sendErrorResponse(res, `${result.message}`, 500)
+                return sendErrorResponse(res, 500, result.message);
             }
-
-            uploadedImageUrls.push(result.url);
+            uploadedImageUrls.push({
+                url: result.url,
+                public_id: result.public_id
+            });
         }
-
-        //create slug
-        const slug = slugify(name, { lower: true, strict: true });
 
         const product = new Product({
             name,
             description,
-            slug,
-            images: uploadedImageUrls,
+            images: uploadedImageUrls.map((img) => img.url),
             category,
-            subcategory,
+            sub_category,
             price,
-            stock,
-            discount,
-            color,
-            size,
-            weight,
-            isFeatured,
+            stock: stock || 0,
+            discount: discount || 0,
+            size: size || [],
+            color: color || [],
+            is_featured,
         });
 
         await product.save();
@@ -62,6 +49,11 @@ const createProduct = async (req, res) => {
 
     }
     catch (error) {
+        // Remove uploaded images from Cloudinary if save fails
+        for (let img of uploadedImageUrls) {
+            await removeImageFromCloudinary(img.public_id);
+        }
+
         console.error('Error creating product:', error);
         return sendErrorResponse(res, "Internal server error", 500);
     }
@@ -70,42 +62,71 @@ const createProduct = async (req, res) => {
 //get all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find()
-            .populate("category", "name")
-            .populate('subcategory')
-            .populate("size")
-            .populate('color')
-        return res.status(200).json({
-            products,
-            error: false,
-            success: true
-        })
+        const { page = 1, limit = 10, search = "", categoryId } = req.query;
+        console.log(req.query.categoryId);
 
+        const skip = (parseInt(page) - 1) * parseInt(limit)
+
+        const query = search ?
+            {
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { description: { $regex: search, $options: "i" } }
+                ],
+            }
+            : {};
+
+        //filter by category or sub_category
+        if (categoryId) {
+            if (categoryId) {
+                query.$or = query.$or ? [...query.$or, { category: categoryId }, { sub_category: categoryId }]
+                    : [{ category: categoryId }, { sub_category: categoryId }];
+            }
+        }
+
+        const totalProducts = await Product.countDocuments(query);
+
+        const products = await Product.find(query)
+            .populate("category", "name")
+            .skip(skip)
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })   //newest first
+
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            products,
+            totalPages,
+            currentPage: page,
+            totalItems: totalProducts,
+        });
     }
     catch (error) {
         console.error('Error fetching products', error);
-        return sendErrorResponse(res, "Internal server error", 500);
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 
 //get product by Id
 const getProductById = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
 
-    // Validate ObjectId format first
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return sendErrorResponse(res, "Invalid Product Id format", 400)
-    }
     try {
         const product = await Product.findById(id)
             .populate("category", "name")
-            .populate('subcategory')
             .populate("size")
-            .populate('color')
+            .populate('color');
+
         if (!product) {
-            return sendErrorResponse(res, "Product not found", 404);
+            return sendErrorResponse(res, 404, "Product not found");
         }
-        product.viewCount += 1;
+
+        product.view_count += 1;
+
         await product.save();
         return res.status(200).json({
             product,
@@ -116,7 +137,7 @@ const getProductById = async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching product', error);
-        return sendErrorResponse(res, "Internal server error", 500);
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 
@@ -197,6 +218,7 @@ const updateProduct = async (req, res) => {
     }
 }
 
+// delete Product
 const deleteProduct = async (req, res) => {
     const { id } = req.params;
 
@@ -230,6 +252,32 @@ const deleteProduct = async (req, res) => {
 
 }
 
+//toggle Featured Product
+const toggleFeaturedProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            [
+                { $set: { is_featured: { $not: "$is" } } } // <-- toggle boolean
+            ],
+            { new: true }
+        );
+
+        return res.status(200).json({
+            message: `Product featured toggled`,
+            success: true,
+            error: false,
+            updatedProduct
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        return sendErrorResponse(res, 500, "Failed to update featured product");
+    }
+}
+
 //get featured Products
 const getFeaturedProducts = async (req, res) => {
     try {
@@ -252,53 +300,53 @@ const getFeaturedProducts = async (req, res) => {
 
 //searched & Filter Products products
 const searchAndFilterProducts = async (req, res) => {
-  try {
-    const { search, category, minPrice, maxPrice, sortBy, order = 'asc', page = 1, limit = 10 } = req.query;
-    const query = {};
+    try {
+        const { search, category, minPrice, maxPrice, sortBy, order = 'asc', page = 1, limit = 10 } = req.query;
+        const query = {};
 
-    if (search) {
-      query.name = { $regex: search, $options: "i" };
+        if (search) {
+            query.name = { $regex: search, $options: "i" };
+        }
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = parseFloat(minPrice);
+            if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+        }
+
+        const sortOptions = {};
+        if (sortBy) {
+            sortOptions[sortBy] = order === 'desc' ? -1 : 1;
+        }
+
+        const total = await Product.countDocuments(query);
+
+        const products = await Product.find(query)
+            .populate("category", "name")
+            .populate("subcategory", "name")
+            .populate("size", "name")
+            .populate("color", "name")
+            .sort(sortOptions)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        return res.status(200).json({
+            products,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / limit),
+            success: true,
+            error: false
+        });
+    } catch (error) {
+        console.error("Error filtering products", error);
+        return sendErrorResponse(res, "Internal server error", 500);
     }
-
-    if (category) {
-      query.category = category;
-    }
-
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = parseFloat(minPrice);
-      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
-    }
-
-    const sortOptions = {};
-    if (sortBy) {
-      sortOptions[sortBy] = order === 'desc' ? -1 : 1;
-    }
-
-    const total = await Product.countDocuments(query);
-
-    const products = await Product.find(query)
-      .populate("category", "name")
-      .populate("subcategory", "name")
-      .populate("size", "name")
-      .populate("color", "name")
-      .sort(sortOptions)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    return res.status(200).json({
-      products,
-      total,
-      page: parseInt(page),
-      pages: Math.ceil(total / limit),
-      success: true,
-      error: false
-    });
-  } catch (error) {
-    console.error("Error filtering products", error);
-    return sendErrorResponse(res, "Internal server error", 500);
-  }
 };
 
 
-export { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct }
+export { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, toggleFeaturedProduct }

@@ -4,9 +4,18 @@
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
 }
+body{
+  background-color: #F9F9F9;
+}
 
 .swipeSlideColor{
   color: white !important;
   font-size: 22px;
   padding:8px 0px;
 }
+/* Select of Products Size */
+.css-13cymwt-control{
+  background-color: transparent !important;
+  border: none !important;
+}
+

@@ -112,7 +112,7 @@ const getAllCategories = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return sendErrorResponse(res, "Internal Server Error", 500);
+        return sendErrorResponse(res, 500,"Internal Server Error");
     }
 }
 

@@ -1,4 +1,4 @@
-const sendErrorResponse = (res, message,status)=>{
+const sendErrorResponse = (res, status, message)=>{
     return res.status(status).json({
         message,
         error:true,

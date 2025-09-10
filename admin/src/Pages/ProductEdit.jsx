@@ -1,9 +1,56 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { IoMdCloudUpload } from 'react-icons/io';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import { GlobalContext } from '../context/GlobalContext';
+import { fetchProduct } from '../api/productApi';
 
 const ProductEdit = () => {
+    const { id } = useParams();
+    const nav = useNavigate();
+    const { activeCategories, fetchActiveCategories, sizes, fetchSizes, colors, fetchColors } = useContext(GlobalContext);
+
+    const [product, setProduct] = useState();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => { getProduct(id); }, [id]);
+    useEffect(() => {
+        fetchActiveCategories();
+        fetchColors();
+        fetchSizes();
+    }, []);
+
+    const getProduct = async (id) => {
+        setProduct(null);
+        try {
+            const res = await fetchProduct(id);
+            console.log(res.data);
+            if (!res?.data?.product) {
+                throw new Error('Product not found');
+            }
+            setProduct(res?.data?.product);
+
+        } catch (error) {
+            setError(error.message || 'Failed to load product.');
+        } finally {
+            setLoading(false);
+        }
+
+        if (loading) {
+            return <p className="text-center p-10 text-blue-500">Loading product details...</p>;
+        }
+
+        if (error) {
+            return <p className="text-center p-10 text-red-500">{error}</p>;
+        }
+
+        if (!product) {
+            return <p className="text-center p-10 text-gray-500">No product found.</p>;
+        }
+    }
+
+
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-[30px]">
@@ -128,7 +175,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >
-                    <Button className='!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full                        !flex 
+                    <Button className='!bg-[#F66C2B] hover:!bg-[#E55B1C] !text-white !capitalize !w-full                        !flex 
                                 !justify-center !items-center gap-x-2'
                     >
                         <IoMdCloudUpload className='text-xl' />

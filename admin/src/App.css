@@ -5,3 +5,8 @@
   outline: none;
   height:100%;
 }
+
+/* Image in product detail */
+.eotRQP.loaded img {
+  height:100% !important;
+}

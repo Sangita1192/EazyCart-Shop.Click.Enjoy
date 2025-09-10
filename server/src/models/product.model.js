@@ -6,21 +6,17 @@ const productSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
     description: {
         type: String,
         required: true,
         trim: true
     },
-    slug: {
-        type: String,
-        unique: true,
-        lowercase: true
-    },
     images: [
         {
-            type: String
+            type: String,
+            required:true,
         }
     ],
     category: {
@@ -28,17 +24,17 @@ const productSchema = mongoose.Schema({
         ref: "Category",
         required: true
     },
-    subcategory: {
+    sub_category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "SubCategory",
-        // required: true
+        set: v => v === "" ? undefined : v
     },
     price: {
         type: Number,
         required: true,
         min: 0
     },
-    isFeatured: {
+    is_featured: {
         type: Boolean,
         default: false
     },
@@ -68,26 +64,17 @@ const productSchema = mongoose.Schema({
     weight: {
         type: Number
     },
-    viewCount: {
+    view_count: {
         type: Number,
         default: 0
     },
-    soldCount: {
+    sold_count: {
         type: Number,
         default: 0
     },
     ratings: [reviewSchema]
 
 }, { timestamps: true });
-
-
-// Middleware to generate slug from name before saving
-productSchema.pre('save', function (next) {
-    if (this.isModified('name')) {
-        this.slug = slugify(this.name, { lower: true, strict: true });
-    }
-    next();
-});
 
 const Product = mongoose.model('Product', productSchema);
 

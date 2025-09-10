@@ -1,9 +1,66 @@
-import React, { useState } from 'react';
-import { Button } from '@mui/material';
-import { RiProductHuntFill } from 'react-icons/ri';
+import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
+import { Button, CircularProgress } from '@mui/material';
+import { useContext } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
+import { addProduct } from '../api/productApi';
+import { showError, showSuccess } from '../services/toastService';
+import { useNavigate } from 'react-router-dom';
+import { showSuccessAlert } from '../../utils/successAlert';
 
 const ProductCreate = () => {
+    const nav = useNavigate();
+    const { activeCategories, fetchActiveCategories, sizes, fetchSizes, colors, fetchColors } = useContext(GlobalContext);
+    const [parentCategories, setParentCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [subcategories, setSubcategories] = useState([])
     const [selectedImages, setSelectedImages] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [submitting, setSubmitting] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+        category: "",
+        sub_category: "",
+        price: "",
+        is_featured: false,
+        stock: 0,
+        discount: 0,
+        size: [],
+        color: [],
+    });
+
+    useEffect(() => {
+        fetchActiveCategories();
+        fetchColors();
+        fetchSizes();
+    }, []);
+
+    useEffect(() => {
+        setParentCategories(activeCategories.filter((cat) => !cat.parent));
+        if (selectedCategory) {
+            const subs = activeCategories.filter(cat => cat.parent?._id?.toString() === selectedCategory);
+            setSubcategories(subs);
+        }
+
+
+    }, [activeCategories, selectedCategory]);
+
+    // validate product create form
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.name.trim()) newErrors.name = "Product name is required";
+        if (!formData.description.trim()) newErrors.description = "Description is required";
+        if (!formData.category) newErrors.category = "Category is required";
+        if (!formData.price || isNaN(formData.price) || formData.price <= 0) {
+            newErrors.price = "Enter a valid price";
+        }
+        if (selectedImages.length === 0) newErrors.images = "Upload at least one image";
+
+        return newErrors;
+    };
+
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -14,6 +71,7 @@ const ProductCreate = () => {
 
         setSelectedImages((prevImages) => [...prevImages, ...newImages]);
 
+
     };
 
     const handleRemoveImage = (index) => {
@@ -21,17 +79,95 @@ const ProductCreate = () => {
             prevImages.filter((_, i) => i !== index)
         );
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setErrors({});
+        setSubmitting(true);
+        try {
+            const form = new FormData();
+            // Append text fields
+            form.append("name", formData.name);
+            form.append("description", formData.description);
+            form.append("category", formData.category);
+            if (formData.sub_category) form.append("sub_category", formData.sub_category);
+            form.append("is_featured", formData.is_featured ? "true" : "false");
+            form.append("stock", Number(formData.stock));
+            form.append("discount", Number(formData.discount));
+            form.append("price", Number(formData.price));
+
+
+            // Append arrays (size, color)
+            formData.size.forEach(size => form.append("size[]", size));
+            formData.color.forEach(color => form.append("color[]", color));
+
+            // Append images
+            selectedImages.forEach(img => {
+                form.append("images", img.file);
+            });
+            await addProduct(form);
+            setFormData({
+                name: "",
+                description: "",
+                category: "",
+                sub_category: "",
+                price: "",
+                is_featured: false,
+                stock: 0,
+                discount: 0,
+                size: [],
+                color: [],
+            });
+            setSelectedImages([]);
+            await showSuccessAlert("Success", "The product was successfully created.");
+            nav("/products/list");
+        } catch (error) {
+            const apiErrors = error?.response?.data?.errors;
+            const errMsg = error?.response?.data?.message || "Something went wrong.";
+
+            if (apiErrors) {
+                setErrors(apiErrors);
+            } else {
+                showError(errMsg);
+            }
+        } finally {
+            setSubmitting(false);
+        }
+    }
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-[30px]">
                 <h1 className='text-2xl mb-[35px]'>Add Product</h1>
                 <div className="my-[25px] flex flex-col gap-[5px] relative">
                     <label htmlFor="name" className="mb-2 font-semibold">Product Name</label>
-                    <input type="text" className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600" placeholder="Product Name" />
+                    <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className={`bg-gray-100 px-4 py-2 rounded-md focus:outline-blue-600 
+    ${errors.name ? "border border-red-500" : "border border-gray-300"}`}
+                        placeholder="Product Name"
+                    />
+                    {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+
                 </div>
                 <div className="my-[25px] flex flex-col gap-[5px]">
                     <label htmlFor="description" className="mb-2 font-semibold">Description</label>
-                    <textarea className="bg-[#f1f1f1] px-[15px] py-[10px] rounded-md focus:outline-blue-600" placeholder="Product Description" />
+                    <textarea className={`bg-gray-100 px-4 py-2 rounded-md focus:outline-blue-600 
+    ${errors.description ? "border border-red-500" : "border border-gray-300"}`}
+                        placeholder="Product Description"
+                        name='description'
+                        value={formData.description}
+                        required
+                        onChange={(e) => { setFormData({ ...formData, description: e.target.value }) }}
+                    />
+                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                 </div>
                 <div className="my-[25px] flex flex-col md:flex-row gap-[15px]">
                     {/* Category */}
@@ -40,27 +176,39 @@ const ProductCreate = () => {
                         <select
                             name="category"
                             id="category"
-                            className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
+                            value={selectedCategory}
+                            onChange={(e) => {
+                                setSelectedCategory(e.target.value);
+                                setFormData({ ...formData, category: e.target.value })
+                            }}
+                            className={`bg-gray-100 px-4 py-2 rounded-md focus:outline-blue-600 
+    ${errors.category ? "border border-red-500" : "border border-gray-300"}`}
                         >
-                            <option value="default">---select category---</option>
-                            <option value="fashion">Fashion</option>
-                            <option value="electronics">Electronics</option>
+                            <option value="null">---select category---</option>
+                            {parentCategories.length > 0 &&
+                                parentCategories.map((category) => (
+                                    <option value={category._id} key={category._id}>{category.name}</option>
+                                ))
+                            }
                         </select>
+                        {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
                     </div>
 
                     {/* Sub-Category */}
                     <div className="flex flex-col gap-[5px] w-full lg:w-1/2">
                         <label htmlFor="subcategory" className="mb-2 font-semibold">Sub-Category</label>
                         <select
-                            name="subcategory"
+                            name="sub_category"
                             id="subcategory"
+                            onChange={(e) => { setFormData({ ...formData, sub_category: e.target.value }) }}
                             className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
                         >
-                            <option value="default">---select sub-category---</option>
-                            <option value="jeans">Jeans</option>
-                            <option value="shirts">Shirts</option>
-                            <option value="mobiles">Mobiles</option>
-                            <option value="laptops">Laptops</option>
+                            <option value="">---select sub-category---</option>
+                            {subcategories.length > 0 &&
+                                subcategories.map((subcat) => (
+                                    <option value={subcat._id} key={subcat._id}>{subcat.name}</option>
+                                ))
+                            }
                         </select>
                     </div>
                     <div className="flex flex-col gap-[5px] w-full lg:w-1/2">
@@ -68,20 +216,26 @@ const ProductCreate = () => {
                         <input
                             name="price"
                             id="price"
-                            className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
+                            type='number'
+                            value={formData.price}
+                            required
+                            onChange={(e) => { setFormData({ ...formData, price: e.target.value }) }}
+                            className={`bg-gray-100 px-4 py-2 rounded-md focus:outline-blue-600 
+    ${errors.price ? "border border-red-500" : "border border-gray-300"}`}
                         >
                         </input>
+                        {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
                     </div>
                 </div>
                 <div className="my-[25px] flex flex-col md:flex-row gap-[15px]">
                     <div className="flex flex-col gap-[5px] w-full lg:w-1/2">
                         <label htmlFor="isfeatured" className="mb-2 font-semibold">isFeatured</label>
                         <select
-                            name="isfeatured"
+                            name="is_featured"
                             id="isfeatured"
                             className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
+                            onChange={(e) => setFormData({ ...formData, is_featured: e.target.value === "true" })}
                         >
-                            <option value="none">IsFeatured</option>
                             <option value="true">True</option>
                             <option value="false">False</option>
                         </select>
@@ -91,6 +245,9 @@ const ProductCreate = () => {
                         <input
                             name="stock"
                             id="stock"
+                            type='number'
+                            value={formData.stock}
+                            onChange={(e) => { setFormData({ ...formData, stock: e.target.value }) }}
                             className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
                         >
                         </input>
@@ -100,6 +257,8 @@ const ProductCreate = () => {
                         <input
                             name="discount"
                             id="discount"
+                            value={formData.discount}
+                            onChange={(e) => { setFormData({ ...formData, discount: e.target.value }) }}
                             className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
                         >
                         </input>
@@ -108,28 +267,39 @@ const ProductCreate = () => {
                 <div className="my-[25px] flex flex-col md:flex-row gap-[15px]">
                     <div className="flex flex-col gap-[5px] w-full lg:w-1/2">
                         <label htmlFor="size" className="mb-2 font-semibold">Product Size</label>
-                        <select
+                        <Select
+                            isMulti
                             name="size"
-                            id="size"
-                            className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
+                            options={sizes.map(size => ({
+                                value: size._id,
+                                label: size.label
+                            }))}
+                            className="basic-multi-select bg-[#f1f1f1] rounded-md focus:outline-blue-600"
+                            onChange={(selectedOptions) => {
+                                const selectedValues = selectedOptions.map(opt => opt.value);
+                                setFormData({ ...formData, size: selectedValues });
+                            }}
                         >
-                            <option value="default">---Select Size----</option>
-                            <option value="S">Small</option>
-                            <option value="M">Medium</option>
-                            <option value="XS">Extra Small</option>
-                            <option value="L">Large</option>
-                        </select>
+                        </Select>
                     </div>
                     <div className="flex flex-col gap-[5px] w-full lg:w-1/2">
-                        <label htmlFor="weight" className="mb-2 font-semibold">Product Weight</label>
-                        <input
-                            name="weight"
-                            id="weight"
-                            className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] focus:outline-blue-600"
+                        <label htmlFor="color" className="mb-2 font-semibold">Product Color</label>
+                        <Select
+                            name="color"
+                            id="color"
+                            isMulti
+                            options={colors.map(color => ({
+                                value: color._id,
+                                label: color.name
+                            }))}
+                            className="basic-multi-select bg-[#f1f1f1] rounded-md focus:outline-blue-600"
+                            onChange={(selectedOptions) => {
+                                const selectedValues = selectedOptions.map(opt => opt.value);
+                                setFormData({ ...formData, color: selectedValues });
+                            }}
                         >
-                        </input>
+                        </Select>
                     </div>
-
                 </div>
                 <div className="my-[25px] flex flex-col w-full lg:w-1/2">
                     <label htmlFor="images" className="mb-2 font-semibold">Product Images</label>
@@ -141,6 +311,7 @@ const ProductCreate = () => {
                         onChange={handleImageChange}
                         className="bg-[#f1f1f1] rounded-md px-[15px] py-[10px] text-sm focus:outline-blue-600 cursor-pointer"
                     />
+                    {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
                     {/* Previews */}
                     {selectedImages.length > 0 && (
                         <div className="mt-4 flex flex-wrap gap-4">
@@ -172,8 +343,12 @@ const ProductCreate = () => {
                 </div>
 
                 <div className='lg:w-[30%] md:w-[40%] sm:w-[60%] w-[70%]' >
-                    <Button className='!bg-blue-600 hover:!bg-blue-700 !text-white !capitalize !w-full'>
-                        Add Product
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={submitting}
+                        className="!bg-[#F66C2B] hover:!bg-[#E55B1C] !text-white !capitalize !w-full"
+                    >
+                        {submitting ? <CircularProgress size={20} color="inherit" /> : 'Add Product'}
                     </Button>
                 </div>
 

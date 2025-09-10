@@ -16,7 +16,7 @@ const Profile = () => {
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 lg:w-[70%] w-full">
                 <div className='w-full flex justify-between'>
                     <h1 className='text-2xl font-bold'>User Profile</h1>
-                    <Button className='!bg-blue-600 !text-white hover:!bg-blue-800 !flex !gap-[5px]' onClick={()=>setShowChangePass(!showChangePass)}>
+                    <Button className='!bg-[#F66C2B] hover:!bg-[#E55B1C] !text-white !flex !gap-[5px]' onClick={()=>setShowChangePass(!showChangePass)}>
                         <TbPasswordUser />
                         <span> Change Password </span>
                     </Button>

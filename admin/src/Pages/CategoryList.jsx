@@ -98,12 +98,11 @@ const CategoryList = () => {
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">
                 <h1 className="text-2xl font-bold">Category List</h1>
                 <Link to="/category/add">
-                    <Button className="!bg-blue-600 !text-white hover:!bg-blue-800">
+                    <Button className="!bg-[#3B82F6] !text-white hover:!bg-[#2563EB]">
                         + Add Category
                     </Button>
                 </Link>
             </div>
-
             <div className="rounded-[8px] border border-gray-200 shadow-lg bg-white p-5">
                 <div className="flex justify-between items-center my-[15px] mb-[25px]">
                     <div>
@@ -145,13 +144,13 @@ const CategoryList = () => {
                         </div>
                     )}
                     <table className="min-w-full text-left text-sm text-gray-700 shadow-md rounded-[10px]">
-                        <thead className="bg-blue-300 text-xs uppercase text-gray-600 sticky top-0 z-10">
+                        <thead className="bg-[#F3F4F6] text-[#333333]  text-xs uppercase sticky top-0 z-10">
                             <tr>
                                 <th className="px-4 py-3">Category</th>
                                 <th className="px-4 py-3">Parent Category</th>
                                 <th className="px-4 py-3">Description</th>
                                 <th className="px-4 py-3">Images</th>
-                                <th className="px-4 py-3">isFeatured</th>
+                                <th className="px-4 py-3">Featured</th>
                                 <th className="px-4 py-3">Status</th>
                                 <th className="px-4 py-3">Action</th>
                             </tr>
@@ -160,7 +159,7 @@ const CategoryList = () => {
                             {!loading ? (
                                 categories.length > 0 ? (
                                     categories.map((category) => (
-                                        <tr key={category._id} className="hover:bg-gray-50">
+                                        <tr key={category._id} className="hover:bg-[#FFF3E8]">
                                             <td className="px-4 py-3 align-top">{category.name}</td>
                                             <td className="px-4 py-3 align-top">
                                                 {category.parent ? category.parent.name || 'Unnamed' : 'None'}
@@ -180,13 +179,13 @@ const CategoryList = () => {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3 align-top">
-                                                <Tooltip title={`Click to mark as ${category.isFeatured ? "Not Featured" : "featured"}`}>
+                                                <Tooltip title={`Click to mark as ${category.isFeatured ? "No" : "Yes"}`}>
                                                     <button
                                                         onClick={() => handleFeaturedCat(category._id, category.isFeatured)}
                                                         className={`text-white px-3 py-1 rounded-md capitalize cursor-pointer 
             ${category.isFeatured ? "bg-emerald-500 hover:bg-emerald-600" : "bg-red-500 hover:bg-red-600"}`}
                                                     >
-                                                        {category.isFeatured ? 'Featured' : 'Not Featured'}
+                                                        {category.isFeatured ? 'Yes' : 'No'}
                                                     </button>
                                                 </Tooltip>
                                             </td>
