@@ -1,6 +1,4 @@
 import React from 'react'
-import grocery from "/grocery.png"
-import fashion from '/fashion.png'
 import { useSelector } from 'react-redux';
 
 const ProductCategory = () => {

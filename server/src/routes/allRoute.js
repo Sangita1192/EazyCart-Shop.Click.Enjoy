@@ -9,6 +9,7 @@ import { addressRouterWeb } from './Website/addressRouter.js';
 import sizeRouter from './Admin/sizeRouter.js';
 import colorRouter from './Admin/colorRouter.js';
 import { bannerRouter } from './Admin/bannerRouter.js';
+import { categoryRouterWeb } from './Website/categoryRouter.js';
 
 const adminRouter = express.Router();  //handle admin panel routes
 const clientRouter = express.Router(); //handle frontend routes
@@ -25,6 +26,7 @@ clientRouter.use("/cart", cartRouterWeb);
 clientRouter.use('/user', userRouter );
 clientRouter.use('/wishlist', wishlistRouterWeb );
 clientRouter.use('/address', addressRouterWeb );
+clientRouter.use('/categories', categoryRouterWeb);
 
 
 

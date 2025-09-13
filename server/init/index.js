@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Category from '../src/models/category.model.js';
-import { bannerData, categoryData, colorData, productData, sizeData } from './data.js';
+import { bannerData, colorData, mainCategory, productData, sizeData, subcategories, subcategories2 } from './data.js';
 import Banner from '../src/models/banner.model.js';
 import Size from '../src/models/size.model.js';
 import Color from '../src/models/color.model.js';
@@ -18,7 +18,7 @@ async function main() {
 
 const initDb = async ()=>{
     // await Category.deleteMany({});
-    // await Category.insertMany(categoryData);
+    // await Category.insertMany(subcategories2);
     // await Banner.deleteMany({});
     // await Banner.insertMany(bannerData);
     // await Size.deleteMany({});
