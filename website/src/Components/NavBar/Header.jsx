@@ -19,7 +19,6 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const nav = useNavigate();
 
     const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
-    console.log('userlogged==>', user)
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
 

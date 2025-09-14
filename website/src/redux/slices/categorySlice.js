@@ -8,7 +8,6 @@ export const fetchActiveCategories = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const res = await getActiveMainCategories();
-            console.log('fetch categories', res.data);
             return res.data.categories;
         } catch (error) {
             const msg = error?.response?.data?.message || "failed to fetch categories";

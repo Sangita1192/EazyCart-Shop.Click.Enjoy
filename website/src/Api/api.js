@@ -34,3 +34,4 @@ export const updateCartItem = async()=>axios.put(`/cart`);
 
 // Categroies API
 export const getActiveMainCategories = ()=>axios.get(`/categories`);
+export const getSubcategories1  = (id) => axios.get(`/categories/subcategory/${id}`);

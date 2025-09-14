@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 const ProductCategory = () => {
     const { categories, loading, error } = useSelector((state) => state.category);
-    console.log(categories);
     return (
         <>
             <div className='w-full my-[20px] '>
@@ -20,55 +19,6 @@ const ProductCategory = () => {
                                     <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>{cat.name}</p>
                                 </div>
                             ))}
-
-                            {/* <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Grocery</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Electronics</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={fashion} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Bags</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700'>Footwear</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Footwear</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Footwear</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Footwear</p>
-                            </div>
-                            <div className='flex flex-col gap-[10px] items-center justify-center group cursor-pointer'>
-                                <div className='w-[100px] h-[100px] rounded-full p-[15px] border border-1 border-gray-300 shadow-sm bg-[#FFF3FF] transition-transform duration-300 ease-in-out group-hover:scale-107 cursor-pointer'>
-                                    <img src={grocery} alt="" className='w-full h-full rounded-full ' />
-                                </div>
-                                <p className='!font-bold !text-gray-700 transition-transform duration-300 ease-in-out group-hover:!text-red-500'>Footwear</p>
-                            </div> */}
                         </div>
                     }
 
