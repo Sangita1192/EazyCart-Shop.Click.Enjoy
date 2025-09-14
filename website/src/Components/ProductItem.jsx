@@ -5,7 +5,7 @@ import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { Button } from '@mui/material';
 import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 
-const ProductItem = () => {
+const ProductItem = ({product}) => {
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
     const [quantity, setQuantity] = useState(0);
