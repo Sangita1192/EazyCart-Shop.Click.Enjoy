@@ -86,7 +86,12 @@ const getAllCategories = async (req, res) => {
 
         //filter by category name
         if (categoryName && categoryName !== "all") {
-            query.name = categoryName;
+            const regex = new RegExp(categoryName, "i"); // case-insensitive search
+            query.$or = [
+                { name: regex },            
+                { description: regex },      
+                { "parent.name": regex } 
+            ];
         }
 
         const totalCategories = await Category.countDocuments(query);
@@ -112,14 +117,14 @@ const getAllCategories = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return sendErrorResponse(res, 500,"Internal Server Error");
+        return sendErrorResponse(res, 500, "Internal Server Error");
     }
 }
 
-//get CategoryNameList
+//get Main category List
 const getCategoryList = async (req, res) => {
     try {
-        const categories = await Category.find({}, 'name')
+        const categories = await Category.find({ parent: null }, 'name')
             .sort({ name: 1 });
         return res.status(200).json({
             success: true,
@@ -212,15 +217,15 @@ const updateCategory = async (req, res) => {
         console.log("Error in updateCategory", error);
 
         //Duplicate key error
-        if(error?.cause?.code === 11000){
+        if (error?.cause?.code === 11000) {
             return res.status(400).json({
-                errors: {name: "Category name must be unique"},
+                errors: { name: "Category name must be unique" },
                 message: "Validation Error"
             });
         }
 
         //Mongoose Schema validation errors
-        if(error.name === "ValidationError"){
+        if (error.name === "ValidationError") {
             const fieldErrors = {};
             for (const field in error.errors) {
                 fieldErrors[field] = error.errors[field].message;
@@ -324,11 +329,11 @@ const toggleStatusCategory = async (req, res) => {
 
 
 //fetchActiveCategory
-const fetchActiveCategory =  async(req,res)=>{
+const fetchActiveCategory = async (req, res) => {
     try {
-        const categories = await Category.find({status: "active"})
+        const categories = await Category.find({ status: "active" })
             .populate("parent", "name")
-            .sort({ createdAt: -1 })  
+            .sort({ createdAt: -1 })
 
         return res.status(200).json({
             success: true,
