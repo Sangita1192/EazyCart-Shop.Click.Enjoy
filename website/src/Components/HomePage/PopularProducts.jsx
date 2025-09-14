@@ -26,7 +26,7 @@ const PopularProducts = () => {
                                 <li key={cat._id}>
                                     <button
                                         onClick={() => setActiveTab(cat.name)}
-                                        className={`cursor-pointer pb-2 px-[15px] transition-all duration-200 font-semibold border-b-2 ${activeTab == cat.name
+                                        className={`cursor-pointer pb-2 px-[15px] transition-all duration-200 font-semibold border-b-2 whitespace-nowrap ${activeTab == cat.name
                                             ? "border-red-700 text-red-600"
                                             : "border-transparent text-gray-600 hover:text-red-500 hover:border-red-300"
                                             }`}

@@ -32,18 +32,19 @@ const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
                     ...prev,
                     [id]: res.data.categories || [],
                 }));
-                console.log(res);
             }
         } catch (error) {
             console.log('error in fetch subcategory', error.message)
         }
     }
     const handleClose = () => {
+        if (document.activeElement) document.activeElement.blur();
         setIsSidebarOpen(false);
     };
 
     return (
-        <Drawer anchor="left" open={isSideBarOpen} onClose={handleClose} className='!h-100vh'>
+        <Drawer anchor="left" open={isSideBarOpen} onClose={handleClose} ModalProps={{
+            disableRestoreFocus: true}} className='!h-100vh'>
             <Box sx={{ width: 250 }} role="presentation" >
                 <List>
                     <ListItem className='!w-[90%] !m-auto '>
