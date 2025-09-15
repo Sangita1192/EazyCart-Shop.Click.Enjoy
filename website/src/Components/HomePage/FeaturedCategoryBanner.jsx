@@ -1,58 +1,52 @@
-import React from 'react';
-import featuredImg from '/public/featuredImg1.jpg'
+import React, { useEffect, useState } from 'react';
+import { fetchBottomCard } from '../../Api/api';
 
 const FeaturedCategoryBanner = () => {
-  return (
-    <>
-    <div className='w-[85%] lg:w-[92%] m-auto mt-10 py-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[15px] justify-center items-center'>
-    <div className='shadow-lg rounded-[6px] bg-[#DBDCF1] relative h-[200px] lg:h-[250px] xl:h-[200px]'>
-        <img src={featuredImg} alt="featured Category Image" className='absoulte top-0 left-0 w-[90%] h-full rounded-[6px] ' />
-        <div className='absolute top-0 right-0 w-[55%] p-2 py-4'>
-            <h1 className='text-xl font-[600] text-gray-700'>Buy women products with low price</h1>
-            <p className='text-red-500 font-bold text-lg my-[10px]'>Upto 70% Off</p>
-            <button className='font-[600] !uppercase underline  cursor-pointer hover:!text-amber-500'>
-                Shop Now
-            </button>
+    const [bottomBanners, setBottomBanners] = useState([]);
 
-        </div>
-    </div>
-    <div className='shadow-lg rounded-[6px] bg-[#DBDCF1] relative h-[200px] lg:h-[250px] xl:h-[200px]'>
-        <img src={featuredImg} alt="featured Category Image" className='absoulte top-0 left-0 w-[90%] h-full rounded-[6px] ' />
-        <div className='absolute top-0 right-0 w-[55%] p-2 py-4'>
-            <h1 className='text-xl font-[600] text-gray-700'>Buy women products with low price</h1>
-            <p className='text-red-500 font-bold text-lg my-[10px]'>Upto 70% Off</p>
-            <button className='font-[600] !uppercase underline  cursor-pointer hover:!text-amber-500'>
-                Shop Now
-            </button>
+    useEffect(() => {
+        fetchBottomBanners();
+    }, []);
 
-        </div>
-    </div>
-    <div className='shadow-lg rounded-[6px] bg-[#DBDCF1] relative h-[200px] lg:h-[250px] xl:h-[200px]'>
-        <img src={featuredImg} alt="featured Category Image" className='absoulte top-0 left-0 w-[90%] h-full rounded-[6px] ' />
-        <div className='absolute top-0 right-0 w-[55%] p-2 py-4'>
-            <h1 className='text-xl font-[600] text-gray-700'>Buy women products with low price</h1>
-            <p className='text-red-500 font-bold text-lg my-[10px]'>Upto 70% Off</p>
-            <button className='font-[600] !uppercase underline  cursor-pointer hover:!text-amber-500'>
-                Shop Now
-            </button>
+    const fetchBottomBanners = async () => {
+        try {
+            const res = await fetchBottomCard();
+            setBottomBanners(res.data.banners);
+            console.log(res.data.banners);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    return (
+        <>
+            <div className='w-[85%] lg:w-[92%] m-auto mt-10 py-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[15px] justify-center items-center'>
+                {bottomBanners.length > 0 &&
+                    bottomBanners.map(banner => (
+                        <div
+                            key={banner._id}
+                            className="shadow-lg rounded-lg bg-[#DBDCF1] relative overflow-hidden h-[250px] cursor-pointer group"
+                            onClick={() => window.location.href = banner.link}
+                        >
+                            <img
+                                src={banner.image}
+                                alt={banner.title}
+                                className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center text-center p-4 !capitalize">
+                                <h1 className="text-xl lg:text-3xl font-semibold text-white drop-shadow-md">
+                                    {banner.title}
+                                </h1>
+                                <p className="text-[silver] font-bold text-md my-2 drop-shadow">
+                                    {banner.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+            </div>
 
-        </div>
-    </div>
-    <div className='shadow-lg rounded-[6px] bg-[#DBDCF1] relative h-[200px] lg:h-[250px] xl:h-[200px]'>
-        <img src={featuredImg} alt="featured Category Image" className='absoulte top-0 left-0 w-[90%] h-full rounded-[6px] ' />
-        <div className='absolute top-0 right-0 w-[55%] p-2 py-4'>
-            <h1 className='text-xl font-[600] text-gray-700'>Buy women products with low price</h1>
-            <p className='text-red-500 font-bold text-lg my-[10px]'>Upto 70% Off</p>
-            <button className='font-[600] !uppercase underline  cursor-pointer hover:!text-amber-500'>
-                Shop Now
-            </button>
-
-        </div>
-    </div>
-</div>
-
-    </>
-  )
+        </>
+    )
 }
 
 export default FeaturedCategoryBanner

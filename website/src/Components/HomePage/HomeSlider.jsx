@@ -19,7 +19,6 @@ const HomeSlider = () => {
         try {
             const res = await fetchHomeSlider();
             setBanners(res.data.banners);
-            console.log(res.data.banners);
         }
         catch (error) {
             console.log(error);

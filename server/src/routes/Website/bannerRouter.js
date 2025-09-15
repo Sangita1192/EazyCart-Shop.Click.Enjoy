@@ -1,6 +1,7 @@
 import express from 'express';
-import { getHomeBanners } from '../../controllers/Website/bannerController.js';
+import { getCardBanners, getHomeBanners } from '../../controllers/Website/bannerController.js';
 
 export const bannerRouterWeb = express.Router();
 
-bannerRouterWeb.get('/home', getHomeBanners)
+bannerRouterWeb.get('/home', getHomeBanners);
+bannerRouterWeb.get('/card', getCardBanners);
