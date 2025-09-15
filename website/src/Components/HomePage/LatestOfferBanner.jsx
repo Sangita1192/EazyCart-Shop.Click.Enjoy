@@ -31,7 +31,7 @@ const OfferBanners = () => {
       <div className='w-full m-auto md:w-[95%] my-[15px] lg:my-[0px] lg:w-[90%] block lg:flex justify-center gap-[4%] lg:h-[420px] '>
         {middleBanners.length > 1 &&
           <>
-            <div className='w-[95%] m-auto lg:w-[60%] rounded-lg h-[280px] lg:h-full p-0 overflow-hidden'>
+            <div className="w-[95%] m-auto lg:w-[60%] rounded-lg h-[280px] lg:h-full p-0 overflow-hidden">
               <Swiper
                 slidesPerView={1}
                 loop={true}
@@ -41,29 +41,31 @@ const OfferBanners = () => {
                 }}
                 navigation={true}
                 modules={[Navigation, Autoplay]}
-                className='offer-banner-swiper group h-full'
+                className="offer-banner-swiper group h-full"
               >
                 {middleBanners.map((slide) => (
-                  <SwiperSlide key={slide._id} className='h-full'>
-                    <div className="flex flex-col lg:flex-row h-full rounded-lg overflow-hidden">
+                  <SwiperSlide key={slide._id} className="h-full">
+                    <div className="flex flex-col md:flex-row h-full rounded-lg overflow-hidden relative">
 
-                      <div className="w-full lg:w-1/2 h-48 lg:h-full">
+                      <div className="w-full h-100 md:w-1/2 relative">
                         <img
                           src={slide.image}
                           alt={slide.title}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="w-full lg:w-1/2 h-full bg-black/20 flex flex-col justify-center items-center text-center p-6 space-y-4">
-                        <h4 className="text-lg lg:text-2xl font-semibold text-[#f5f5f5]  drop-shadow-md !capitalize">
+
+                      <div className="w-full md:w-1/2 h-full flex flex-col justify-center items-center md:items-start md:justify-center text-center md:text-left p-4 md:p-6 bg-black/40 absolute md:relative inset-0 md:inset-auto">
+                        <h4 className="text-lg sm:text-xl md:text-2xl font-semibold text-white md:text-[#f5f5f5] drop-shadow-md !capitalize">
                           {slide.title}
                         </h4>
-                        <h2 className="text-xl md:text-2xl font-bold text-[#f5f5f5]  drop-shadow-md">
+                        <h2 className="text-xl sm:text-2xl md:text-2xl font-bold text-white md:text-[#f5f5f5] drop-shadow-md mt-2">
                           {slide.description}
                         </h2>
                         <button
-                          className="px-5 py-2 md:text-lg bg-orange-400 rounded-lg text-white hover:bg-orange-500 mt-5"
-                          onClick={() => window.location.href = slide.link}>
+                          className="px-5 py-2 md:text-lg bg-orange-400 rounded-lg text-white hover:bg-orange-500 mt-3 md:mt-5"
+                          onClick={() => window.location.href = slide.link}
+                        >
                           Shop Now
                         </button>
                       </div>
@@ -74,7 +76,8 @@ const OfferBanners = () => {
               </Swiper>
             </div>
 
-            <div className='w-[95%] m-auto lg:w-[40%] sm:flex lg:flex-col  justify-between gap-[10px] mt-[10px] lg:mt-0 lg:h-full'>
+
+            <div className='w-[95%] m-auto lg:w-[40%] sm:flex lg:flex-col  justify-between gap-[10px] mt-[10px] lg:mt-0 lg:h-full hidden'>
               {sideBanner.map(banner => (
                 <div key={banner._id}
                   className="shadow-lg rounded-lg bg-[#DBDCF1] relative overflow-hidden h-[250px] cursor-pointer group"
@@ -95,20 +98,6 @@ const OfferBanners = () => {
                   </div>
                 </div>
               ))}
-
-              {/* <div className='h-full sm:h-[48%] w-full grid grid-cols-2 gap-[15px] bg-pink-50 items-center p-2 border border-amber-300 mt-[10px] rounded-[6px]'>
-                <div className='h-[155px] sm:h-full'>
-                  <img src={womenSummer} alt="offer" className='object-contain h-full w-full xl:w-auto m-auto rounded-[6px]' />
-                </div>
-                <div className='h-full'>
-                  <h1 className='text-xl font-[600] text-gray-700'>Buy women products with low price</h1>
-                  <p className='text-red-500 font-bold text-lg my-[10px]'>Upto 70% Off</p>
-                  <button className='font-[600] !uppercase underline  cursor-pointer hover:!text-amber-500'>
-                    Shop Now
-                  </button>
-                </div>
-              </div> */}
-
             </div>
           </>
 
