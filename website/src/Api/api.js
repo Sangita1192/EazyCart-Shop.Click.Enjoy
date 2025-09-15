@@ -39,3 +39,6 @@ export const getSubcategories1  = (id) => axios.get(`/categories/subcategory/${i
 
 // products api
 export const fetchPopularProducts = (id) =>axios.get(`/products/popular/${id}`);
+
+// banner api
+export const fetchHomeSlider = () =>axios.get(`/banners/home`);
