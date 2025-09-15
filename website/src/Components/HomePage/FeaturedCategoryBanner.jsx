@@ -12,7 +12,6 @@ const FeaturedCategoryBanner = () => {
         try {
             const res = await fetchBottomCard();
             setBottomBanners(res.data.banners);
-            console.log(res.data.banners);
         }
         catch (error) {
             console.log(error);

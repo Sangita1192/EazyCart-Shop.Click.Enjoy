@@ -43,3 +43,4 @@ export const fetchPopularProducts = (id) =>axios.get(`/products/popular/${id}`);
 // banner api
 export const fetchHomeSlider = () =>axios.get(`/banners/home`);
 export const fetchBottomCard = () =>axios.get(`/banners/card`);
+export const fetchMiddleBanners = () =>axios.get(`/banners/middle`);
