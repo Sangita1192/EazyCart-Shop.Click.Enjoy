@@ -5,6 +5,7 @@ import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 
 const ProductItem = ({ product }) => {
+  console.log(product);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(0);
@@ -20,29 +21,31 @@ const ProductItem = ({ product }) => {
   };
 
   // Determine if product has sizes or colors
-  const hasSizes = product?.sizes && product?.sizes.length > 0;
-  const hasColors = product?.colors && product?.colors.length > 0;
+  const hasSizes = product?.size && product?.size.length > 0;
+  const hasColors = product?.color && product?.color.length > 0;
 
   return (
     <div className='border border-gray-200 rounded-lg overflow-hidden shadow-lg hover:shadow-md transition-shadow duration-200 bg-gray-50 cursor-pointer'>
       <div className="w-full h-[240px] overflow-hidden relative group">
         {/* Default Image */}
         <img
-          src={product1 || product?.images[0] }
+          src={product?.images[0] || product2}
           alt="Product"
           className="w-full h-full absolute top-0 left-0 transition-opacity duration-300 opacity-100 group-hover:opacity-0"
         />
         {/* Hover Image */}
         <img
-          src={product2 || product?.images[1] }
+          src={product?.images[1] || product1}
           alt="Product Hover"
           className="w-full h-full absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
         />
 
         {/* Discount Tag */}
-        <span className='absolute top-[3%] left-[3%] bg-red-500 text-white px-3 py-1 rounded-lg text-sm'>
-          {product?.discount || 0} %
-        </span>
+        {product?.discount &&
+          <span className='absolute top-[3%] left-[3%] bg-red-500 text-white px-3 py-1 rounded-lg text-sm'>
+            ${product?.discount}%
+          </span>
+        }
 
         {/* Floating Icons */}
         <div className='absolute top-[8%] right-[2%] flex flex-col gap-2 opacity-0 -translate-y-4 
@@ -60,75 +63,75 @@ const ProductItem = ({ product }) => {
       </div>
 
       {/* Product Info */}
-      <div className="px-4 py-5">
-        <h4 className="text-sm text-gray-500 mb-1">{product?.category?.name || "all about you"}</h4>
+      <div className="px-4 py-2">
         <p className="font-semibold text-gray-800 text-base line-clamp-2">
-          {product?.name || "Embroidered Satin Saree for Women"}
+          {product?.name}
         </p>
-
-        {/* Ratings */}
-        <div className="flex items-center gap-1 text-yellow-500 mt-2 text-sm">
-          {[...Array(5)].map((_, i) => (
-            <FaStar key={i} />
-          ))}
-        </div>
-
-        {/* Price */}
-        <div className="flex justify-between items-center mt-3 text-sm">
-          <span className="line-through text-gray-400">${product?.price || 259.00}</span>
-          <span className="text-red-600 font-semibold">
-            ${Math.floor((product?.price || 259) * (100 - (product?.discount || 0)) / 100)}
-          </span>
+        {/* Ratings  and Price*/}
+        <div className='flex justify-between items-center'>
+          <div className="flex items-center gap-1 text-yellow-500 mt-2 text-sm">
+            {[...Array(5)].map((_, i) => (
+              <FaStar key={i} />
+            ))}
+          </div>
+          <div className='text-red-600 font-semibold'>
+             ${Math.floor((product?.price || 259) * (100 - (product?.discount || 0)) / 100)}
+          </div>
         </div>
 
         {/* Size Selection (only if available) */}
-        {hasSizes && (
-          <div className='mt-2'>
-            <div className="flex gap-2 flex-wrap">
-              {product?.sizes.map((size) => (
+        {hasSizes ? (
+          <div className="mt-2">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar size-color-scroller">
+              {product.size.map((s) => (
                 <button
-                  key={size}
-                  onClick={() => handleSizeChange(size)}
-                  className={`px-3 py-1 rounded-full text-sm border ${selectedSize === size
+                  key={s._id}
+                  onClick={() => handleSizeChange(s)}
+                  className={`px-3 py-1 rounded-full text-sm border whitespace-nowrap ${selectedSize === s
                     ? "bg-emerald-700 text-white"
                     : "text-gray-700 border-gray-300"
                     }`}
                 >
-                  {size}
+                  {s.label}
                 </button>
               ))}
             </div>
           </div>
-        )}
+        ) :
+          <div className={`${hasSizes}? h-[32px] : h-0`}>
+          </div>
+        }
 
         {/* Color Selection (only if available) */}
-        {hasColors && (
+        {hasColors ? (
           <div className="mt-2">
-            <div className="flex gap-2 flex-wrap">
-              {product?.colors.map((color) => (
+            <div className="flex gap-2 overflow-x-auto no-scrollbar size-color-scroller">
+              {product.color.map((c) => (
                 <button
-                  key={color}
-                  aria-label={`Select color ${color}`}
-                  onClick={() => handleColorChange(color)}
-                  className={`w-6 h-6 rounded-full border-2 cursor-pointer ${selectedColor === color ? "border-black" : "border-gray-300"}`}
-                  style={{ backgroundColor: color }}
+                  key={c._id}
+                  onClick={() => handleColorChange(c)}
+                  className={`w-6 h-6 rounded-full border-2 cursor-pointer flex-shrink-0 ${selectedColor === c ? "border-black" : "border-gray-300"
+                    }`}
+                  style={{ backgroundColor: c.code }}
                 />
               ))}
             </div>
           </div>
-        )}
-
+        ) : (
+          <div className={`${hasColors}? h-[26px] : h-0`}>
+          </div>
+        )
+        }
         {/* Add to Cart or Quantity */}
         <div className="mt-4">
           {quantity === 0 ? (
             <button
               onClick={() => setQuantity(1)}
               disabled={(hasSizes && !selectedSize) || (hasColors && !selectedColor)}
-              className={`w-full py-2 rounded-md font-semibold text-white ${
-                (!hasSizes || selectedSize) && (!hasColors || selectedColor)
-                  ? "bg-amber-500 hover:bg-amber-600 cursor-pointer"
-                  : "bg-gray-300 cursor-not-allowed"
-              }`}
+              className={`w-full py-2 rounded-md font-semibold text-white bg-amber-500 hover:bg-amber-600  ${(!hasSizes || selectedSize) && (!hasColors || selectedColor)
+                ? "cursor-pointer"
+                : "cursor-not-allowed"
+                }`}
             >
               <FaShoppingCart className="inline-block mr-2" size={16} />
               Add to Cart
