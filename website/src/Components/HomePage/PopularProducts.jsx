@@ -21,15 +21,12 @@ const PopularProducts = () => {
     const getPopularProducts = async (id) => {
         try {
             const res = await fetchPopularProducts(id);
-            console.log('popular products', res.data);
             setPopularProducts(res.data.products || []);
         }
         catch (error) {
             console.log("error in fetching popular products", error.message);
         }
     }
-
-
 
     return (
         <>

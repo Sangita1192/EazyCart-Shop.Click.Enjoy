@@ -5,7 +5,6 @@ import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 
 const ProductItem = ({ product }) => {
-  console.log(product);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(0);
@@ -43,7 +42,7 @@ const ProductItem = ({ product }) => {
         {/* Discount Tag */}
         {product?.discount &&
           <span className='absolute top-[3%] left-[3%] bg-red-500 text-white px-3 py-1 rounded-lg text-sm'>
-            ${product?.discount}%
+            {product?.discount}%
           </span>
         }
 
