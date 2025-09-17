@@ -10,3 +10,7 @@
 .eotRQP.loaded img {
   height:100% !important;
 }
+
+.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+  padding:15px 10px !important;
+}
