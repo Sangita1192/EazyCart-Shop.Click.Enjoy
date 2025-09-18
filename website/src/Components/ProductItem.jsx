@@ -112,7 +112,8 @@ const ProductItem = ({ product }) => {
                   className={`w-6 h-6 rounded-full border-2 cursor-pointer flex-shrink-0 ${selectedColor === c ? "border-black" : "border-gray-300"
                     }`}
                   style={{ backgroundColor: c.code }}
-                />
+                >
+                </button>
               ))}
             </div>
           </div>

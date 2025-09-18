@@ -38,6 +38,7 @@ export const getSubcategories1  = (id) => axios.get(`/categories/subcategory/${i
 
 
 // products api
+export const getAllProducts = () => axios.get(`/products`);
 export const fetchPopularProducts = (id) =>axios.get(`/products/popular/${id}`);
 export const fetchLatestProducts = () => axios.get(`/products/latest`);
 

@@ -1,6 +1,26 @@
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import Product from "../../models/product.model.js";
 
+
+// fetch all products
+export const fetchAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find({})
+            .populate('category', "name")
+            .populate('size')
+            .populate('color');
+        res.status(200).json({
+            success: true,
+            error: false,
+            products
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, 500, "internal server error");
+    }
+}
+
 // fetch top 8 popular products as per categories
 export const fetchPopularProducts = async (req, res) => {
     try {
@@ -24,7 +44,7 @@ export const fetchPopularProducts = async (req, res) => {
 }
 
 //fetch top 10 latest products as per categories
-export const fetchLatestProducts = async(req,res)=>{
+export const fetchLatestProducts = async (req, res) => {
     try {
         const products = await Product.find({})
             .populate('category', "name")
@@ -43,3 +63,4 @@ export const fetchLatestProducts = async(req,res)=>{
         return sendErrorResponse(res, 500, "internal server error");
     }
 }
+
