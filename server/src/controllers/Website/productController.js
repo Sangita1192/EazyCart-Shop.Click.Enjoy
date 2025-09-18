@@ -1,5 +1,7 @@
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import Product from "../../models/product.model.js";
+import Size from "../../models/size.model.js";
+import Color from "../../models/color.model.js";
 
 
 // fetch all products
@@ -56,6 +58,38 @@ export const fetchLatestProducts = async (req, res) => {
             success: true,
             error: false,
             products
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, 500, "internal server error");
+    }
+}
+
+// fetch all product sizes
+export const fetchAllProductSizes = async (req, res) => {
+    try {
+        const productSizes = await Size.find({})
+        res.status(200).json({
+            success: true,
+            error: false,
+            productSizes
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, 500, "internal server error");
+    }
+}
+
+// fetch all product colors
+export const fetchAllProductColors = async (req, res) => {
+    try {
+        const productColors = await Color.find({})
+        res.status(200).json({
+            success: true,
+            error: false,
+            productColors
         });
     }
     catch (error) {

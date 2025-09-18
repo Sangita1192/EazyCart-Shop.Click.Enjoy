@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
-import { FaRegHeart, FaStar } from 'react-icons/fa6';
+import {FaShoppingCart } from 'react-icons/fa';
+import { FaStar } from 'react-icons/fa6';
 import product1 from '/productImg1.webp';
 import product2 from '/productImg2.webp';
 
 const ProductItemWithDesc = ({ product }) => {
-    console.log('product', product);
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
     const [quantity, setQuantity] = useState(0);

@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import FilterSection from './ProductListing/FilterSection'
 import { Button } from '@mui/material';
+import { useSelector } from 'react-redux';
 
-const ProductSideBar = ({ isOpen, setIsOpen }) => {
+const ProductSideBar = ({ isOpen, setIsOpen, sizes, colors }) => {
+    const { categories = [], error } = useSelector((state) => state.category || {});
     const [selectedFilters, setSelectedFilters] = useState({});
 
     // add or remove a filter value under a filter type (eg. Category['fashion'])
@@ -77,17 +79,24 @@ const ProductSideBar = ({ isOpen, setIsOpen }) => {
                             )}
                         </div>
                     )}
-                    <FilterSection title="Category" options={['Fashion', 'Electronics', 'Footwear']} selected={selectedFilters['Category'] || []} onToggle={value => toggleFilter('Category', value)} />
+                    <FilterSection
+                        title="Category"
+                        options={categories.map(c => c.name)} 
+                        selected={selectedFilters['Category'] || []}
+                        onToggle={value => toggleFilter('Category', value)} />
 
-                    <FilterSection title="Size" options={['S', 'M', 'L', 'XL']} selected={selectedFilters['Size'] || []} onToggle={value => toggleFilter('Size', value)} />
+                    <FilterSection
+                        title="Size"
+                        options={sizes.map(s => s.name)} 
+                        selected={selectedFilters['Size'] || []}
+                        onToggle={value => toggleFilter('Size', value)} />
 
-                    <FilterSection title="Color" options={['Red', 'Blue', 'Green', 'Black']} selected={selectedFilters['Color'] || []} onToggle={value => toggleFilter('Color', value)} />
-                    <FilterSection title="Size" options={['S', 'M', 'L', 'XL']} selected={selectedFilters['Size'] || []} onToggle={value => toggleFilter('Size', value)} />
+                    <FilterSection
+                        title="Color"
+                        options={colors.map(c => c.name)} 
+                        selected={selectedFilters['Color'] || []}
+                        onToggle={value => toggleFilter('Color', value)} />
 
-                    <FilterSection title="Color" options={['Red', 'Blue', 'Green', 'Black']} selected={selectedFilters['Color'] || []} onToggle={value => toggleFilter('Color', value)} />
-                    <FilterSection title="Size" options={['S', 'M', 'L', 'XL']} selected={selectedFilters['Size'] || []} onToggle={value => toggleFilter('Size', value)} />
-
-                    <FilterSection title="Color" options={['Red', 'Blue', 'Green', 'Black']} selected={selectedFilters['Color'] || []} onToggle={value => toggleFilter('Color', value)} />
 
                 </div>
                 <div className={` lg:hidden my-2 px-2 `} onClick={() => setIsOpen(false)}>

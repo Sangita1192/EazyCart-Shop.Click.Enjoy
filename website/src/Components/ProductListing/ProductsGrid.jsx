@@ -26,7 +26,6 @@ const ProductsGrid = () => {
         try {
             const res = await getAllProducts();
             setProducts(res.data.products);
-            console.log('all products', res.data);
         }
         catch (e) {
             showError(e.message || "something went wrong");
@@ -79,7 +78,7 @@ const ProductsGrid = () => {
                                             (
                                                 <>
                                                     {products.map(product => (
-                                                        <ProductItemWithDesc product={product} />
+                                                        <ProductItemWithDesc key={product._id} product={product} />
                                                     ))}
                                                 </>
 
