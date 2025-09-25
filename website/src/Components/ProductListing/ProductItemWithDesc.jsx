@@ -38,7 +38,6 @@ const ProductItemWithDesc = ({ product }) => {
                     </span>
                 </div>
 
-
                 {/* Product Info */}
                 <div className="flex flex-col flex-grow pl-2">
                     <h3 className="font-semibold text-gray-800 text-lg line-clamp-2">
