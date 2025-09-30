@@ -62,9 +62,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                     <div className="w-[85%] m-auto">
                         <div className='flex justify-between gap-[10px] items-center'>
                             <FaBars className="block lg:hidden" onClick={() => setIsSidebarOpen(true)} />
-                            <div className='w-[25%] '>
+                            <Link className='w-[25%] ' to={`/`}>
                                 <img src={logo} alt="Logo" className='w-[220px] h-[60px]' />
-                            </div>
+                            </Link>
                             <div className='w-[40%] hidden lg:block'>
                                 <Search />
                             </div>

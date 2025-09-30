@@ -11,6 +11,7 @@ import colorRouter from './Admin/colorRouter.js';
 import { bannerRouter } from './Admin/bannerRouter.js';
 import { categoryRouterWeb } from './Website/categoryRouter.js';
 import { bannerRouterWeb } from './Website/bannerRouter.js';
+import { reviewRouter } from './Website/reviewRouter.js';
 
 const adminRouter = express.Router();  //handle admin panel routes
 const clientRouter = express.Router(); //handle frontend routes
@@ -29,7 +30,7 @@ clientRouter.use('/wishlist', wishlistRouterWeb );
 clientRouter.use('/address', addressRouterWeb );
 clientRouter.use('/categories', categoryRouterWeb);
 clientRouter.use('/banners', bannerRouterWeb);
-
+clientRouter.use('/reviews', reviewRouter);
 
 
 export {adminRouter, clientRouter};

@@ -72,7 +72,12 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    ratings: [reviewSchema]
+    ratings:  [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Review'
+        }
+    ],
 
 }, { timestamps: true });
 

@@ -23,7 +23,6 @@ const ProductListing = () => {
         try {
             const res = await fetchAllProductSizes();
             setSizes(res.data.productSizes);
-            console.log(res);
         }
         catch (e) {
             console.log(e.mesage);

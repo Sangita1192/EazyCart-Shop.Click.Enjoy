@@ -14,7 +14,6 @@ import { getProduct } from '../Api/api';
 import { showError } from '../services/toastService';
 
 
-
 const ProductDetail = () => {
     const { id } = useParams();
     const nav = useNavigate();
@@ -33,7 +32,6 @@ const ProductDetail = () => {
             const res = await getProduct(id);
             setProduct(res.data.product[0]);
             setSelectedImg(res.data.product[0].images[0]);
-            console.log(res.data);
         }
         catch (e) {
             showError(e.message || "error in fetching product details");
@@ -55,7 +53,7 @@ const ProductDetail = () => {
                                     {product?.images?.map((img, i) => (
                                         <img
                                             key={i}
-                                            src={img || (i % 2 === 0 ? product1 : product2)} 
+                                            src={img || (i % 2 === 0 ? product1 : product2)}
                                             alt={product?.name || "product"}
                                             onClick={() => setSelectedImg(img)}
                                             className={`shadow-lg rounded-md cursor-pointer border ${selectedImg === img ? "border-amber-600" : "border-transparent"
@@ -100,7 +98,7 @@ const ProductDetail = () => {
                                 </p>
                                 <div className='mt-2 flex gap-4 xl:mt-3'>
                                     <span className='uppercase text-lg'>SIZE</span>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 overflow-x-auto size-color-scroller">
                                         {product?.size?.map((s) => (
                                             <button
                                                 key={s._id}
@@ -123,7 +121,7 @@ const ProductDetail = () => {
                                             aria-label={`Select color ${c}`}
                                             // onClick={() => handleColorChange(color)}
                                             className={`w-6 h-6 rounded-full border-2 cursor-pointer ${"selectedColor" === c ? "border-black" : "border-gray-300"}`}
-                                            style={{ backgroundColor: c.name}}
+                                            style={{ backgroundColor: c.name }}
                                         ></button>
                                     ))}
                                 </div>
@@ -168,7 +166,7 @@ const ProductDetail = () => {
                             </div>
                         </div>
                         <div className='lg:w-[85%] sm:w-[95%] lg:px-6 w-full m-auto shadow-lg p-2 bg-gray-200/50 mt-4'>
-                            <ProductReview />
+                            <ProductReview productId={id} reviews={product?.ratings}/>
                         </div>
                     </>
                 }

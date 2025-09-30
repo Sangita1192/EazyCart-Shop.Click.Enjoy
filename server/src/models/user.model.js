@@ -80,6 +80,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ["ADMIN", "USER"],
         default: "USER"
+    },
+    review: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Review'
     }
 }, {
     timestamps: true

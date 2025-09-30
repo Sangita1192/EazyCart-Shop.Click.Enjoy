@@ -106,6 +106,13 @@ export const getProduct = async (req, res) => {
             .populate("category", "name")
             .populate("size")
             .populate("color")
+            .populate({
+                path: "ratings",
+                populate: {
+                    path: "user",
+                    select: "name email"  
+                }
+            });
         res.status(200).json({
             success: true,
             error: false,
@@ -142,8 +149,8 @@ export const getRelatedProducts = async (req, res) => {
             category: product.category._id,
         })
             .populate('category', 'name')
-            .populate('color', '_id name')
-            .populate('size', '_id label')
+            .populate('color')
+            .populate('size')
             .limit(10);
 
         const fetchedProductIds = products.map(p => p._id);
@@ -157,8 +164,8 @@ export const getRelatedProducts = async (req, res) => {
                 ]
             })
                 .populate('category', 'name')
-                .populate('color', '_id name')
-                .populate('size', '_id label')
+                .populate('color')
+                .populate('size')
                 .limit(10 - products.length);
 
         }

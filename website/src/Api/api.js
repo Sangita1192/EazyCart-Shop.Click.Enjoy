@@ -44,8 +44,13 @@ export const fetchLatestProducts = () => axios.get(`/products/latest`);
 export const fetchAllProductSizes = ()=>axios.get(`/products/sizes`);
 export const fetchAllProductColors = ()=>axios.get(`/products/colors`);
 export const getProduct = (id)=>axios.get(`/products/${id}`);
+export const getRelatedProducts = (id)=>axios.get(`/products/${id}/related`);
 
 // banner api
 export const fetchHomeSlider = () =>axios.get(`/banners/home`);
 export const fetchBottomCard = () =>axios.get(`/banners/card`);
 export const fetchMiddleBanners = () =>axios.get(`/banners/middle`);
+
+
+// review api
+export const addReview = (formData, productId) => axios.post(`/reviews/${productId}`, formData);
