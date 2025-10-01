@@ -193,5 +193,30 @@ export const getRelatedProducts = async (req, res) => {
     }
 };
 
+//fetch products of particular category
+export const fetchProductsByCategory = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const products = await Product.find({
+            $or:[
+                {category:id},
+                {sub_category:id}
+            ]
+        })
+            .populate('category', "name")
+            .populate('size')
+            .populate('color');
+        res.status(200).json({
+            success: true,
+            error: false,
+            products
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return sendErrorResponse(res, 500, "internal server error");
+    }
+}
+
 
 

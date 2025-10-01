@@ -29,7 +29,8 @@ const MenuBar = ({ setIsSidebarOpen }) => {
                                     key={cat._id}
                                     className="!font-bold !px-2 !capitalize !text-[black]"
                                     component={Link}
-                                    to={`/category/${cat.slug || cat._id}`}
+                                    to={`/products`}
+                                    // to={`/products/${cat.slug || cat._id}`}
                                 >
                                     {cat.name}
                                 </Button>
