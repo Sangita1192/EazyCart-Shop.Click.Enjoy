@@ -9,7 +9,7 @@ import { getAllProducts } from '../../Api/api';
 import { showError } from '../../services/toastService';
 import LoadingSpinner from './../LoadingSpinner';
 
-const ProductsGrid = () => {
+const ProductsGrid = ({categoryId}) => {
     const nav = useNavigate();
 
     const [products, setProducts] = useState([]);
@@ -19,12 +19,12 @@ const ProductsGrid = () => {
 
     useEffect(() => {
         fetchAllProducts();
-    }, [])
+    }, [categoryId])
 
     const fetchAllProducts = async () => {
         setLoading(true);
         try {
-            const res = await getAllProducts();
+            const res = await getAllProducts(categoryId);
             setProducts(res.data.products);
         }
         catch (e) {

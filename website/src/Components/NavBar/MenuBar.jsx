@@ -3,11 +3,16 @@ import React from 'react';
 import { FaBarsStaggered } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const MenuBar = ({ setIsSidebarOpen }) => {
-
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const selectedCategoryId = queryParams.get('category');
     const { categories, loading, error } = useSelector((state) => state.category);
+
+    const isActive = (id) => id === selectedCategoryId;
+    const isAllProductsActive = location.pathname === '/products' && !selectedCategoryId;
 
     return (
         <>
@@ -21,16 +26,22 @@ const MenuBar = ({ setIsSidebarOpen }) => {
                 </div>
                 <div className="flex-1 overflow-x-auto scrollbar-hide whitespace-nowrap px-2">
                     <div className="w-max gap-4 flex">
+                        <Button
+                            className={`!font-bold !px-2 !capitalize ${isAllProductsActive ? '!text-amber-500' : '!text-black'}`}
+                            component={Link}
+                            to={`/products`}
+                        >
+                            All products
+                        </Button>
                         {loading && <span className="px-2">Loading...</span>}
                         {error && <span className="text-red-500 px-2">{error}</span>}
                         {!loading && !error && categories.length > 0 &&
                             categories.map((cat) => (
                                 <Button
                                     key={cat._id}
-                                    className="!font-bold !px-2 !capitalize !text-[black]"
+                                    className={`!font-bold !px-2 !capitalize !text-[black] ${isActive(cat._id) ? '!text-amber-500' : '!text-black'}`}
                                     component={Link}
-                                    to={`/products`}
-                                    // to={`/products/${cat.slug || cat._id}`}
+                                    to={`/products?category=${cat._id}`}
                                 >
                                     {cat.name}
                                 </Button>

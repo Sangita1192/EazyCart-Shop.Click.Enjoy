@@ -7,7 +7,17 @@ import Color from "../../models/color.model.js";
 // fetch all products
 export const fetchAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({})
+        const { category } = req.query;
+        let filter = {};
+        if (category) {
+            if (category) {
+                filter.$or = [
+                    { category },
+                    { subcategory: category }
+                ];
+            }
+        }
+        const products = await Product.find(filter)
             .populate('category', "name")
             .populate('size')
             .populate('color');
@@ -110,7 +120,7 @@ export const getProduct = async (req, res) => {
                 path: "ratings",
                 populate: {
                     path: "user",
-                    select: "name email"  
+                    select: "name email"
                 }
             });
         res.status(200).json({
@@ -192,31 +202,4 @@ export const getRelatedProducts = async (req, res) => {
         return sendErrorResponse(res, 500, "Internal server error");
     }
 };
-
-//fetch products of particular category
-export const fetchProductsByCategory = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const products = await Product.find({
-            $or:[
-                {category:id},
-                {sub_category:id}
-            ]
-        })
-            .populate('category', "name")
-            .populate('size')
-            .populate('color');
-        res.status(200).json({
-            success: true,
-            error: false,
-            products
-        });
-    }
-    catch (error) {
-        console.log(error);
-        return sendErrorResponse(res, 500, "internal server error");
-    }
-}
-
-
 

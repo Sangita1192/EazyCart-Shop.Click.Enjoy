@@ -8,22 +8,22 @@ const auth = (allowedRoles = []) => {
             const token = req.cookies.accessToken || req?.headers?.authorization?.split(" ")[1];
 
             if (!token) {
-                return sendErrorResponse(res, "You are not logged in", 401)
+                return sendErrorResponse(res, 401, "You are not logged in");
             }
 
             const decode = jwt.verify(token, process.env.TOKEN_SECRET);
 
             if (!decode) {
-                return sendErrorResponse(res, "unauthorized access", 401)
+                return sendErrorResponse(res, 401,"unauthorized access")
             }
 
             const user = await UserModel.findById(decode.id);
             if (!user) {
-                return sendErrorResponse(res, "User not found", 404);
+                return sendErrorResponse(res, 404, "User not found");
             }
 
             if (allowedRoles.length && !allowedRoles.includes(user.role)) {
-                return sendErrorResponse(res, "Access denied: insufficient permissions", 403);
+                return sendErrorResponse(res,403, "Access denied: insufficient permissions");
 
             }
 
@@ -35,15 +35,15 @@ const auth = (allowedRoles = []) => {
         }
         catch (error) {
             if (error.name === 'TokenExpiredError') {
-                return sendErrorResponse(res, "Access token expired", 401);
+                return sendErrorResponse(res, 401,"Access token expired");
             }
 
             if (error.name === 'JsonWebTokenError') {
-                return sendErrorResponse(res, "Invalid token", 401);
+                return sendErrorResponse(res, 401,"Invalid token");
             }
             console.log(error);
 
-            return sendErrorResponse(res, "You are not logged in", 500);
+            return sendErrorResponse(res, 500, "You are not logged in");
         }
     }
 }
