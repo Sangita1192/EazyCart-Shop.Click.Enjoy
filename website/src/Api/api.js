@@ -60,6 +60,8 @@ export const fetchMiddleBanners = () => axios.get(`/banners/middle`);
 //wishlist api
 export const getWishlists = ()=> axios.get(`/wishlist`);
 export const addProductToWishlist = (id) => axios.post(`/wishlist/${id}`);
+export const deleteProductFromWishlist = (id) => axios.delete(`/wishlist/${id}`);
+export const clearWishlists = () => axios.delete(`/wishlist/clear`);
 
 
 

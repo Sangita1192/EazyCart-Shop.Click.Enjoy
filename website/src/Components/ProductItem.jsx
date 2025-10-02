@@ -4,17 +4,22 @@ import product2 from '/public/productImg2.webp';
 import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showError, showSuccess } from '../services/toastService';
-import { addProductToWishlist } from '../Api/api';
+import { addProductToWishlist, deleteProductFromWishlist } from '../Api/api';
+import { fetchWishlist } from '../redux/slices/wishlistSlice';
 
 const ProductItem = ({ product }) => {
+  const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
+  const { wishlists } = useSelector(state => state.wishlist);
 
   const nav = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(0);
+  const isInWishlist = wishlists.some(item => item.product._id === product._id);
+
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
@@ -26,14 +31,19 @@ const ProductItem = ({ product }) => {
     setQuantity(0);
   };
 
-  const handleWishlist = async (id) =>{
-    if(!isLoggedIn) return nav('/login');
-    try{
-      await addProductToWishlist(id);
-      showSuccess("product added into wishlist");
-      nav('/my-account/wishlist');
+  const handleWishlist = async (id) => {
+    if (!isLoggedIn) return nav('/login');
+    try {
+      if (isInWishlist) {
+        await deleteProductFromWishlist(id); 
+        showSuccess("Product removed from wishlist");
+      } else {
+        await addProductToWishlist(id);      
+        showSuccess("Product added to wishlist");
+      }
+      dispatch(fetchWishlist());
     }
-    catch(error){
+    catch (error) {
       showError(error.message || "something went wrong");
       nav('/');
     }
@@ -72,8 +82,10 @@ const ProductItem = ({ product }) => {
             <FaExpandArrowsAlt size={22} />
           </div>
           <div
-            className='p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center bg-pink-500 text-white hover:bg-pink-700 transition duration-300'
-            onClick={()=>handleWishlist(product?._id)}
+            className={`p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center
+    ${isInWishlist ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-pink-500 hover:bg-pink-700 text-white'}`}
+            onClick={() => handleWishlist(product._id)}
+            title={`${isInWishlist ? 'remove from wishlist' : 'add to wishlist'}`}
           >
             <FaRegHeart size={22} />
           </div>
