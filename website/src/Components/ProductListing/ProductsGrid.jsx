@@ -84,8 +84,6 @@ const ProductsGrid = ({categoryId}) => {
 
                                             )
                                     }
-
-
                                 </div>
                             }
                         </>

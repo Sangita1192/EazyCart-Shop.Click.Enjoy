@@ -7,11 +7,9 @@ export const fetchCart = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const res = await getCart();
-            console.log('fetchCart', res.data);
             return res.data;
         } catch (error) {
             const msg = error?.response?.data?.message || "failed to fetch cart";
-            showError(msg);
             return thunkAPI.rejectWithValue(msg);
         }
     }

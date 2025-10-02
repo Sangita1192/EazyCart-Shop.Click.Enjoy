@@ -3,9 +3,15 @@ import product1 from '/public/productImg1.webp';
 import product2 from '/public/productImg2.webp';
 import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { showError, showSuccess } from '../services/toastService';
+import { addProductToWishlist } from '../Api/api';
 
 const ProductItem = ({ product }) => {
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  const nav = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(0);
@@ -20,6 +26,18 @@ const ProductItem = ({ product }) => {
     setQuantity(0);
   };
 
+  const handleWishlist = async (id) =>{
+    if(!isLoggedIn) return nav('/login');
+    try{
+      await addProductToWishlist(id);
+      showSuccess("product added into wishlist");
+      nav('/my-account/wishlist');
+    }
+    catch(error){
+      showError(error.message || "something went wrong");
+      nav('/');
+    }
+  }
   // Determine if product has sizes or colors
   const hasSizes = product?.size && product?.size.length > 0;
   const hasColors = product?.color && product?.color.length > 0;
@@ -53,7 +71,10 @@ const ProductItem = ({ product }) => {
           <div className='p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center bg-emerald-500 text-white hover:bg-emerald-700 transition duration-300'>
             <FaExpandArrowsAlt size={22} />
           </div>
-          <div className='p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center bg-pink-500 text-white hover:bg-pink-700 transition duration-300'>
+          <div
+            className='p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center bg-pink-500 text-white hover:bg-pink-700 transition duration-300'
+            onClick={()=>handleWishlist(product?._id)}
+          >
             <FaRegHeart size={22} />
           </div>
           <div className='p-[6px] w-[40px] h-[40px] rounded-full flex items-center justify-center bg-sky-500 text-white hover:bg-sky-700 transition duration-300'>
@@ -63,7 +84,7 @@ const ProductItem = ({ product }) => {
       </div>
 
       {/* Product Info */}
-      <Link to={`product/${product?._id}`}>
+      <Link to={`/product/${product?._id}`}>
         <div className="px-4 py-2">
           <p className="font-semibold text-gray-800 text-base line-clamp-2">
             {product?.name}

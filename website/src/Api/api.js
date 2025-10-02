@@ -57,6 +57,12 @@ export const fetchHomeSlider = () => axios.get(`/banners/home`);
 export const fetchBottomCard = () => axios.get(`/banners/card`);
 export const fetchMiddleBanners = () => axios.get(`/banners/middle`);
 
+//wishlist api
+export const getWishlists = ()=> axios.get(`/wishlist`);
+export const addProductToWishlist = (id) => axios.post(`/wishlist/${id}`);
+
+
 
 // review api
 export const addReview = (formData, productId) => axios.post(`/reviews/${productId}`, formData);
+

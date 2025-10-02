@@ -4,16 +4,9 @@ import { addWishlistController, clearWishlistController, getWishlistController, 
 
 const wishlistRouterWeb = express.Router();
 
-// Add a product to wishlist
-wishlistRouterWeb.post("/add", auth(), addWishlistController);
-
-// Remove a product from wishlist
-wishlistRouterWeb.delete("/remove", auth(), removeFromWishlistController);
-
-// Get all wishlist items
-wishlistRouterWeb.get("/all", auth(), getWishlistController);
-
-// Clear entire wishlist
+wishlistRouterWeb.get("/", auth(), getWishlistController);
+wishlistRouterWeb.post("/:id", auth(), addWishlistController);
+wishlistRouterWeb.delete("/", auth(), removeFromWishlistController);
 wishlistRouterWeb.delete("/clear", auth(), clearWishlistController);
 
 export default wishlistRouterWeb;

@@ -13,31 +13,28 @@ import LoadingSpinner from '../LoadingSpinner';
 import { MdOutlineManageAccounts } from 'react-icons/md';
 import { handleLogout } from '../../services/authServices';
 import { fetchCart } from '../../redux/slices/cartSlice';
+import { fetchWishlist } from '../../redux/slices/wishlistSlice';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const dispatch = useDispatch();
     const nav = useNavigate();
 
     const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
+    let { wishlists } = useSelector((state) => state.wishlist);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
+
+    useEffect(() => {
+        if (isLoggedIn && user) {
+            dispatch(fetchCart());
+            dispatch(fetchWishlist());
+        }
+    }, [isLoggedIn, user, dispatch]);
 
     const onLogoutClick = async () => {
         setShowAccount(false);
         handleLogout({ dispatch, nav })
     };
-
-    // const cartCount = useSelector(
-    //     (state) => state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
-    // );
-    // console.log('cartcount==>', cartCount)
-
-
-    useEffect(() => {
-        if (isLoggedIn && user) {
-            dispatch(fetchCart());
-        }
-    }, [isLoggedIn, user]);
 
     return (
         <>
@@ -125,10 +122,12 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                     </div>
                                 )}
                                 <Link to="/my-account/wishlist" className='cursor-pointer hover:text-red-400'>
-                                    <FaRegHeart className='text-[22px]' />
-                                </Link>
+                                <Badge badgeContent={wishlists?.length || 0} color="error">
+                                    <FaRegHeart className='text-[20px]'/>
+                                </Badge>
+                                 </Link>                         
 
-                                <Badge badgeContent={4} color="success" className='!cursor-pointer hover:!text-blue-600'>
+                                <Badge badgeContent={4} color="error" className='!cursor-pointer hover:!text-blue-600'>
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>

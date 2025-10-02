@@ -59,7 +59,7 @@ const UserSchema = new mongoose.Schema({
     wishlist: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: 'cart'
+            ref: 'wishlist'
         }
     ],
     orderHistory: [
