@@ -21,7 +21,6 @@ const RelatedProducts = () => {
     const handleRelatedProducts = async () => {
         try {
             const res = await getRelatedProducts(id);
-            console.log(res.data);
             setRelatedProducts(res.data.relatedProducts);
         }
         catch (error) {

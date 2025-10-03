@@ -21,7 +21,7 @@ const AddReview = ({ productId }) => {
             setSubmitting(true);
             await addReview(review, productId);
             showSuccess("Review added successfully!");
-            nav(`/product/${productId}`);
+            window.location.reload();
         } catch (error) {
             console.log(error);
             showError("erorr in adding review");

@@ -60,9 +60,7 @@ const ProductListing = () => {
                     <div className='w-full lg:w-[80%] p-3'>
                         <ProductsGrid categoryId={catId}/>
                     </div>
-
                 </div>
-
             </div>
         </>
     )

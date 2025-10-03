@@ -10,21 +10,27 @@ import LoadingSpinner from '../Components/LoadingSpinner';
 import ProductReview from '../Components/Review/ProductReview';
 import RelatedProducts from '../Components/RelatedProducts';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProduct } from '../Api/api';
-import { showError } from '../services/toastService';
+import { addProductToWishlist, deleteProductFromWishlist, getProduct } from '../Api/api';
+import { showError, showSuccess } from '../services/toastService';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchWishlist } from '../redux/slices/wishlistSlice';
 
 
 const ProductDetail = () => {
+    const dispatch = useDispatch();
+    const { isLoggedIn } = useSelector((state) => state.auth);
+    const { wishlists } = useSelector(state => state.wishlist);
     const { id } = useParams();
     const nav = useNavigate();
     const [loading, setLoading] = useState(false);
     const [selectedImg, setSelectedImg] = useState(null);
     const [product, setProduct] = useState({});
     const [quantity, setQuantity] = useState(1);
+    const isInWishlist = wishlists.some(item => item.product._id === product?._id);
 
     useEffect(() => {
         fetchProduct();
-    }, [id])
+    }, [id]);
 
     const fetchProduct = async () => {
         try {
@@ -38,6 +44,24 @@ const ProductDetail = () => {
             nav('/')
         } finally {
             setLoading(false);
+        }
+    }
+
+    const handleWishlist = async (id) => {
+        if (!isLoggedIn) return nav('/login');
+        try {
+            if (isInWishlist) {
+                await deleteProductFromWishlist(id);
+                showSuccess("Product removed from wishlist");
+            } else {
+                await addProductToWishlist(id);
+                showSuccess("Product added to wishlist");
+            }
+            dispatch(fetchWishlist());
+        }
+        catch (error) {
+            showError(error.message || "something went wrong");
+            nav('/');
         }
     }
     return (
@@ -85,7 +109,7 @@ const ProductDetail = () => {
                                                 <FaStar key={i} />
                                             ))}
                                         </div>
-                                        <span className='text-sm xl:text-md'>(10)</span>
+                                        <span className='text-sm xl:text-md'>({product?.ratings?.length || 0})</span>
                                     </div>
 
                                 </div>
@@ -97,7 +121,7 @@ const ProductDetail = () => {
                                     {product?.description}
                                 </p>
                                 <div className='mt-2 flex gap-4 xl:mt-3'>
-                                    <span className='uppercase text-lg'>SIZE</span>
+                                    {product?.size?.length > 0 && <span className='uppercase text-lg'>SIZE</span>}
                                     <div className="flex gap-2 overflow-x-auto size-color-scroller">
                                         {product?.size?.map((s) => (
                                             <button
@@ -159,14 +183,17 @@ const ProductDetail = () => {
                                         Add to Cart
                                     </Button>
                                 </div>
-                                <Button className='!mt-2 !flex !gap-2 !curosr-pointer xl:!mt-3'>
-                                    <FaRegHeart />
-                                    Add to wishlist
+                                <Button
+                                    className={`!mt-2 !flex !gap-2 !curosr-pointer xl:!mt-3 !border ${isInWishlist ? "!border-[red]" : "!border-[gray]"}`}
+                                    onClick={() => handleWishlist(product?._id)}
+                                >
+                                    {isInWishlist ? <FaRegHeart /> : <FaHeart color='red' />}
+                                    {isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
                                 </Button>
                             </div>
                         </div>
                         <div className='lg:w-[85%] sm:w-[95%] lg:px-6 w-full m-auto shadow-lg p-2 bg-gray-200/50 mt-4'>
-                            <ProductReview productId={id} reviews={product?.ratings}/>
+                            <ProductReview productId={id} reviews={product?.ratings} />
                         </div>
                     </>
                 }
