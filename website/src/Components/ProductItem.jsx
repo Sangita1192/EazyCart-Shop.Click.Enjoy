@@ -1,36 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import product1 from '/public/productImg1.webp';
 import product2 from '/public/productImg2.webp';
 import { FaRegHeart, FaStar } from 'react-icons/fa6';
-import { FaExpandArrowsAlt, FaShareAlt, FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showError, showSuccess } from '../services/toastService';
 import { addProductToWishlist, deleteProductFromWishlist } from '../Api/api';
 import { fetchWishlist } from '../redux/slices/wishlistSlice';
+import { addCart, removeFromCart, updateCartQty } from '../redux/slices/cartSlice';
 
 const ProductItem = ({ product }) => {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
   const { wishlists } = useSelector(state => state.wishlist);
+  const { cart } = useSelector(state => state.cart);
 
   const nav = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
-  const [quantity, setQuantity] = useState(0);
+  const [localQty, setLocalQty] = useState(1);
   const isInWishlist = wishlists.some(item => item.product._id === product._id);
+  const matchingItems = cart?.items?.filter(item => item.product._id === product._id) || [];
   // Determine if product has sizes or colors
   const hasSizes = product?.size && product?.size.length > 0;
   const hasColors = product?.color && product?.color.length > 0;
 
+  const variantItem = matchingItems.find(item => {
+    const sizeMatch = hasSizes ? item.size === selectedSize?.label : true;
+    const colorMatch = hasColors ? item.color === selectedColor?.code : true;
+    return sizeMatch && colorMatch;
+  });
+
+
+  const cartQty = variantItem ? variantItem.quantity : 0;
+
+
+  useEffect(() => {
+    if (cartQty > 0) {
+      setLocalQty(cartQty);
+    } else {
+      setLocalQty(1);
+    }
+  }, [cartQty]);
+
+
   const handleSizeChange = (size) => {
     setSelectedSize(size);
-    setQuantity(0);
+    setLocalQty(1);
   };
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
-    setQuantity(0);
+    setLocalQty(1);
   };
 
   const handleWishlist = async (id) => {
@@ -51,10 +73,63 @@ const ProductItem = ({ product }) => {
     }
   };
 
-  const handleAddToCart = async()=>{
-    
-  }
+  const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      nav('/login');
+      return;
+    }
 
+    if ((hasSizes && !selectedSize) || (hasColors && !selectedColor)) {
+      showError('Please select size and color');
+      return;
+    }
+
+    if (localQty < 1) {
+      showError('Quantity must be at least 1');
+      return;
+    }
+
+    // If variantItem exists, update quantity instead of adding new
+    if (variantItem) {
+      dispatch(updateCartQty({
+        itemId: variantItem._id,
+        quantity: variantItem.quantity + localQty,
+      }));
+    } else {
+      dispatch(addCart({
+        id: product._id,
+        quantity: localQty,
+        size: selectedSize?.label || null,
+        color: selectedColor?.code || null,
+      }));
+    }
+  };
+
+
+  const handleUpdateQuantity = (newQty) => {
+    if (!isLoggedIn) {
+      nav('/login');
+      return;
+    }
+
+    if ((hasSizes && !selectedSize) || (hasColors && !selectedColor)) {
+      showError('Please select size and color');
+      return;
+    }
+
+    if (!variantItem) {
+      showError('Item not found in cart');
+      return;
+    }
+    if (newQty < 1) {
+      dispatch(removeFromCart(variantItem._id));
+    } else {
+      dispatch(updateCartQty({
+        itemId: variantItem._id,
+        quantity: newQty,
+      }));
+    }
+  };
 
   return (
     <div className='border border-gray-200 rounded-lg overflow-hidden shadow-lg hover:shadow-md transition-shadow duration-200 bg-gray-50 cursor-pointer'>
@@ -131,8 +206,7 @@ const ProductItem = ({ product }) => {
             </div>
           </div>
         ) :
-          <div className={`${hasSizes}? h-[32px] : h-0`}>
-          </div>
+          !hasSizes && <div className="h-[32px]"></div>
         }
 
         {/* Color Selection (only if available) */}
@@ -152,42 +226,43 @@ const ProductItem = ({ product }) => {
             </div>
           </div>
         ) : (
-          <div className={`${hasColors}? h-[26px] : h-0`}>
-          </div>
+          !hasColors && <div className="h-[32px]"></div>
         )
         }
         {/* Add to Cart or Quantity */}
         <div className="mt-4">
-          {quantity === 0 ? (
+          {variantItem ? (
+            <div className="flex items-center justify-center gap-4 border border-gray-200 rounded">
+              <button
+                onClick={() => handleUpdateQuantity(localQty - 1)}
+                className="w-10 h-10 bg-gray-200 hover:bg-gray-300 text-xl rounded cursor-pointer"
+              >
+                -
+              </button>
+              <span className="font-medium text-lg flex-1 text-center">{localQty}</span>
+              <button
+                onClick={() => handleUpdateQuantity(localQty + 1)}
+                className="w-10 h-10 bg-gray-200 hover:bg-gray-300 text-xl rounded cursor-pointer"
+              >
+                +
+              </button>
+            </div>
+          ) : (
             <button
-              onClick={() => setQuantity(1)}
+              onClick={handleAddToCart}
               disabled={(hasSizes && !selectedSize) || (hasColors && !selectedColor)}
-              className={`w-full py-2 rounded-md font-semibold text-white bg-amber-500 hover:bg-amber-600  ${(!hasSizes || selectedSize) && (!hasColors || selectedColor)
-                ? "cursor-pointer"
-                : "cursor-not-allowed"
+              className={`w-full py-2 rounded-md font-semibold text-white bg-amber-500 hover:bg-amber-600 ${(hasSizes && !selectedSize) || (hasColors && !selectedColor)
+                ? "cursor-not-allowed opacity-50"
+                : ""
                 }`}
             >
               <FaShoppingCart className="inline-block mr-2" size={16} />
               Add to Cart
             </button>
-          ) : (
-            <div className="flex items-center justify-between mt-2 border shadow-md border-gray-300 lg:w-[50%] m-auto w-[70%] rounded-[12px]">
-              <button
-                onClick={() => setQuantity((q) => Math.max(0, q - 1))}
-                className="w-10 h-10 bg-gray-200 hover:bg-gray-300 text-xl font-bold rounded-tl-[12px] rounded-bl-[12px]"
-              >
-                -
-              </button>
-              <span className="font-medium text-lg">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 bg-gray-200 hover:bg-gray-300 text-xl font-bold rounded-tr-[12px] rounded-br-[12px]"
-              >
-                +
-              </button>
-            </div>
           )}
         </div>
+
+
       </div>
     </div>
   );

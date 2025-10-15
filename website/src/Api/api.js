@@ -21,17 +21,6 @@ export const deleteAddress = (addressId) => axios.delete(`address/${addressId}`)
 export const updateAddrss = (addressId, payload) => axios.patch(`address/${addressId}`, payload);
 
 
-// Cart APIs
-export const getCart = async () => axios.get(`/cart`);
-//add product to cart
-export const addCartItem = async (product) => axios.post(`/cart`, { product });
-//remove product 
-export const removeCartItem = async (itemId) => axios.delete(`/cart/${itemId}`);
-// update cart
-export const updateCartItem = async () => axios.put(`/cart`);
-
-
-
 // Categroies API
 export const getActiveMainCategories = () => axios.get(`/categories`);
 export const getSubcategories1 = (id) => axios.get(`/categories/subcategory/${id}`);
@@ -68,3 +57,10 @@ export const clearWishlists = () => axios.delete(`/wishlist/clear`);
 // review api
 export const addReview = (formData, productId) => axios.post(`/reviews/${productId}`, formData);
 
+
+// Cart APIs
+export const getCart = async () => axios.get(`/cart`);
+export const addCartItem = async (productId, quantity,size, color) => axios.post(`/cart`, {productId, quantity,size, color});
+export const removeCartItem = async (itemId) => axios.delete(`/cart/${itemId}`);
+export const updateCartItem = async (itemId, quantity) => axios.put(`/cart`,{itemId, quantity});
+export const clearCart = async () => axios.delete(`/cart/clear`);

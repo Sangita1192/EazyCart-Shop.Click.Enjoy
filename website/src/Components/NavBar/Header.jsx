@@ -21,8 +21,10 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
 
     const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
     let { wishlists } = useSelector((state) => state.wishlist);
+    const { cart } = useSelector(state => state.cart);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
+    const [totalCartQty, setTotalCartQty] = useState(0);
 
     useEffect(() => {
         if (isLoggedIn && user) {
@@ -30,6 +32,12 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
             dispatch(fetchWishlist());
         }
     }, [isLoggedIn, user, dispatch]);
+
+    useEffect(() => {
+        const cartQty = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+        setTotalCartQty(cartQty);
+    }, [cart]);
+
 
     const onLogoutClick = async () => {
         setShowAccount(false);
@@ -122,17 +130,17 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                     </div>
                                 )}
                                 <Link to="/my-account/wishlist" className='cursor-pointer hover:text-red-400'>
-                                <Badge badgeContent={wishlists?.length || 0} color="error">
-                                    <FaRegHeart className='text-[20px]'/>
-                                </Badge>
-                                 </Link>                         
+                                    <Badge badgeContent={wishlists?.length || 0} color="error">
+                                        <FaRegHeart className='text-[20px]' />
+                                    </Badge>
+                                </Link>
 
-                                <Badge badgeContent={4} color="error" className='!cursor-pointer hover:!text-blue-600'>
+                                <Badge badgeContent={totalCartQty} color="error" className='!cursor-pointer hover:!text-blue-600'>
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
                             <div className='flex sm:gap-4 gap-2 md:hidden cursor-pointer'>
-                                <Badge badgeContent={4} color="success" >
+                                <Badge badgeContent={totalCartQty} color="success" >
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
 

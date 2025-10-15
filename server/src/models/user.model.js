@@ -50,12 +50,6 @@ const UserSchema = new mongoose.Schema({
             ref: 'address'
         }
     ],
-    shoppingCart: [
-        {
-            type: mongoose.Schema.ObjectId,
-            ref: 'cart'
-        }
-    ],
     wishlist: [
         {
             type: mongoose.Schema.ObjectId,
