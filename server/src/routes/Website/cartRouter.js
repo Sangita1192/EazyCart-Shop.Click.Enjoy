@@ -7,7 +7,8 @@ const cartRouterWeb = express.Router();
 cartRouterWeb.get('/',auth(), getCart);
 cartRouterWeb.post('/',auth(), addCartItemController);
 cartRouterWeb.put('/',auth(), updateCartItem);
-cartRouterWeb.delete('/:itemId',auth(), removeCartItem);
 cartRouterWeb.delete('/clear',auth(), clearCart);
+cartRouterWeb.delete('/:itemId',auth(), removeCartItem);
+
 
 export default cartRouterWeb;

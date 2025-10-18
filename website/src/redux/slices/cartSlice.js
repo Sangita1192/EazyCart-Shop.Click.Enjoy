@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addCartItem, getCart, removeCartItem, updateCartItem } from "../../Api/api";
+import { addCartItem, getCart, removeCartItem, updateCartItem, clearCart } from "../../Api/api";
 import { showError, showSuccess } from "../../services/toastService";
 
 export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, thunkAPI) => {
@@ -55,6 +55,21 @@ export const updateCartQty = createAsyncThunk(
     }
 );
 
+export const clearCartItems = createAsyncThunk(
+    "cart/clearCartItems",
+    async(_,thunkAPI) =>{
+        try {
+            await clearCart();
+            await thunkAPI.dispatch(fetchCart());
+            showSuccess("Cart Cleared");
+        } catch (error) {
+            const msg = error?.response?.data?.message || "Failed to clear cart";
+            showError(msg);
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+)
+
 // SLICE
 const cartSlice = createSlice({
     name: "cart",
@@ -63,11 +78,7 @@ const cartSlice = createSlice({
         loading: false,
         error: null
     },
-    reducers: {
-        clearCart: (state) => {
-            state.cart = null;
-        }
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchCart.pending, (state) => {
@@ -82,7 +93,7 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-
+            // add to cart
             .addCase(addCart.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -94,21 +105,19 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            // remove from cart
             .addCase(removeFromCart.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(removeFromCart.fulfilled, (state) => {
                 state.loading = false;
-                // if (state.cart?.items) {
-                //     state.cart.items = state.cart.items.filter(item => item._id !== action.payload);
-                // }
             })
             .addCase(removeFromCart.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
-
+            // update cart
             .addCase(updateCartQty.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -119,9 +128,20 @@ const cartSlice = createSlice({
             .addCase(updateCartQty.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // clear all cart items
+            .addCase(clearCartItems.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(clearCartItems.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(clearCartItems.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     }
 });
 
-export const { clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

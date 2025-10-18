@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import product1 from '/public/productImg1.webp';
-import product2 from '/public/productImg2.webp';
+import product1 from '/productImg1.webp';
+import product2 from '/productImg2.webp';
 import { FaRegHeart, FaStar } from 'react-icons/fa6';
 import { FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';

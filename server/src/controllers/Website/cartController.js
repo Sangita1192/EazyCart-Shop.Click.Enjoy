@@ -120,7 +120,6 @@ export const updateCartItem = async (req, res) => {
 export const removeCartItem = async (req, res) => {
     const userId = req.userId;
     const { itemId } = req.params;
-    console.log(req.params);
 
     if (!itemId) return sendErrorResponse(res, 400, "Item ID is required");
 
@@ -154,7 +153,15 @@ export const clearCart = async (req, res) => {
     try {
         const userId = req.userId;
 
-        await Cart.deleteMany({ user:userId });
+        const cart = await Cart.findOne({ user: userId });
+
+        if (!cart) return sendErrorResponse(res,404, "Cart not exists")
+
+        cart.items = [];
+        cart.subTotal = 0;
+        cart.updatedAt = new Date();
+
+        await cart.save();
 
         return res.status(200).json({
             message: "Cart cleared successfully",
@@ -162,8 +169,11 @@ export const clearCart = async (req, res) => {
             error: false
         });
     } catch (error) {
-        console.error("Error in clearCartController:", error);
-        return sendErrorResponse(res, 500, "Failed to clear cart");
+        console.error("Error in clearCart controller:", error);
+        return res.status(500).json({
+            message: "Failed to clear cart",
+            success: false,
+            error: true
+        });
     }
 };
-

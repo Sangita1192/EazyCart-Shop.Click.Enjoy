@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import logo from './../../../public/logo.png'
+import logo from '/logo.png'
 import Search from './Search';
 import Badge from '@mui/material/Badge';
 import { FaBars, FaRegHeart, FaRegUser } from "react-icons/fa";
