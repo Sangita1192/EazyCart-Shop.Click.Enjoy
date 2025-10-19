@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import sendErrorResponse from "../../helperFunction/sendErrorResponse.js"
 import Cart from "../../models/cartProduct.model.js";
-import UserModel from "../../models/user.model.js";
 import Product from "../../models/product.model.js";
 import { calculateSubTotal, findCartItemIndex } from "../../utils/cartHelper.js";
 
@@ -20,10 +19,19 @@ export const addCartItemController = async (req, res) => {
 
         let cart = await Cart.findOne({ user: userId });
 
-        if(!cart) {
+        const newItem = {
+            product: productId,
+            quantity,
+            size,
+            color,
+            price: product.price,
+            discount: product.discount
+        };
+
+        if (!cart) {
             cart = new Cart({
                 user: userId,
-                items: [{ product: productId, quantity, size, color }],
+                items: [newItem],
             });
         } else {
             const index = findCartItemIndex(cart.items, productId, size, color);
@@ -31,7 +39,7 @@ export const addCartItemController = async (req, res) => {
             if (index > -1) {
                 cart.items[index].quantity += quantity;
             } else {
-                cart.items.push({ product: productId, quantity, size, color });
+                cart.items.push(newItem);
             }
         }
 
@@ -51,11 +59,18 @@ export const addCartItemController = async (req, res) => {
     }
 };
 
-
 //get all cartItem
 export const getCart = async (req, res) => {
     try {
-        const cart = await Cart.findOne({ user: req.userId }).populate('items.product');
+        const cart = await Cart.findOne({ user: req.userId })
+            .populate({
+                path: 'items.product',
+                select: 'name description discount price ratings category images',
+                populate: {
+                    path: 'category',
+                    select: 'name'
+                }
+            });
 
         if (!cart) {
             return res.status(200).json({
@@ -155,7 +170,7 @@ export const clearCart = async (req, res) => {
 
         const cart = await Cart.findOne({ user: userId });
 
-        if (!cart) return sendErrorResponse(res,404, "Cart not exists")
+        if (!cart) return sendErrorResponse(res, 404, "Cart not exists")
 
         cart.items = [];
         cart.subTotal = 0;
