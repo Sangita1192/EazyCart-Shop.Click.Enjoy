@@ -5,8 +5,6 @@ import AddressItem from './AddressItem';
 import { useOutletContext } from 'react-router-dom';
 import AddEditAddress from './AddEditAddress';
 import { useEffect } from 'react';
-import { getAllAddress } from '../../Api/api';
-import { showError } from '../../services/toastService';
 
 const Address = () => {
     const { user } = useOutletContext() || {};
@@ -17,19 +15,8 @@ const Address = () => {
     useEffect(() => {
         if (user?.address?.length > 0) {
             setAddressList(user.address);
-            // fetchAddresses();
         }
     }, [user]);
-
-    const fetchAddresses = async () => {
-        try {
-            const response = await getAllAddress();
-            setAddressList(response.data.addresses)
-        }
-        catch (error) {
-            showError(error.message);
-        }
-    }
 
     const handleCloseForm = () => {
         setSelectedAddress(null);
@@ -65,7 +52,6 @@ const Address = () => {
                                 onDelete={()=>handleDelete(address._id)}
                             />
                         ))}
-
                     </div>
                 }
                 <Dialog
@@ -87,7 +73,5 @@ const Address = () => {
         </>
     )
 }
-
-
 
 export default Address
