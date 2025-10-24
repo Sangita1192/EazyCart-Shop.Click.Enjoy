@@ -1,5 +1,4 @@
-// src/components/Cart.jsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { RemoveScroll } from 'react-remove-scroll';
 import { IoClose } from 'react-icons/io5';
 import { Button } from '@mui/material';
@@ -8,16 +7,12 @@ import { MdDelete } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearCartItems, removeFromCart } from '../redux/slices/cartSlice';
+import { calculateCartTotals } from '../utils/calculateCart';
 
 const Cart = ({ isCartOpen, setIsCartOpen }) => {
     const dispatch = useDispatch();
     const { cart } = useSelector(state => state.cart);
-    const [totalCartQty, setTotalCartQty] = useState(0);
-
-    useEffect(() => {
-        const cartQty = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
-        setTotalCartQty(cartQty);
-    }, [cart]);
+    const { subTotal, tax, shipping, total, cartQty } = calculateCartTotals(cart);
 
     if (!isCartOpen) return null;
     return (
@@ -30,7 +25,7 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
             <RemoveScroll>
                 <div className="fixed top-0 right-0 h-[100vh] w-[280px] sm:w-[50%] md:w-[40%] lg:w-[35%] bg-white ps-2 z-9999 shadow-lg transition-transform duration-300 ease-in-out translate-x-0 flex flex-col">
                     <div className="flex items-center justify-between p-4 border-b border-gray-300">
-                        <h2 className="text-lg font-semibold">Shopping Cart <span>({totalCartQty})</span></h2>
+                        <h2 className="text-lg font-semibold">Shopping Cart <span>({cartQty})</span></h2>
                         <button
                             onClick={() => setIsCartOpen(false)}
                             aria-label="Close Cart"
@@ -40,7 +35,7 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                         </button>
                     </div>
                     <div className="flex items-center justify-between p-4 border-b border-gray-300">
-                        <button className='ms-auto hover:!text-red-500 cursor-pointer px-1' onClick={()=>dispatch(clearCartItems())}>Clear All</button>
+                        <button className='ms-auto hover:!text-red-500 cursor-pointer px-1' onClick={() => dispatch(clearCartItems())}>Clear All</button>
                     </div>
 
                     {/* Cart Content */}
@@ -70,15 +65,30 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
 
                                                         <p className='text-amber-600 font-semibold mt-2'>${item.product.price}</p>
                                                     </div>
-                                                    <MdDelete className="text-gray-600 hover:text-amber-600" onClick={()=>dispatch(removeFromCart(item._id))}/>
+                                                    <MdDelete className="text-gray-600 hover:text-amber-600" onClick={() => dispatch(removeFromCart(item._id))} />
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                     <div className='py-4 px-2'>
-                                        <div className='flex justify-between items-center px-2 py-3 border-t border-gray-300'>
+                                        <div className='flex justify-between items-center px-2 py-1 border-t border-gray-300'>
+                                            <span>Subtotal</span>
+                                            <span>${subTotal.toFixed(2)}</span>
+                                        </div>
+                                        <div className='flex justify-between items-center px-2 py-1 border-t border-gray-300'>
+                                            <span>Tax (GST/PST)</span>
+                                            <span>${tax.toFixed(2)}</span>
+                                        </div>
+                                        <div className='flex justify-between items-center px-2 py-1 border-t border-gray-300'>
+                                            <div>
+                                                <span>Shipping Fee</span>
+                                                <p className='text-sm italic'>(free shipping over $19.99)</p>
+                                            </div>
+                                            <span>${shipping.toFixed(2)}</span>
+                                        </div>
+                                        <div className='flex justify-between items-center px-2 py-1 border-t border-gray-300'>
                                             <span className='font-bold'>Total Amount</span>
-                                            <span>${cart?.subTotal}</span>
+                                            <span>${total.toFixed(2)}</span>
                                         </div>
 
                                         <div className='flex justify-center gap-2 items-center py-3 border-t border-gray-300'>
@@ -87,7 +97,16 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                                                     View Cart
                                                 </Link>
                                             </Button>
-                                            <Button className="!w-[45%] !border-2 !border-amber-600 hover:!bg-black hover:!text-white !text-amber-600 hover:!border-black">Checkout</Button>
+                                            <Link to={cart?.items?.length ? "/checkout" : "#"} className='!w-[45%]'>
+                                                <Button
+                                                    className="!w-full !border-2 !border-amber-600 hover:!bg-black hover:!text-white !text-amber-600 hover:!border-black"
+                                                    onClick={() => setIsCartOpen(false)}
+                                                    disabled={!cart?.items?.length}
+                                                >
+                                                    Checkout
+                                                </Button>
+                                            </Link>
+
                                         </div>
                                     </div>
                                 </>

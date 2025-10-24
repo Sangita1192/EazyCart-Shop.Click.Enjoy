@@ -46,8 +46,8 @@ const CartItem = ({ cartItem }) => {
                             </div>
                         )}
                         <div className='mt-3 flex md:gap-4 gap-2'>
-                            <p>${(cartItem?.product.price * (100 + cartItem?.product.discount) / 100).toFixed(2)}</p>
-                            <p className='text-gray-500 line-through'>${cartItem?.price}</p>
+                            <p>${cartItem?.price}</p>
+                            <p className='text-gray-500 line-through'>${(cartItem?.product.price * (100 + cartItem?.product.discount) / 100).toFixed(2)}</p>
                             {cartItem?.discount > 0 && <span className='font-bold text-red-600 uppercase hidden sm:block'>{cartItem?.discount}% off</span>}
                         </div>
                     </div>

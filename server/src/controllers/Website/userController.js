@@ -295,7 +295,7 @@ const logoutUser = async (req, res) => {
 //get User from token controller
 const getUser = async (req, res) => {
     try {
-        const user = await UserModel.findById(req.userId);
+        const user = await UserModel.findById(req.userId).populate("addressDetail");
         if (!user) {
             return sendErrorResponse(res, "User not found", 404)
         }

@@ -15,10 +15,11 @@ const Address = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
 
     useEffect(() => {
-        if (user.address?.length > 0) {
-            fetchAddresses();
+        if (user?.address?.length > 0) {
+            setAddressList(user.address);
+            // fetchAddresses();
         }
-    }, [user?.address]);
+    }, [user]);
 
     const fetchAddresses = async () => {
         try {
@@ -39,6 +40,9 @@ const Address = () => {
         setSelectedAddress(address);
         setIsFormVisible(true);
     };
+    const handleDelete = (deletedId) => {
+        setAddressList(prev => prev.filter(addr => addr._id !== deletedId));
+    };
 
     return (
         <>
@@ -58,9 +62,7 @@ const Address = () => {
                                 key={address._id}
                                 address={address}
                                 onEdit={() => handleEdit(address)}
-                                onDelete={(deletedId) => {
-                                    setAddressList(prev => prev.filter(addr => addr._id !== deletedId));
-                                }}
+                                onDelete={()=>handleDelete(address._id)}
                             />
                         ))}
 
@@ -77,11 +79,9 @@ const Address = () => {
                         <AddEditAddress
                             existingData={selectedAddress}
                             onClose={handleCloseForm}
-                            refreshAddressList={fetchAddresses}
                         />
                     </DialogContent>
                 </Dialog>
-
             </div>
 
         </>
