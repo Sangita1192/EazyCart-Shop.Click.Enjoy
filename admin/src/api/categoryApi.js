@@ -21,3 +21,7 @@ export const deleteCategory = (id) => axios.delete(`categories/category/${id}`);
 export const toggleStatus = (id) => axios.patch(`categories/status/${id}`);
 
 export const toggleFeaturedCategory = (id) => axios.patch(`categories/featured/${id}`);
+
+
+
+

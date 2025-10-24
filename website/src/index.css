@@ -67,8 +67,9 @@ Button {
 
 /* Custom Scrollbar for filterSection and Cart */
 .scrollbar-sidebar::-webkit-scrollbar {
-  width: 6px;/* Set the width of the scrollbar */
-  height:4px; 
+  width: 6px;
+  /* Set the width of the scrollbar */
+  height: 4px;
 }
 
 .scrollbar-sidebar::-webkit-scrollbar-track {
@@ -83,7 +84,7 @@ Button {
 
 /* Product Detail Zoom image */
 
-.zoom-full-img > div {
+.zoom-full-img>div {
   width: 100% !important;
   height: 100% !important;
 }
@@ -96,20 +97,30 @@ Button {
 /* Swiper navigation related products */
 .swiper-navigation-related-products .swiper-prev,
 .swiper-navigation-related-products .swiper-next {
-    width:35px;
-    height:35px;
-    background-color: #E17100;
-    color: white !important;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: color 0.3s ease;
+  width: 35px;
+  height: 35px;
+  background-color: #E17100;
+  color: white !important;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: color 0.3s ease;
 }
 
 .swiper-prev:hover,
 .swiper-next:hover {
-    background-color: #6F3800;
+  background-color: #6F3800;
 }
 
 
+/* size and Color scrollbar */
+.size-color-scroller::-webkit-scrollbar {
+  display: none;
+}
 
+.size-color-scroller {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}

@@ -5,8 +5,6 @@ import AddressItem from './AddressItem';
 import { useOutletContext } from 'react-router-dom';
 import AddEditAddress from './AddEditAddress';
 import { useEffect } from 'react';
-import { getAllAddress } from '../../Api/api';
-import { showError } from '../../services/toastService';
 
 const Address = () => {
     const { user } = useOutletContext() || {};
@@ -15,20 +13,10 @@ const Address = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
 
     useEffect(() => {
-        if (user.address?.length > 0) {
-            fetchAddresses();
+        if (user?.address?.length > 0) {
+            setAddressList(user.address);
         }
-    }, [user?.address]);
-
-    const fetchAddresses = async () => {
-        try {
-            const response = await getAllAddress();
-            setAddressList(response.data.addresses)
-        }
-        catch (error) {
-            showError(error.message);
-        }
-    }
+    }, [user]);
 
     const handleCloseForm = () => {
         setSelectedAddress(null);
@@ -38,6 +26,9 @@ const Address = () => {
     const handleEdit = (address) => {
         setSelectedAddress(address);
         setIsFormVisible(true);
+    };
+    const handleDelete = (deletedId) => {
+        setAddressList(prev => prev.filter(addr => addr._id !== deletedId));
     };
 
     return (
@@ -58,12 +49,9 @@ const Address = () => {
                                 key={address._id}
                                 address={address}
                                 onEdit={() => handleEdit(address)}
-                                onDelete={(deletedId) => {
-                                    setAddressList(prev => prev.filter(addr => addr._id !== deletedId));
-                                }}
+                                onDelete={()=>handleDelete(address._id)}
                             />
                         ))}
-
                     </div>
                 }
                 <Dialog
@@ -77,17 +65,13 @@ const Address = () => {
                         <AddEditAddress
                             existingData={selectedAddress}
                             onClose={handleCloseForm}
-                            refreshAddressList={fetchAddresses}
                         />
                     </DialogContent>
                 </Dialog>
-
             </div>
 
         </>
     )
 }
-
-
 
 export default Address

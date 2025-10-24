@@ -10,7 +10,7 @@ const FilterSection = ({ title, options, selected, onToggle }) => {
         className="flex justify-between items-center py-2 text-lg font-semibold cursor-pointer"
         onClick={() => setShow(!show)}
       >
-        <h3>{title}</h3>
+        <h3 className='!capitalize'>{title}</h3>
         {show ? <FaMinus /> : <FaPlus />}
       </div>
 
@@ -22,7 +22,7 @@ const FilterSection = ({ title, options, selected, onToggle }) => {
               checked={selected.includes(option)}
               onChange={() => onToggle(option)}
             />
-            <span>{option}</span>
+            <span className='!capitalize'>{option}</span>
           </li>
         ))}
       </ul>

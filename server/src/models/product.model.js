@@ -47,7 +47,7 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 100 // percentage discount
+        max: 100 
     },
     color: [
         {
@@ -72,7 +72,12 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    ratings: [reviewSchema]
+    ratings:  [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Review'
+        }
+    ],
 
 }, { timestamps: true });
 

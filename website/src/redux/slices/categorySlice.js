@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getActiveCategories } from "../../../../admin/src/api/categoryApi";
+import { getActiveMainCategories } from "../../Api/api";
+
 
 // fetch all active categories
 export const fetchActiveCategories = createAsyncThunk(
     'category/fetchCategories',
     async (_, thunkAPI) => {
         try {
-            const res = await getActiveCategories();
-            console.log('fetch categories', res.data);
+            const res = await getActiveMainCategories();
             return res.data.categories;
         } catch (error) {
             const msg = error?.response?.data?.message || "failed to fetch categories";

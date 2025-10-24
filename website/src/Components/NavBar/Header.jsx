@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import logo from './../../../public/logo.png'
+import logo from '/logo.png'
 import Search from './Search';
 import Badge from '@mui/material/Badge';
 import { FaBars, FaRegHeart, FaRegUser } from "react-icons/fa";
@@ -13,32 +13,36 @@ import LoadingSpinner from '../LoadingSpinner';
 import { MdOutlineManageAccounts } from 'react-icons/md';
 import { handleLogout } from '../../services/authServices';
 import { fetchCart } from '../../redux/slices/cartSlice';
+import { fetchWishlist } from '../../redux/slices/wishlistSlice';
 
 const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const dispatch = useDispatch();
     const nav = useNavigate();
 
     const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
-    console.log('userlogged==>', user)
+    let { wishlists } = useSelector((state) => state.wishlist);
+    const { cart } = useSelector(state => state.cart);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
+    const [totalCartQty, setTotalCartQty] = useState(0);
+
+    useEffect(() => {
+        if (isLoggedIn && user) {
+            dispatch(fetchCart());
+            dispatch(fetchWishlist());
+        }
+    }, [isLoggedIn, user, dispatch]);
+
+    useEffect(() => {
+        const cartQty = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+        setTotalCartQty(cartQty);
+    }, [cart]);
+
 
     const onLogoutClick = async () => {
         setShowAccount(false);
         handleLogout({ dispatch, nav })
     };
-
-    // const cartCount = useSelector(
-    //     (state) => state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
-    // );
-    // console.log('cartcount==>', cartCount)
-
-
-    useEffect(() => {
-        if (isLoggedIn && user) {
-            dispatch(fetchCart());
-        }
-    }, [isLoggedIn, user]);
 
     return (
         <>
@@ -63,9 +67,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                     <div className="w-[85%] m-auto">
                         <div className='flex justify-between gap-[10px] items-center'>
                             <FaBars className="block lg:hidden" onClick={() => setIsSidebarOpen(true)} />
-                            <div className='w-[25%] '>
+                            <Link className='w-[25%] ' to={`/`}>
                                 <img src={logo} alt="Logo" className='w-[220px] h-[60px]' />
-                            </div>
+                            </Link>
                             <div className='w-[40%] hidden lg:block'>
                                 <Search />
                             </div>
@@ -126,15 +130,17 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
                                     </div>
                                 )}
                                 <Link to="/my-account/wishlist" className='cursor-pointer hover:text-red-400'>
-                                    <FaRegHeart className='text-[22px]' />
+                                    <Badge badgeContent={wishlists?.length || 0} color="error">
+                                        <FaRegHeart className='text-[20px]' />
+                                    </Badge>
                                 </Link>
 
-                                <Badge badgeContent={4} color="success" className='!cursor-pointer hover:!text-blue-600'>
+                                <Badge badgeContent={totalCartQty} color="error" className='!cursor-pointer hover:!text-blue-600'>
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
                             </div>
                             <div className='flex sm:gap-4 gap-2 md:hidden cursor-pointer'>
-                                <Badge badgeContent={4} color="success" >
+                                <Badge badgeContent={totalCartQty} color="success" >
                                     <IoCartOutline className='text-[24px]' onClick={() => setIsCartOpen(true)} />
                                 </Badge>
 

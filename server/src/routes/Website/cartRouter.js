@@ -1,15 +1,14 @@
 import express from "express";
-import { addCartItemController, clearCartController, getAllCartItems, removeCartItemController, updateCartItemController } from "../../controllers/Website/cartController.js";
 import auth from "../../middleware/auth.js";
+import { addCartItemController, clearCart, getCart, removeCartItem, updateCartItem } from "../../controllers/Website/cartController.js";
 
 const cartRouterWeb = express.Router();
 
-cartRouterWeb.get('/',auth(), getAllCartItems);
+cartRouterWeb.get('/',auth(), getCart);
 cartRouterWeb.post('/',auth(), addCartItemController);
-cartRouterWeb.put('/update-cart',auth(), updateCartItemController);
-// Remove a specific item from cart
-cartRouterWeb.delete('/remove',auth(), removeCartItemController);
-// Clear entire cart
-cartRouterWeb.delete('/clear',auth(), clearCartController);
+cartRouterWeb.put('/',auth(), updateCartItem);
+cartRouterWeb.delete('/clear',auth(), clearCart);
+cartRouterWeb.delete('/:itemId',auth(), removeCartItem);
+
 
 export default cartRouterWeb;

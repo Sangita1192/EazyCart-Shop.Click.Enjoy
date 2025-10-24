@@ -9,9 +9,9 @@ productRouter.post('/', upload.array("images", 5), createProduct);
 productRouter.get('/', getAllProducts);
 productRouter.get('/:id', getProductById);
 productRouter.delete('/:id', deleteProduct);
+productRouter.put('/:id', upload.array("images", 5),updateProduct);
 productRouter.put(`/:id/featured`, toggleFeaturedProduct)
 
-productRouter.put('/update/:id', auth(["ADMIN"]),upload.array("images", 5),updateProduct);
 
 
 // productRouter.post('/create', auth(["ADMIN"]), upload.array("images", 5), createProduct);
