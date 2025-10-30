@@ -64,3 +64,8 @@ export const addCartItem = async (productId, quantity,size, color) => axios.post
 export const removeCartItem = async (itemId) => axios.delete(`/cart/${itemId}`);
 export const updateCartItem = async (itemId, quantity) => axios.put(`/cart`,{itemId, quantity});
 export const clearCart = async () => axios.delete(`/cart/clear`);
+
+
+// payment APIs
+export const checkoutSession = async(cartItems, shippingAddress)=> axios.post(`/payment/create-checkout-session`, {cartItems, shippingAddress});
+export const verifyPayment = async(sessionId)=>axios.post('/payment/verify',{sessionId});

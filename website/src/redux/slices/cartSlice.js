@@ -61,7 +61,6 @@ export const clearCartItems = createAsyncThunk(
         try {
             await clearCart();
             await thunkAPI.dispatch(fetchCart());
-            showSuccess("Cart Cleared");
         } catch (error) {
             const msg = error?.response?.data?.message || "Failed to clear cart";
             showError(msg);

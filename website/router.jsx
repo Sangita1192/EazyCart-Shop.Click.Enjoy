@@ -17,6 +17,7 @@ import VerifyUserAccount from './src/Pages/VerfiyUserAccount';
 import PublicRoute from './src/Components/Routes/PublicRoute';
 import PrivateRoute from './src/Components/Routes/PrivateRoute';
 import ResetPassword from './src/Components/ResetPassword';
+import PaymentSuccess from './src/Components/Payment/paymentSuccess';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: 'products', element: <ProductListing /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <CartPage /> },
+      {path:'payment-success', element:<PaymentSuccess/>},
       { 
         element: <PrivateRoute />,
         children: [
