@@ -47,7 +47,7 @@ export const fetchBottomCard = () => axios.get(`/banners/card`);
 export const fetchMiddleBanners = () => axios.get(`/banners/middle`);
 
 //wishlist api
-export const getWishlists = ()=> axios.get(`/wishlist`);
+export const getWishlists = () => axios.get(`/wishlist`);
 export const addProductToWishlist = (id) => axios.post(`/wishlist/${id}`);
 export const deleteProductFromWishlist = (id) => axios.delete(`/wishlist/${id}`);
 export const clearWishlists = () => axios.delete(`/wishlist/clear`);
@@ -60,12 +60,16 @@ export const addReview = (formData, productId) => axios.post(`/reviews/${product
 
 // Cart APIs
 export const getCart = async () => axios.get(`/cart`);
-export const addCartItem = async (productId, quantity,size, color) => axios.post(`/cart`, {productId, quantity,size, color});
+export const addCartItem = async (productId, quantity, size, color) => axios.post(`/cart`, { productId, quantity, size, color });
 export const removeCartItem = async (itemId) => axios.delete(`/cart/${itemId}`);
-export const updateCartItem = async (itemId, quantity) => axios.put(`/cart`,{itemId, quantity});
+export const updateCartItem = async (itemId, quantity) => axios.put(`/cart`, { itemId, quantity });
 export const clearCart = async () => axios.delete(`/cart/clear`);
 
 
 // payment APIs
-export const checkoutSession = async(cartItems, shippingAddress)=> axios.post(`/payment/create-checkout-session`, {cartItems, shippingAddress});
-export const verifyPayment = async(sessionId)=>axios.post('/payment/verify',{sessionId});
+export const checkoutSession = async (cartItems, shippingAddress) => axios.post(`/payment/create-checkout-session`, { cartItems, shippingAddress });
+export const verifyPayment = async (sessionId) => axios.post('/payment/verify', { sessionId });
+
+// user orderlist
+export const getOrderList = async () => axios.get(`/orders`);
+export const getOrderDetails = async (orderId) => axios.get(`/orders/${orderId}`);

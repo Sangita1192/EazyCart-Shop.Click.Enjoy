@@ -18,6 +18,7 @@ import PublicRoute from './src/Components/Routes/PublicRoute';
 import PrivateRoute from './src/Components/Routes/PrivateRoute';
 import ResetPassword from './src/Components/ResetPassword';
 import PaymentSuccess from './src/Components/Payment/paymentSuccess';
+import OrderDetails from './src/Components/Account/orderDetail';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
               { path: 'address', element: <Address /> },
               { path: 'wishlist', element: <Wishlist /> },
               { path: 'orders', element: <Order /> },
+              { path:'orders/:orderId', element: <OrderDetails/>}
             ],
           },
         ],
