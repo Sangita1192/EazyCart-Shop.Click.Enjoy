@@ -37,13 +37,11 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                             <IoClose className='hover:text-amber-600' />
                         </button>
                     </div>
-                    {cart?.items?.length &&
+                    {cart?.items?.length < 0 &&
                         <div className="flex items-center justify-between p-4 border-b border-gray-300">
                             <button className='ms-auto hover:!text-red-500 cursor-pointer px-1' onClick={handleclearAllCart}>Clear All</button>
                         </div>
                     }
-
-
                     {/* Cart Content */}
                     {
                         cart?.items?.length > 0 ?

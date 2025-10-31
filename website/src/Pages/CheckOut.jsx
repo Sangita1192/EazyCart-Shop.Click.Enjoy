@@ -136,14 +136,6 @@ const CheckOut = () => {
                 >
                     <MdPayment size={22} /> Proceed to Payment
                 </Button>
-
-                <Button className='!my-2 !bg-blue-500 hover:!bg-blue-600 !py-3 !text-white'>
-                    PayPal
-                </Button>
-
-                <Button className='!my-2 !bg-black hover:!bg-black/80 !text-white !uppercase !flex !gap-2 !py-3'>
-                    <TbCash size={22} /> Cash on Delivery
-                </Button>
             </div>
 
         </div>
