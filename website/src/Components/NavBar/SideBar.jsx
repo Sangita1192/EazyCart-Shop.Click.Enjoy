@@ -9,6 +9,7 @@ import { FaRegPlusSquare } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { getSubcategories1 } from '../../Api/api';
 import { SubCategoryList } from './SubCategoryList';
+import { Link } from 'react-router-dom';
 
 const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
     const { categories } = useSelector(state => state.category);
@@ -22,8 +23,7 @@ const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
                 setExpandedCats(expandedCats.filter(cid => cid !== id))
                 return
             }
-
-            setExpandedCats([...expandedCats, id])
+            setExpandedCats([...expandedCats, id]);
 
             // fetch only if not already fetched
             if (!subCategories[id]) {
@@ -44,7 +44,8 @@ const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
 
     return (
         <Drawer anchor="left" open={isSideBarOpen} onClose={handleClose} ModalProps={{
-            disableRestoreFocus: true}} className='!h-100vh'>
+            disableRestoreFocus: true
+        }} className='!h-100vh'>
             <Box sx={{ width: 250 }} role="presentation" >
                 <List>
                     <ListItem className='!w-[90%] !m-auto '>
@@ -53,10 +54,19 @@ const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
                     <Divider />
                     {categories.length > 0 && categories.map((cat) => (
                         <ListItem className='!mt-[15px] !block' disablePadding key={cat._id}>
-                            <Button className='!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center !capitalize'
-                                onClick={() => fetchSubCategories(cat._id)}>
+                            <Button className='!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center !capitalize !text-black/80'
+                                component={Link}
+                                onClick={handleClose}
+                                to={`/products?category=${cat._id}`}
+                            >
                                 <p className='!font-bold'>{cat.name}</p>
-                                <FaRegPlusSquare />
+                                <FaRegPlusSquare 
+                                className='hover:text-amber-600'
+                                onClick={(e) => {
+                                    e.stopPropagation(); //Prevent event propagation
+                                    e.preventDefault();  
+                                    fetchSubCategories(cat._id);
+                                }} />
                             </Button>
                             {/* subCategories */}
                             {expandedCats.includes(cat._id) && (

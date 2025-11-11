@@ -1,8 +1,11 @@
 import React from 'react'
 import { Button, List, ListItem } from "@mui/material"
+import { FaRegPlusSquare } from 'react-icons/fa';
 
 export const SubCategoryList = ({ parentId, subCategories, expandedCats, setExpandedCats, fetchSubCategories }) => {
-    const children = subCategories[parentId] || []
+    const children = subCategories[parentId] || [];
+
+    console.log("children", subCategories[parentId]);
 
     return (
         <List className="!w-[90%] !ml-auto !p-0">

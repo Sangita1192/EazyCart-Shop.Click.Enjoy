@@ -1,39 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FaBars } from 'react-icons/fa6'
 import { RiLayoutGridFill } from "react-icons/ri";
 import ProductItem from '../ProductItem';
-import { useNavigate } from 'react-router-dom';
 import ProductItemWithDesc from './ProductItemWithDesc';
 import { useMediaQuery } from 'react-responsive';
-import { getAllProducts } from '../../Api/api';
-import { showError } from '../../services/toastService';
 import LoadingSpinner from './../LoadingSpinner';
 
-const ProductsGrid = ({categoryId}) => {
-    const nav = useNavigate();
-
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+const ProductsGrid = ({ products, loading, sortOption, setSortOption }) => {
     const [isGrid, setIsGrid] = useState(true);
     const isMobile = useMediaQuery({ maxWidth: 639 });
-
-    useEffect(() => {
-        fetchAllProducts();
-    }, [categoryId])
-
-    const fetchAllProducts = async () => {
-        setLoading(true);
-        try {
-            const res = await getAllProducts(categoryId);
-            setProducts(res.data.products);
-        }
-        catch (e) {
-            showError(e.message || "something went wrong");
-            nav('/')
-        } finally {
-            setLoading(false);
-        }
-    }
 
     const shouldShowGrid = isGrid || isMobile;
     return (
@@ -50,6 +25,8 @@ const ProductsGrid = ({categoryId}) => {
                                 <div className="flex items-center gap-2">
                                     <span className="font-semibold text-lg text-gray-800">Sort By:</span>
                                     <select
+                                        value={sortOption}
+                                        onChange={(e) => setSortOption(e.target.value)}
                                         name="sort"
                                         id="sort"
                                         className="border border-gray-300 rounded-md px-3 py-1 bg-white text-gray-700 focus:outline-none focus:border-amber-400 transition-all"
@@ -59,6 +36,7 @@ const ProductsGrid = ({categoryId}) => {
                                         <option value="high_to_low">Price: High to Low</option>
                                         <option value="top_rated">Top Rated</option>
                                         <option value="popular">Most Popular</option>
+                                        <option value="newest">Newest Arrivals</option>
                                     </select>
                                 </div>
 

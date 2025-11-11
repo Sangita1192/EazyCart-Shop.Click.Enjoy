@@ -1,37 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import FilterSection from './ProductListing/FilterSection'
 import { Button } from '@mui/material';
 import { useSelector } from 'react-redux';
 
-const ProductSideBar = ({ isOpen, setIsOpen, sizes, colors }) => {
-    const { categories = [], error } = useSelector((state) => state.category || {});
-    const [selectedFilters, setSelectedFilters] = useState({});
-
-    // add or remove a filter value under a filter type (eg. Category['fashion'])
-    const toggleFilter = (type, value) => {
-        setSelectedFilters(prev => {
-            const current = prev[type] || [];
-            const exists = current.includes(value);
-            const updated = exists ?
-                current.filter(v => v !== value)
-                :
-                [...current, value];
-
-            //If updated array is empty, remove the key
-            const newFilters = { ...prev };
-            if (updated.length) {
-                newFilters[type] = updated;
-            } else {
-                delete newFilters[type];
-            }
-            return newFilters;
-        });
-    };
-
-    // Remove a specific filter
-    const removeFilter = (type, value) => {
-        toggleFilter(type, value);
-    };
+const ProductSideBar = ({ isOpen, setIsOpen, sizes, colors, toggleFilter, removeFilter,selectedFilters }) => {
+    const { categories = []} = useSelector((state) => state.category || {});
 
     return (
         <>
