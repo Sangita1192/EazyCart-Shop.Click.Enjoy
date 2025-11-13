@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import ProductItem from '../ProductItem';
 import LoadingSpinner from '../LoadingSpinner';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { fetchLatestProducts } from '../../Api/api';
 import { useNavigate } from 'react-router-dom';
+import ProductItemBase from '../ProductitemBase';
 
 const LatestProducts = () => {
     const nav = useNavigate();
@@ -60,7 +60,7 @@ const LatestProducts = () => {
                                     className="popular-products-slider"
                                 >
                                     {product.map(prod => (
-                                        <SwiperSlide key={prod._id}> <ProductItem product={prod}/></SwiperSlide>
+                                        <SwiperSlide key={prod._id}> <ProductItemBase product={prod} layout='grid'/></SwiperSlide>
                                     ))}
                                 </Swiper>
                             </div>)

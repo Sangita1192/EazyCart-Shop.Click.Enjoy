@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import ProductItem from './ProductItem';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 import { Navigation } from 'swiper/modules';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getRelatedProducts } from '../Api/api';
 import { showError } from '../services/toastService';
+import ProductItemBase from './ProductitemBase';
 
 const RelatedProducts = () => {
     const { id } = useParams();
@@ -72,7 +72,7 @@ const RelatedProducts = () => {
                             modules={[Navigation]}
                         >
                             {relatedProducts.map(prod => (
-                                <SwiperSlide key={prod._id}><ProductItem key={prod._id} product={prod}/></SwiperSlide>
+                                <SwiperSlide key={prod._id}><ProductItemBase key={prod._id} product={prod}/></SwiperSlide>
                             ))}
 
                         </Swiper>

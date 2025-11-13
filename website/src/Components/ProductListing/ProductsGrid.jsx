@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { FaBars } from 'react-icons/fa6'
 import { RiLayoutGridFill } from "react-icons/ri";
-import ProductItem from '../ProductItem';
-import ProductItemWithDesc from './ProductItemWithDesc';
 import { useMediaQuery } from 'react-responsive';
 import LoadingSpinner from './../LoadingSpinner';
+import ProductItemBase from '../ProductitemBase';
 
 const ProductsGrid = ({ products, loading, sortOption, setSortOption }) => {
     const [isGrid, setIsGrid] = useState(true);
@@ -44,23 +43,12 @@ const ProductsGrid = ({ products, loading, sortOption, setSortOption }) => {
                             {products.length > 0 &&
                                 <div className='py-2'>
                                     {
-                                        shouldShowGrid ?
-                                            (
-                                                <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
-                                                    {products.map(product => (
-                                                        <ProductItem key={product._id} product={product} />
-                                                    ))}
-                                                </div>
-                                            )
-                                            :
-                                            (
-                                                <>
-                                                    {products.map(product => (
-                                                        <ProductItemWithDesc key={product._id} product={product} />
-                                                    ))}
-                                                </>
-
-                                            )
+                                        shouldShowGrid
+                                            ? 
+                                            <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
+                                                {products.map(p => <ProductItemBase key={p._id} product={p} layout="grid" />)}
+                                            </div>
+                                            : products.map(p => <ProductItemBase key={p._id} product={p} layout="list" />)
                                     }
                                 </div>
                             }
