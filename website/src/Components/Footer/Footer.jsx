@@ -3,7 +3,7 @@ import MobileFooter from './MobileFooter';
 import { FiTruck } from "react-icons/fi";
 import { MdPayment } from 'react-icons/md';
 import { IoGiftSharp } from 'react-icons/io5';
-import { FaCcAmex, FaCcMastercard, FaCcPaypal, FaCcVisa, FaFacebook, FaGoogle, FaHeadphones, FaInstagram, FaPinterest, FaYoutube } from 'react-icons/fa6';
+import { FaCcAmex, FaCcMastercard, FaCcPaypal, FaCcVisa, FaFacebook, FaHeadphones, FaInstagram, FaPinterest, FaYoutube } from 'react-icons/fa6';
 import { Button } from '@mui/material';
 
 
@@ -18,7 +18,7 @@ const Footer = () => {
                             <div className='flex flex-col items-center text-center gap-[6px]'>
                                 <FiTruck size={30} />
                                 <h2 className='sm:text-xl font-[600] text-lg'>Free Shipping</h2>
-                                <p>For all orders above $39</p>
+                                <p>For all orders above $19.99</p>
                             </div>
                             <div className='flex flex-col items-center text-center gap-[6px]'>
                                 <MdPayment size={30} />

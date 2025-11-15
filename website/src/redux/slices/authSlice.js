@@ -48,28 +48,33 @@ const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.isLoggedIn = true;
             state.user = action.payload;
+            state.loading = false;
         },
         logout: (state) => {
             state.isLoggedIn = false;
             state.user = null;
+            state.loading = false;
+            localStorage.removeItem('EazyCartUser')
         },
 
     },
     extraReducers: (builder) => {
         builder
             .addCase(loadUserFromCookies.pending, (state) => {
-                state.loading = false;
+                state.loading = true;
             })
             .addCase(loadUserFromCookies.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isLoggedIn = true;
                 state.loading = false;
+                state.hasLoaded = true;
             })
             .addCase(loadUserFromCookies.rejected, (state) => {
                 state.loading = false;
                 state.isLoggedIn = false;
                 state.user = null;
                 state.error = true;
+                
             })
             .addCase(logoutUserThunk.fulfilled, (state) => {
                 state.user = null;
@@ -82,5 +87,5 @@ const authSlice = createSlice({
     }
 });
 
-export const { loginSuccess, logout, setAuthLoadingFalse } = authSlice.actions;
+export const { loginSuccess, logout} = authSlice.actions;
 export default authSlice.reducer;

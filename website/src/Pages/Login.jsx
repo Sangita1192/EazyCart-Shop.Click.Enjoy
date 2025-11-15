@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showWarning } from '../services/toastService';
 import { forgotPassword, userLogin } from '../Api/api';
 import { useDispatch } from 'react-redux';
-import { loadUserFromCookies, loginSuccess } from '../redux/slices/authSlice';
+import { loginSuccess } from '../redux/slices/authSlice';
 
 const Login = () => {
     const nav = useNavigate();
@@ -25,10 +25,15 @@ const Login = () => {
             setLoading(true);
             const res = await userLogin(email, password);
             dispatch(loginSuccess(res.data.user));
-            dispatch(loadUserFromCookies());
             showSuccess(res.data.message || "Login successful");
             localStorage.setItem("EazyCartUser", true);
-            nav('/');
+
+            const params = new URLSearchParams(window.location.search);
+            const redirectPath = params.get("redirect") || "/";
+            console.log("redirectPath==>", redirectPath);
+
+            nav(redirectPath);
+
         } catch (error) {
             showError(error?.message || "Invalid email or password");
         }
@@ -39,14 +44,14 @@ const Login = () => {
 
     const handleForgotPassword = async () => {
         if (!email) {
-           return showError("Email is required!");
+            return showError("Email is required!");
         }
         try {
             const res = await forgotPassword(email);
             if (res.data?.success) {
                 showSuccess(res.data.message || "Reset Link sent to your email");
                 nav('/')
-            }else{
+            } else {
                 showError(res.data.message || "Something went wrong");
             }
         }

@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Components/NavBar/Header'
 import SideBar from './Components/NavBar/SideBar';
 import Footer from './Components/Footer/Footer';
-import { useDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { loadUserFromCookies } from './redux/slices/authSlice';
 import { fetchActiveCategories } from './redux/slices/categorySlice';
 
@@ -21,14 +21,13 @@ export default function App() {
     dispatch(fetchActiveCategories());
   }, [dispatch]);
 
-    
-  const hideLayout = location.pathname == '/payment-success';
-  // const noLayoutRoutes =  ['/payment-success'];
-  // const hideLayout =  noLayoutRoutes.includes(location.pathname);
+
+  const isNotFoundPage = location.pathname === '/404' || location.pathname === '*' || location.pathname.includes('/404');
+  const hideLayout = location.pathname == '/payment-success' || !isNotFoundPage;
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!hideLayout && (
+      {!hideLayout  && (
         <>
           <Header isSideBarOpen={isSideBarOpen} setIsSidebarOpen={setIsSidebarOpen} />
           <SideBar isSideBarOpen={isSideBarOpen} setIsSidebarOpen={setIsSidebarOpen} />

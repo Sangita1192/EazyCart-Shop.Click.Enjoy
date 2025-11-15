@@ -157,7 +157,7 @@ const ProductDetail = () => {
                                         ))}
                                     </div>
                                 }
-                                <p className='mt-2 mb-3 xl:mt-3'> Free Shipping over $39.99 (Est Delivery in 2-3 days)</p>
+                                <p className='mt-2 mb-3 xl:mt-3'> Free Shipping over $19.99 (Est Delivery in 2-3 days)</p>
                                 <div className='flex gap-4'>
                                     <div className="relative w-20">
                                         <input

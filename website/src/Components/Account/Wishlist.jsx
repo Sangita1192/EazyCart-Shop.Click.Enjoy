@@ -26,10 +26,10 @@ const Wishlist = () => {
     catch (error) {
       showError(error.message || "something went wrong");
     }
-  }
+  };
+  
   return (
     <>
-
       <div className=' bg-white/70 md:flex-1 md:p-6 p-2 rounded-md w-full mb-[25px] md:mb-0 text-gray-600 flex flex-col gap-2'>
         <div className='border-b pb-2 border-gray-300 md:flex justify-between'>
           <div>

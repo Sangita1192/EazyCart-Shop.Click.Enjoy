@@ -19,6 +19,7 @@ import PrivateRoute from './src/Components/Routes/PrivateRoute';
 import ResetPassword from './src/Components/ResetPassword';
 import PaymentSuccess from './src/Components/Payment/paymentSuccess';
 import OrderDetails from './src/Components/Account/orderDetail';
+import NotFound from './src/Pages/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -56,7 +57,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-      // { path: '*', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ])
