@@ -12,7 +12,7 @@ const VerifyUserAccount = () => {
     const nav = useNavigate();
 
     const [otp, setOtp] = useState(Array(6).fill(''));
-    const [timer, setTimer] = useState(120); // countdown in seconds
+    const [timer, setTimer] = useState(120);
     const [loading, setLoading] = useState(false);
     const [resendOtp, setResendOtp] = useState(false);
 

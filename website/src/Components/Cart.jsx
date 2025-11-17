@@ -14,6 +14,9 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
     const { cart } = useSelector(state => state.cart);
     const { subTotal, tax, shipping, total, cartQty } = calculateCartTotals(cart);
 
+    const handleclearAllCart = () => {
+        dispatch(clearCartItems());
+    }
     if (!isCartOpen) return null;
     return (
         <>
@@ -34,10 +37,11 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                             <IoClose className='hover:text-amber-600' />
                         </button>
                     </div>
-                    <div className="flex items-center justify-between p-4 border-b border-gray-300">
-                        <button className='ms-auto hover:!text-red-500 cursor-pointer px-1' onClick={() => dispatch(clearCartItems())}>Clear All</button>
-                    </div>
-
+                    {cart?.items?.length > 0 &&
+                        <div className="flex items-center justify-between p-4 border-b border-gray-300">
+                            <button className='ms-auto hover:!text-red-500 cursor-pointer px-1' onClick={handleclearAllCart}>Clear All</button>
+                        </div>
+                    }
                     {/* Cart Content */}
                     {
                         cart?.items?.length > 0 ?
@@ -56,11 +60,20 @@ const Cart = ({ isCartOpen, setIsCartOpen }) => {
                                                             <span className='ml-2'>{item.quantity}</span>
                                                         </p>
                                                         {(item.size || item.color) && (
-                                                            <p className="italic">
+                                                            <div className="italic flex items-center">
                                                                 {item.size && <span>Size: {item.size}</span>}
                                                                 {item.size && item.color && <span className="mx-2">|</span>}
-                                                                {item.color && <span>Color: {item.color}</span>}
-                                                            </p>
+                                                                {item.color && (
+                                                                    <span className="flex items-center gap-1">
+                                                                        Color:
+                                                                        <span
+                                                                            className="inline-block w-5 h-5 rounded-full border border-gray-300"
+                                                                            style={{ backgroundColor: item.color }}
+                                                                        ></span>
+                                                                    </span>
+                                                                )}
+
+                                                            </div>
                                                         )}
 
                                                         <p className='text-amber-600 font-semibold mt-2'>${item.product.price}</p>

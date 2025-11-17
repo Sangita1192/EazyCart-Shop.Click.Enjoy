@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import ProductItem from '../ProductItem';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { useSelector } from 'react-redux';
 import { fetchPopularProducts } from '../../Api/api';
+import ProductItemBase from '../ProductitemBase';
 
 const PopularProducts = () => {
 
@@ -70,7 +70,7 @@ const PopularProducts = () => {
                             >
                                 {popularProducts.map(prod => (
                                     <SwiperSlide key={prod._id}>
-                                        <ProductItem product={prod} />
+                                        <ProductItemBase product={prod} layout='grid' />
                                     </SwiperSlide>
                                 ))}
                             </Swiper>

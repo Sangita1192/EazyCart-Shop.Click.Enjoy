@@ -6,11 +6,6 @@ const OrderSchema = new mongoose.Schema({
         ref: "user",
         required: true,
     },
-    order_id: {
-        type: String,
-        required: [true, "OrderId is required"],
-        unique: true
-    },
     products: [
         {
             product_id: {
@@ -30,6 +25,8 @@ const OrderSchema = new mongoose.Schema({
             product_details: {
                 name: { type: String, required: true },
                 image: { type: [String], default: [] },
+                color: {type: String},
+                size: {type: String}
             },
         }],
     payment_id: {
@@ -49,17 +46,14 @@ const OrderSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-
     discount_amt: {
         type: Number,
         default: 0,
     },
-
     shipping_fee: {
         type: Number,
         default: 0,
     },
-
     total_amt: {
         type: Number,
         default: 0,
@@ -68,6 +62,6 @@ const OrderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const OrderModel = mongoose.model('order', OrderSchema);
+const Order = mongoose.model('order', OrderSchema);
 
-export default OrderModel;
+export default Order;

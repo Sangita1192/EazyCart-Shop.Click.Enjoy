@@ -1,12 +1,12 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { RiHeartAddFill } from "react-icons/ri";
-import ProductItem from '../ProductItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 import { showError, showSuccess } from '../../services/toastService';
 import { clearWishlists } from '../../Api/api';
 import { fetchWishlist } from '../../redux/slices/wishlistSlice';
+import ProductItemBase from '../ProductitemBase';
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -26,10 +26,10 @@ const Wishlist = () => {
     catch (error) {
       showError(error.message || "something went wrong");
     }
-  }
+  };
+  
   return (
     <>
-
       <div className=' bg-white/70 md:flex-1 md:p-6 p-2 rounded-md w-full mb-[25px] md:mb-0 text-gray-600 flex flex-col gap-2'>
         <div className='border-b pb-2 border-gray-300 md:flex justify-between'>
           <div>
@@ -51,7 +51,7 @@ const Wishlist = () => {
                 <>
                   <div className='p-2 grid xl:grid-cols-3 xs:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-2 '>
                     {wishlist?.map(prod => (
-                      <ProductItem product={prod} key={prod._id} />
+                      <ProductItemBase product={prod} key={prod._id} layout='grid' />
                     ))}
                   </div>
 

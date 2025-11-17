@@ -9,7 +9,7 @@ const PrivateRoute = () => {
 
   if (loading) return <LoadingSpinner />;
 
-  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+  return isLoggedIn ? <Outlet /> : <Navigate to={`/login?redirect=${window.location.pathname}`} replace />;
 };
 
 export default PrivateRoute;

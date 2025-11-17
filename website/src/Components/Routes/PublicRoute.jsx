@@ -9,7 +9,7 @@ const PublicRoute = () => {
 
   if (loading) return <LoadingSpinner />;
 
-  return isLoggedIn ? <Navigate to="/my-account" replace /> : <Outlet />;
+  return isLoggedIn ? <Navigate to="/" replace /> : <Outlet />;
 };
 
 export default PublicRoute;

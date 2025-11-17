@@ -10,7 +10,7 @@ const FreeShipping = () => {
                     <h1 className='text-2xl uppercase font-bold text-gray-600'>free shipping</h1>
                 </div>
                 <h3 className='text-lg'>Free delivery on your first Order </h3>
-                <h1 className='text-2xl uppercase font-bold text-gray-600 line-through'>$49</h1>
+                <h1 className='text-2xl uppercase font-bold text-gray-600 line-through'>$19.99</h1>
             </div>
         </>
     )

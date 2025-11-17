@@ -1,41 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FaBars } from 'react-icons/fa6'
 import { RiLayoutGridFill } from "react-icons/ri";
-import ProductItem from '../ProductItem';
-import { useNavigate } from 'react-router-dom';
-import ProductItemWithDesc from './ProductItemWithDesc';
 import { useMediaQuery } from 'react-responsive';
-import { getAllProducts } from '../../Api/api';
-import { showError } from '../../services/toastService';
 import LoadingSpinner from './../LoadingSpinner';
+import ProductItemBase from '../ProductitemBase';
 
-const ProductsGrid = ({categoryId}) => {
-    const nav = useNavigate();
-
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+const ProductsGrid = ({ products, loading, sortOption, setSortOption, onResetAll }) => {
     const [isGrid, setIsGrid] = useState(true);
     const isMobile = useMediaQuery({ maxWidth: 639 });
 
-    useEffect(() => {
-        fetchAllProducts();
-    }, [categoryId])
-
-    const fetchAllProducts = async () => {
-        setLoading(true);
-        try {
-            const res = await getAllProducts(categoryId);
-            setProducts(res.data.products);
-        }
-        catch (e) {
-            showError(e.message || "something went wrong");
-            nav('/')
-        } finally {
-            setLoading(false);
-        }
-    }
-
     const shouldShowGrid = isGrid || isMobile;
+
     return (
         <>
             <div className='w-full'>
@@ -50,6 +25,8 @@ const ProductsGrid = ({categoryId}) => {
                                 <div className="flex items-center gap-2">
                                     <span className="font-semibold text-lg text-gray-800">Sort By:</span>
                                     <select
+                                        value={sortOption}
+                                        onChange={(e) => setSortOption(e.target.value)}
                                         name="sort"
                                         id="sort"
                                         className="border border-gray-300 rounded-md px-3 py-1 bg-white text-gray-700 focus:outline-none focus:border-amber-400 transition-all"
@@ -59,33 +36,48 @@ const ProductsGrid = ({categoryId}) => {
                                         <option value="high_to_low">Price: High to Low</option>
                                         <option value="top_rated">Top Rated</option>
                                         <option value="popular">Most Popular</option>
+                                        <option value="newest">Newest Arrivals</option>
                                     </select>
                                 </div>
 
                             </div>
-                            {products.length > 0 &&
+                            {products.length > 0 ? (
                                 <div className='py-2'>
-                                    {
-                                        shouldShowGrid ?
-                                            (
-                                                <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
-                                                    {products.map(product => (
-                                                        <ProductItem key={product._id} product={product} />
-                                                    ))}
-                                                </div>
-                                            )
-                                            :
-                                            (
-                                                <>
-                                                    {products.map(product => (
-                                                        <ProductItemWithDesc key={product._id} product={product} />
-                                                    ))}
-                                                </>
-
-                                            )
-                                    }
+                                    {shouldShowGrid ? (
+                                        <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
+                                            {products.map(p => (
+                                                <ProductItemBase key={p._id} product={p} layout="grid" />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        products.map(p => (
+                                            <ProductItemBase key={p._id} product={p} layout="list" />
+                                        ))
+                                    )}
                                 </div>
-                            }
+                            ) : (
+                                <div className="py-16 flex flex-col items-center text-center">
+                                    <img
+                                        src="https://cdn-icons-png.flaticon.com/512/7486/7486817.png"
+                                        alt="no results"
+                                        className="w-32 opacity-80 mb-4"
+                                    />
+                                    <h2 className="text-xl font-semibold text-gray-700 mb-2">
+                                        No Products Found
+                                    </h2>
+                                    <p className="text-gray-500 mb-4">
+                                        Try adjusting your filters or search keywords.
+                                    </p>
+
+                                    <button
+                                        onClick={onResetAll}
+                                        className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-md cursor-pointer"
+                                    >
+                                        Reset Filters
+                                    </button>
+                                </div>
+                            )}
+
                         </>
                         :
                         <LoadingSpinner />

@@ -20,7 +20,8 @@ export const fetchAllProducts = async (req, res) => {
         const products = await Product.find(filter)
             .populate('category', "name")
             .populate('size')
-            .populate('color');
+            .populate('color')
+            .populate('ratings',"rating");
         res.status(200).json({
             success: true,
             error: false,
@@ -120,7 +121,7 @@ export const getProduct = async (req, res) => {
                 path: "ratings",
                 populate: {
                     path: "user",
-                    select: "name email"
+                    select: "name email profilePicture"
                 }
             });
         res.status(200).json({

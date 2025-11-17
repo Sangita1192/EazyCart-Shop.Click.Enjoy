@@ -41,7 +41,9 @@ const Header = ({ isSideBarOpen, setIsSidebarOpen }) => {
 
     const onLogoutClick = async () => {
         setShowAccount(false);
-        handleLogout({ dispatch, nav })
+        await handleLogout({ dispatch});
+        window.location.reload();
+        nav('/');
     };
 
     return (

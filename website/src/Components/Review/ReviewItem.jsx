@@ -6,7 +6,7 @@ const ReviewItem = ({review}) => {
         <div className='flex gap-3 justify-between items-start bg-gray-50 rounded-sm shadow-sm p-2'>
                 <div className='!w-[70px] !h-[70px] bg-orange-700 flex items-center justify-center rounded-[50%] overflow-hidden'>
                     <img
-                        src="/fallbackUser.webp"
+                        src={review?.user?.profilePicture || "/fallbackUser.webp"}
                         alt="user image"
                         className="w-full h-full object-cover"
                     />
