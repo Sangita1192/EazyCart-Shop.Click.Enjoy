@@ -11,6 +11,7 @@ const ProductListing = () => {
     const nav = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     let catId = queryParams.get('category');
+    let searchKey = queryParams.get('search')?.toLowerCase() || "";
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [colors, setColors] = useState([]);
@@ -60,6 +61,16 @@ const ProductListing = () => {
     const filteredSortedProducts = useMemo(() => {
         let filtered = [...products];
 
+        // search
+        if (searchKey) {
+            filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(searchKey) ||
+                p.description?.toLowerCase().includes(searchKey) ||
+                p.category?.name?.toLowerCase().includes(searchKey) ||
+                p.category?.description?.toLowerCase().includes(searchKey)
+            );
+        }
+
         // Only filter if there are selected filters
         if (Object.keys(selectedFilters).length > 0) {
             filtered = filtered.filter(p => {
@@ -88,7 +99,7 @@ const ProductListing = () => {
             case 'top_rated':
                 filtered.sort((a, b) => {
                     const avgA = a.ratings?.reduce((sum, r) => sum + r.rating, 0) / (a.ratings?.length || 1);
-                    const avgB = b.ratings?.reduce((sum, r) => sum + r.rating, 0)/ (b.ratings?.length || 1);
+                    const avgB = b.ratings?.reduce((sum, r) => sum + r.rating, 0) / (b.ratings?.length || 1);
                     return avgB - avgA;
                 });
                 break;
@@ -103,7 +114,7 @@ const ProductListing = () => {
         }
 
         return filtered;
-    }, [products, selectedFilters, sortOption]);
+    }, [products, selectedFilters, sortOption, searchKey]);
 
 
 
@@ -132,6 +143,19 @@ const ProductListing = () => {
         toggleFilter(type, value);
     };
 
+    const handleClearSearch = () => {
+        nav('/products');
+        setSelectedFilters({});
+    };
+
+    // reset all filters
+    const handleResetAll = () => {
+        nav("/products"); 
+        setSelectedFilters({});
+    };
+
+
+
     return (
         <>
             <div className='w-full bg-white py-8 '>
@@ -155,15 +179,30 @@ const ProductListing = () => {
                         selectedFilters={selectedFilters}
                     />
                     <div className='w-full lg:w-[80%] p-3'>
+                        {searchKey && (
+                            <div className="mb-3 flex items-center gap-2">
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm flex items-center gap-2">
+                                    Search: "{searchKey}"
+                                    <button
+                                        onClick={handleClearSearch}
+                                        className="text-green-700 hover:text-green-900 font-bold"
+                                    >
+                                        ✕
+                                    </button>
+                                </span>
+                            </div>
+                        )}
+
                         <ProductsGrid
                             products={filteredSortedProducts}
                             loading={loading}
                             sortOption={sortOption}
                             setSortOption={setSortOption}
+                            onResetAll={handleResetAll}
                         />
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

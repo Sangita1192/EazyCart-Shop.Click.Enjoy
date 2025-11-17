@@ -5,11 +5,12 @@ import { useMediaQuery } from 'react-responsive';
 import LoadingSpinner from './../LoadingSpinner';
 import ProductItemBase from '../ProductitemBase';
 
-const ProductsGrid = ({ products, loading, sortOption, setSortOption }) => {
+const ProductsGrid = ({ products, loading, sortOption, setSortOption, onResetAll }) => {
     const [isGrid, setIsGrid] = useState(true);
     const isMobile = useMediaQuery({ maxWidth: 639 });
 
     const shouldShowGrid = isGrid || isMobile;
+
     return (
         <>
             <div className='w-full'>
@@ -40,18 +41,43 @@ const ProductsGrid = ({ products, loading, sortOption, setSortOption }) => {
                                 </div>
 
                             </div>
-                            {products.length > 0 &&
+                            {products.length > 0 ? (
                                 <div className='py-2'>
-                                    {
-                                        shouldShowGrid
-                                            ? 
-                                            <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
-                                                {products.map(p => <ProductItemBase key={p._id} product={p} layout="grid" />)}
-                                            </div>
-                                            : products.map(p => <ProductItemBase key={p._id} product={p} layout="list" />)
-                                    }
+                                    {shouldShowGrid ? (
+                                        <div className='grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[10px]'>
+                                            {products.map(p => (
+                                                <ProductItemBase key={p._id} product={p} layout="grid" />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        products.map(p => (
+                                            <ProductItemBase key={p._id} product={p} layout="list" />
+                                        ))
+                                    )}
                                 </div>
-                            }
+                            ) : (
+                                <div className="py-16 flex flex-col items-center text-center">
+                                    <img
+                                        src="https://cdn-icons-png.flaticon.com/512/7486/7486817.png"
+                                        alt="no results"
+                                        className="w-32 opacity-80 mb-4"
+                                    />
+                                    <h2 className="text-xl font-semibold text-gray-700 mb-2">
+                                        No Products Found
+                                    </h2>
+                                    <p className="text-gray-500 mb-4">
+                                        Try adjusting your filters or search keywords.
+                                    </p>
+
+                                    <button
+                                        onClick={onResetAll}
+                                        className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-md cursor-pointer"
+                                    >
+                                        Reset Filters
+                                    </button>
+                                </div>
+                            )}
+
                         </>
                         :
                         <LoadingSpinner />

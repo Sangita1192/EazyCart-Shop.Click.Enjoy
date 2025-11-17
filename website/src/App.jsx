@@ -23,7 +23,7 @@ export default function App() {
 
 
   const isNotFoundPage = location.pathname === '/404' || location.pathname === '*' || location.pathname.includes('/404');
-  const hideLayout = location.pathname == '/payment-success' || !isNotFoundPage;
+  const hideLayout = location.pathname == '/payment-success' || isNotFoundPage;
 
   return (
     <div className="flex flex-col min-h-screen">
