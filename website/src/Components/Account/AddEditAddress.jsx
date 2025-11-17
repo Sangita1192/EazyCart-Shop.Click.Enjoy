@@ -8,7 +8,7 @@ import { Button, CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { loadUserFromCookies } from '../../redux/slices/authSlice';
 
-const AddEditAddress = ({ existingData = null, onClose, refreshAddressList }) => {
+const AddEditAddress = ({ existingData = null, onClose}) => {
     const isEdit = !!existingData;
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
@@ -65,7 +65,6 @@ const AddEditAddress = ({ existingData = null, onClose, refreshAddressList }) =>
                 res = await addAddress(payload);
             }
             dispatch(loadUserFromCookies());
-            await refreshAddressList?.();
             showSuccess(res.data?.message || (isEdit ? "Address updated successfully" : "Address added successfully"));
             onClose?.();
         }

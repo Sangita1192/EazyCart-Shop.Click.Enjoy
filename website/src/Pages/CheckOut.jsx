@@ -1,125 +1,145 @@
-import React from 'react'
-import AddressItem from '../Components/Account/AddressItem'
-import { Button } from '@mui/material'
-import { MdPayment } from 'react-icons/md'
-import { TbCash } from "react-icons/tb";
+import React, { useEffect, useState } from 'react';
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { MdPayment } from 'react-icons/md';
+import { TbCash } from 'react-icons/tb';
+import { useSelector } from 'react-redux';
+import AddEditAddress from '../Components/Account/AddEditAddress';
+import { calculateCartTotals } from '../utils/calculateCart';
+import { showError, showWarning } from '../services/toastService';
+import { checkoutSession } from '../Api/api';
 
 const CheckOut = () => {
+    const user = useSelector((state) => state.auth.user);
+    const { cart } = useSelector((state) => state.cart);
+    const { subTotal, tax, shipping, total, cartQty } = calculateCartTotals(cart);
+
+    const [userAddresses, setUserAddresses] = useState([]);
+    const [isAddressFormOpen, setIsAddressFormOpen] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+
+    useEffect(() => {
+        if (user?.address) setUserAddresses(user.address);
+    }, [user]);
+
+    const handleAddAddress = () => {
+        setSelectedAddress(null);
+        setIsAddressFormOpen(true);
+    };
+
+    const handleCloseForm = () => {
+        setSelectedAddress(null);
+        setIsAddressFormOpen(false);
+    };
+
+    const handleCheckout = async () => {
+        if (!selectedAddress) {
+            showWarning("Please select an address before proceeding.");
+            return;
+        }
+        if (!cart?.items?.length) {
+            showWarning("Your cart is empty.");
+            return;
+        }
+        try {
+            const res = await checkoutSession(cart, selectedAddress);
+            console.log("checkout", res);
+            if (res?.data?.url) {
+                window.location.href = res.data.url; 
+            } else {
+                showError("Unable to initiate payment session.");
+            }
+        } catch (error) {
+            showError("Something went wrong during checkout");
+        }
+    }
+
     return (
-        <>
-            <div className='py-8 xl:w-[80%] lg:w-[85%] sm:w-[95%] w-[98%] m-auto md:flex gap-4 items-start '>
-                <div className='shadow-md bg-white p-4 rounded-lg xl:w-[40%] flex-1'>
-                    <div className='w-full flex lg:flex-row flex-col justify-between gap-2 mb-3'>
-                        <h1 className='font-semibold'> Select Delivery Address</h1>
-                        <Button className="!border-amber-600 !text-amber-600 !border hover:!bg-black/70 hover:!text-white hover:!border-none">Add Delivery Address</Button>
-                    </div>
-                    <div className='flex gap-1 bg-blue-100/50 p-2 rounded-md mb-2'>
-                        <input type="radio" name="address" id="address1" />
-                        <AddressItem />
-                    </div>
+        <div className='py-8 xl:w-[80%] lg:w-[85%] sm:w-[95%] w-[98%] m-auto md:flex gap-6 items-start'>
+            <div className='shadow-md bg-white p-4 rounded-lg xl:w-[40%] flex-1'>
+                <div className='w-full flex justify-between mb-3'>
+                    <Dialog
+                        open={isAddressFormOpen}
+                        onClose={handleCloseForm}
+                        fullWidth
+                        maxWidth="sm"
+                    >
+                        <DialogTitle>{userAddresses.length > 0 ? "Add New Address" : "Add Delivery Address"}</DialogTitle>
+                        <DialogContent>
+                            <AddEditAddress onClose={handleCloseForm} />
+                        </DialogContent>
+                    </Dialog>
 
-                    <div className='flex gap-1 bg-blue-100/50 p-2 rounded-md mb-2'>
-                        <input type="radio" name="address" id="address2" />
-                        <AddressItem />
-                    </div>
-
+                    <Button
+                        className="!border-amber-600 !text-amber-600 !border hover:!bg-black/70 hover:!text-white hover:!border-none"
+                        onClick={handleAddAddress}
+                    >
+                        {userAddresses.length > 0 ? "Add New Address" : "Add Delivery Address"}
+                    </Button>
                 </div>
-                <div className='shadow-md rounded-md border-gray-800 p-6 bg-white xl:w-[40%] lg:w-[50%] my-4 md:my-0'>
-                    <h3 className='py-3 border-b border-gray-300'>Your Order</h3>
-                    <div className='py-3 border-b border-gray-300 flex justify-between items-center'>
-                        <p>Product</p>
-                        <p>SubTotal</p>
+
+                <hr className='text-gray-200 mb-3' />
+
+                {userAddresses.length > 0 && <h2 className='font-semibold mb-2'>Select Delivery Address</h2>}
+                {userAddresses.map((address) => (
+                    <div
+                        key={address._id}
+                        className={`flex gap-2 p-3 rounded-md my-2 cursor-pointer border ${selectedAddress?._id === address._id ? "border-amber-600 bg-amber-50" : "border-gray-200 bg-gray-50"
+                            }`}
+                        onClick={() => setSelectedAddress(address)}
+                    >
+                        <input
+                            type="radio"
+                            name="address"
+                            checked={selectedAddress?._id === address._id}
+                            onChange={() => setSelectedAddress(address)}
+                        />
+                        <label className="flex-1">
+                            <p>{`${address.address_line}, ${address.city}, ${address.state}, ${address.pincode}`}</p>
+                            {address.phone && <p>Phone: {address.phone}</p>}
+                        </label>
                     </div>
-                    <div className='py-2 flex flex-col gap-3'>
-                        <div className='overflow-y-auto scrollbar-sidebar max-h-[300px] pr-3'>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                            <div className='flex gap-2 items-start   my-3'>
-                                <img src="/productImg1.webp" alt="product" className='w-[50px] h-[50px] rounded-md shadow-md' />
-                                <div className='flex-1'>
-                                    <h5 className='text-lg font-semibold'>{`Polo Collor Pure Cottom Shirt`.slice(0, 20)}...</h5>
-                                    <p className='flex gap-1'>
-                                        <span>Qty:</span>
-                                        <span>1</span>
-                                    </p>
-                                </div>
-                                <p>$299.00</p>
-                            </div>
-                        </div>
-
-                        <Button className='!my-2 !text-white !bg-red-400 hover:!bg-red-500 !uppercase !flex !gap-1'>
-                            <MdPayment size={22} />
-                            <span>Continue to Payment</span>
-                        </Button>
-                        <Button className='!my-2 !py-3 !bg-yellow-500 hover:!bg-yellow-600'>
-                            paypal
-                        </Button>
-                        <Button className='!my-2 !text-white !bg-black hover:!bg-black/80 !uppercase !flex !gap-1'>
-                            <TbCash size={22} />
-                            <span>Cash on Delivery</span>
-
-                        </Button>
-
-                    </div>
-
-
-                </div>
+                ))}
             </div>
-        </>
-    )
-}
 
-export default CheckOut
+            <div className='shadow-md rounded-md border-gray-300 p-6 bg-white xl:w-[35%] lg:w-[50%] flex flex-col gap-4'>
+                <h3 className='text-lg font-semibold border-b pb-2'>Order Summary</h3>
+
+                <div className='flex justify-between'>
+                    <span>Items in Order</span>
+                    <span>{cartQty}</span>
+                </div>
+
+                <div className='flex justify-between'>
+                    <span>Subtotal</span>
+                    <span>${subTotal.toFixed(2)}</span>
+                </div>
+
+                <div className='flex justify-between'>
+                    <span>Tax (GST/PST)</span>
+                    <span>${tax.toFixed(2)}</span>
+                </div>
+
+                <div className='flex justify-between'>
+                    <span>Shipping</span>
+                    <span>${shipping.toFixed(2)}</span>
+                </div>
+
+                <div className='flex justify-between font-bold text-xl border-t border-gray-300 pt-3'>
+                    <span>Total</span>
+                    <span>${total.toFixed(2)}</span>
+                </div>
+
+                <Button
+                    className={`!my-2 !text-white !bg-amber-600 hover:!bg-amber-700 !uppercase !flex !justify-center !gap-2 !py-3 ${selectedAddress ? "cursor-pointer" : "cursor-not-allowed opacity-30"}`}
+                    disabled={!selectedAddress || !cart?.items?.length}
+                    onClick={handleCheckout}
+                >
+                    <MdPayment size={22} /> Proceed to Payment
+                </Button>
+            </div>
+
+        </div>
+    );
+};
+
+export default CheckOut;

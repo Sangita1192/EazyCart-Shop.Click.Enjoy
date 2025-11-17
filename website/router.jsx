@@ -17,6 +17,9 @@ import VerifyUserAccount from './src/Pages/VerfiyUserAccount';
 import PublicRoute from './src/Components/Routes/PublicRoute';
 import PrivateRoute from './src/Components/Routes/PrivateRoute';
 import ResetPassword from './src/Components/ResetPassword';
+import PaymentSuccess from './src/Components/Payment/paymentSuccess';
+import OrderDetails from './src/Components/Account/orderDetail';
+import NotFound from './src/Pages/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,7 @@ const router = createBrowserRouter([
       { path: 'products', element: <ProductListing /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <CartPage /> },
+      {path:'payment-success', element:<PaymentSuccess/>},
       { 
         element: <PrivateRoute />,
         children: [
@@ -48,11 +52,12 @@ const router = createBrowserRouter([
               { path: 'address', element: <Address /> },
               { path: 'wishlist', element: <Wishlist /> },
               { path: 'orders', element: <Order /> },
+              { path:'orders/:orderId', element: <OrderDetails/>}
             ],
           },
         ],
       },
-      // { path: '*', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ])

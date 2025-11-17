@@ -2,13 +2,12 @@ import { logoutUserThunk } from "../redux/slices/authSlice";
 import { showError, showSuccess } from "./toastService";
 
 // Single, reusable logout handler
-export const handleLogout = async ({ dispatch, navigate }) => {
+export const handleLogout = async ({ dispatch}) => {
   try {
     const res = await dispatch(logoutUserThunk());
     if (res?.meta?.requestStatus === "fulfilled") {
       showSuccess("Logged out successfully");
       localStorage.removeItem("EazyCartUser");
-      navigate("/");
     } else {
       showError("Logout failed");
     }

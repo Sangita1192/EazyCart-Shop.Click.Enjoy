@@ -6,63 +6,81 @@ import ListItem from '@mui/material/ListItem';
 import { Button, Divider } from '@mui/material';
 import logo from './../../../public/logo.png'
 import { FaRegPlusSquare } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { getSubcategories1 } from '../../Api/api';
+import { SubCategoryList } from './SubCategoryList';
+import { Link } from 'react-router-dom';
 
 const SideBar = ({ isSideBarOpen, setIsSidebarOpen }) => {
+    const { categories } = useSelector(state => state.category);
+
+    const [expandedCats, setExpandedCats] = useState([])
+    const [subCategories, setSubCategories] = useState({})
+
+    const fetchSubCategories = async (id) => {
+        try {
+            if (expandedCats.includes(id)) {
+                setExpandedCats(expandedCats.filter(cid => cid !== id))
+                return
+            }
+            setExpandedCats([...expandedCats, id]);
+
+            // fetch only if not already fetched
+            if (!subCategories[id]) {
+                const res = await getSubcategories1(id)
+                setSubCategories((prev) => ({
+                    ...prev,
+                    [id]: res.data.categories || [],
+                }));
+            }
+        } catch (error) {
+            console.log('error in fetch subcategory', error.message)
+        }
+    }
     const handleClose = () => {
+        if (document.activeElement) document.activeElement.blur();
         setIsSidebarOpen(false);
     };
 
     return (
-        <Drawer anchor="left" open={isSideBarOpen} onClose={handleClose} className='!h-100vh'>
+        <Drawer anchor="left" open={isSideBarOpen} onClose={handleClose} ModalProps={{
+            disableRestoreFocus: true
+        }} className='!h-100vh'>
             <Box sx={{ width: 250 }} role="presentation" >
                 <List>
                     <ListItem className='!w-[90%] !m-auto '>
                         <img src={logo} alt="" className='w-full object-fit-contain' />
                     </ListItem>
                     <Divider />
-                    <ListItem className='!mt-[15px] !block' disablePadding>
-                        <Button className='!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center'>
-                            <p className='!font-bold'>Fashion</p>
-                            <FaRegPlusSquare onClick={() => setSubListOpen(!isSubListOpen)} />
-                        </Button>
-                            <List className="!w-[90%] !ml-auto !p-0">
-                                <ListItem className='!block' disablePadding>
-                                    <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                        <p className="!font-bold">Men</p>
-                                        <FaRegPlusSquare onClick={() => setIsMenOpen(prev => !prev)}/>
-                                    </Button>
-                                        <List className="!w-[90%] !ml-auto !p-0">
-                                            <ListItem disablePadding>
-                                                <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                                    <p className="!text-black-600">Shirt</p>                                                   
-                                                </Button>
-                                            </ListItem>
-                                            <ListItem disablePadding>
-                                                <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                                    <p className="!text-black-600">Jackets</p>                                                   
-                                                </Button>
-                                            </ListItem>
-                                            <ListItem disablePadding>
-                                                <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                                    <p className="!text-black-600">Pants</p>                                                   
-                                                </Button>
-                                            </ListItem>
-                                        </List>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                        <p className="!font-bold">Women</p>
-                                        <FaRegPlusSquare />
-                                    </Button>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <Button className="!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center">
-                                        <p className="!font-bold">Kids</p>
-                                        <FaRegPlusSquare />
-                                    </Button>
-                                </ListItem>
-                            </List>
-                    </ListItem>
+                    {categories.length > 0 && categories.map((cat) => (
+                        <ListItem className='!mt-[15px] !block' disablePadding key={cat._id}>
+                            <Button className='!w-full !p-[10px] !px-[15px] !flex !justify-between !items-center !capitalize !text-black/80'
+                                component={Link}
+                                onClick={handleClose}
+                                to={`/products?category=${cat._id}`}
+                            >
+                                <p className='!font-bold'>{cat.name}</p>
+                                <FaRegPlusSquare 
+                                className='hover:text-amber-600'
+                                onClick={(e) => {
+                                    e.stopPropagation(); //Prevent event propagation
+                                    e.preventDefault();  
+                                    fetchSubCategories(cat._id);
+                                }} />
+                            </Button>
+                            {/* subCategories */}
+                            {expandedCats.includes(cat._id) && (
+                                <SubCategoryList
+                                    parentId={cat._id}
+                                    subCategories={subCategories}
+                                    expandedCats={expandedCats}
+                                    setExpandedCats={setExpandedCats}
+                                    fetchSubCategories={fetchSubCategories}
+                                />
+                            )}
+                        </ListItem>
+                    ))}
+
                 </List>
             </Box>
         </Drawer>

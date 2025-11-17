@@ -11,7 +11,6 @@ const createProduct = async (req, res) => {
     try {
         const { name, description, category, sub_category, price, stock, discount, color, size, is_featured } = req.body;
 
-        console.log(req.files);
         const imageFiles = req.files || [];
         uploadedImageUrls = [];
 
@@ -144,77 +143,57 @@ const getProductById = async (req, res) => {
 //update product 
 const updateProduct = async (req, res) => {
     const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return sendErrorResponse(res, "Invalid Product Id format", 400)
-    }
+    let uploadedImageUrls = [];
     try {
         const existingProduct = await Product.findById(id);
         if (!existingProduct) {
-            return sendErrorResponse(res, "Product not found", 404);
+            return sendErrorResponse(res, 404, "Product not found");
         }
+        console.log("body", req.body);
+        console.log("files", req.files);
+        const { name, description, category, sub_category, price, stock, discount, color, size, is_featured } = req.body;
 
-        const {
-            name,
-            description,
-            category,
-            subcategory,
-            price,
-            stock,
-            discount,
-            color = [],
-            size = [],
-            weight,
-            isFeatured
-        } = req.body;
-
-        // handle new image upload
-        const files = req.files || [];
-        const uploadedImageUrls = [];
-
-        if (files.length > 0) {
-            //Remove old images from cloudinary
-            for (const oldUrl of existingProduct.images) {
-                const publicId = extractPublicId(oldUrl);
-                await removeImageFromCloudinary(publicId);
+        if (req.files?.length) {
+            for (const file of req.files) {
+                const result = await uploadImageToCloudinary(file.path);
+                if (!result.success) {
+                    return sendErrorResponse(res, 500, result.message);
+                }
+                uploadedImageUrls.push({
+                    url: result.url,
+                    public_id: result.public_id,
+                });
             }
+            existingProduct.images = uploadedImageUrls.map((img) => img.url);
         }
 
-        //upload new image(s)
-        for (let i = 0; i < files.length; i++) {
-            const result = await uploadImageToCloudinary(files[i].path);
-            if (!result.success) {
-                return sendErrorResponse(res, result.message, 500);
-            }
-            uploadedImageUrls.push(result.url);
-        }
-        existingProduct.images = uploadedImageUrls;
-
-        // Update other fields
+        // update only provided fields
         if (name) existingProduct.name = name;
         if (description) existingProduct.description = description;
         if (category) existingProduct.category = category;
-        if (subcategory) existingProduct.subcategory = subcategory;
+        if (sub_category) existingProduct.sub_category = sub_category;
         if (price !== undefined) existingProduct.price = price;
         if (stock !== undefined) existingProduct.stock = stock;
         if (discount !== undefined) existingProduct.discount = discount;
-        if (color.length) existingProduct.color = color;
-        if (size.length) existingProduct.size = size;
-        if (weight !== undefined) existingProduct.weight = weight;
-        if (typeof isFeatured === 'boolean') existingProduct.isFeatured = isFeatured;
+        if (Array.isArray(color)) existingProduct.color = color;
+        if (Array.isArray(size)) existingProduct.size = size;
+        if (typeof is_featured === "boolean")
+            existingProduct.is_featured = is_featured;
 
         await existingProduct.save();
 
         return res.status(200).json({
             message: "Product updated successfully",
             success: true,
-            existingProduct,
+            product: existingProduct,
         });
-
-    }
-    catch (error) {
-        console.error('Error fetching product', error);
-        return sendErrorResponse(res, "Internal server error", 500);
+    } catch (error) {
+        // Remove uploaded images from Cloudinary if save fails
+        for (let img of uploadedImageUrls) {
+            await removeImageFromCloudinary(img.public_id);
+        }
+        console.error("Error updating product", error);
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 

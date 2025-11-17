@@ -10,30 +10,37 @@ const addWishlistController = async (req, res) => {
     session.startTransaction();
     try {
         const userId = req.userId;
-        const { productId } = req.body;
+        const { id } = req.params;
+        console.log("product id==>", id);
 
-        if (!productId) {
+        if (!userId) {
             await session.abortTransaction();
             session.endSession();
-            return sendErrorResponse(res, "Product ID is required", 400);
+            return sendErrorResponse(res, 400, "you are not logged In");
         }
-        const isAlreadyWishlisted = await Wishlist.findOne({ userId, productId });
+
+        if (!id) {
+            await session.abortTransaction();
+            session.endSession();
+            return sendErrorResponse(res, 400, "product need to be selected");
+        }
+        const isAlreadyWishlisted = await Wishlist.findOne({ user: userId, product: id });
 
         if (isAlreadyWishlisted) {
             await session.abortTransaction();
             session.endSession();
-            return sendErrorResponse(res, "Item already in wishlist", 400);
+            return sendErrorResponse(res, 400, "Item already in wishlist");
         }
 
         const newWishlistItem = new Wishlist({
-            userId,
-            productId
+            user: userId,
+            product: id
         });
         await newWishlistItem.save({ session });
 
         await UserModel.updateOne(
             { _id: userId },
-            { $addToSet: { wishlist: productId } },
+            { $addToSet: { wishlist: id } },
             { session }
         );
 
@@ -51,7 +58,7 @@ const addWishlistController = async (req, res) => {
         await session.abortTransaction();
         session.endSession();
         console.error(error);
-        return sendErrorResponse(res, "Internal server error", 500)
+        return sendErrorResponse(res, 500, "Internal server error");
     }
 }
 
@@ -59,12 +66,23 @@ const addWishlistController = async (req, res) => {
 const getWishlistController = async (req, res) => {
     try {
         const userId = req.userId;
+        if (!userId) {
+            await session.abortTransaction();
+            session.endSession();
+            return sendErrorResponse(res, 400, "you are not logged In");
+        }
         const { page = 1, limit = 10 } = req.query;
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        const totalItems = await Wishlist.countDocuments({ userId });
-        const wishlist = await Wishlist.find({ userId })
-            .populate('productId')
+        const totalItems = await Wishlist.countDocuments({ user: userId });
+        const wishlists = await Wishlist.find({ user: userId })
+            .populate({
+                path: "product",
+                populate: [
+                    { path: "size" },
+                    { path: "color" }
+                ]
+            })
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ createdAt: -1 });
@@ -74,7 +92,7 @@ const getWishlistController = async (req, res) => {
         return res.status(200).json({
             success: true,
             error: false,
-            wishlist,
+            wishlists,
             totalItems,
             totalPages,
             currentPage: parseInt(page),
@@ -83,25 +101,40 @@ const getWishlistController = async (req, res) => {
     }
     catch (error) {
         console.error("Error in getWishlistController:", error);
-        return sendErrorResponse(res, "Failed to fetch wishlist", 500);
+        return sendErrorResponse(res, 500, "Failed to fetch wishlist");
     }
 }
 
 //remove Item from wishlist
-const removeFromWishlistController = async(req,res)=>{
+const removeProductFromWishlist = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
-    try{
+    try {
         const userId = req.userId;
-        const {productId} = req.body;
+        const { id } = req.params;
 
-        const removed = await Wishlist.findOneAndDelete({userId, productId})
-        .session(session);
+        if (!userId) {
+            await session.abortTransaction();
+            session.endSession();
+            return sendErrorResponse(res, 400, "you are not logged In");
+        }
 
-        if(removed){
+        const isExists = await Wishlist.findOne({ user: userId, product: id })
+            .session(session);
+
+        if (!isExists) {
+            await session.abortTransaction();
+            session.endSession();
+            return sendErrorResponse(res, 400, "product not in wishlist");
+        };
+
+        const removed = await Wishlist.findOneAndDelete({ user: userId, product: id })
+            .session(session);
+
+        if (removed) {
             await UserModel.updateOne(
-                {_id: userId},
-                {$pull: {wishlist: productId}},
+                { _id: userId },
+                { $pull: { wishlist: id } },
                 { session }
             );
 
@@ -116,14 +149,14 @@ const removeFromWishlistController = async(req,res)=>{
         } else {
             await session.abortTransaction();
             session.endSession();
-            return sendErrorResponse(res, "Item not found in wishlist", 404);
+            return sendErrorResponse(res, 404, "Item not found in wishlist");
         }
     }
-    catch(error){
+    catch (error) {
         await session.abortTransaction();
         session.endSession();
         console.error("Error in removeFromWishlistController:", error);
-        return sendErrorResponse(res, "Failed to remove from wishlist", 500);
+        return sendErrorResponse(res, 500, "Failed to remove from wishlist");
     }
 };
 
@@ -134,7 +167,14 @@ const clearWishlistController = async (req, res) => {
 
     try {
         const userId = req.userId;
-        await Wishlist.deleteMany({ userId }).session(session);
+
+        if (!userId) {
+            await session.abortTransaction();
+            session.endSession();
+            return sendErrorResponse(res, 400, "you are not logged In");
+        }
+
+        await Wishlist.deleteMany({ user: userId }).session(session);
 
         // Clear the user's wishlist array
         await UserModel.updateOne(
@@ -156,10 +196,10 @@ const clearWishlistController = async (req, res) => {
         await session.abortTransaction();
         session.endSession();
         console.error("Error in clearWishlistController:", error);
-        return sendErrorResponse(res, "Failed to clear wishlist", 500);
+        return sendErrorResponse(res, 500,"Failed to clear wishlist");
     }
 };
 
 
 
-export { addWishlistController, getWishlistController, removeFromWishlistController, clearWishlistController}
+export { addWishlistController, getWishlistController, removeProductFromWishlist, clearWishlistController }
