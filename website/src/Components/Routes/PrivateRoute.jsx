@@ -6,7 +6,6 @@ import LoadingSpinner from "../LoadingSpinner";
 
 const PrivateRoute = () => {
   const { isLoggedIn, loading } = useSelector((state) => state.auth);
-  console.log("private route called");
 
   if (loading) return <LoadingSpinner />;
 

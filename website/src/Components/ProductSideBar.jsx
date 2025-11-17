@@ -21,7 +21,7 @@ const ProductSideBar = ({ isOpen, setIsOpen, sizes, colors, toggleFilter, remove
                     lg:static fixed top-0 left-0 transition
                     transition-transform duration-300
                     border-r lg:border-gray-200 lg:pr-[10px]
-                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-99999
                 `}>
                 <div className={`lg:h-auto h-[90%] p-3 overflow-y-auto lg:overflow-y-visible scrollbar-sidebar`}>
                     {/* Close button for mobile */}

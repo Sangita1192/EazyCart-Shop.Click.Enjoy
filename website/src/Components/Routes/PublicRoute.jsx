@@ -6,7 +6,6 @@ import LoadingSpinner from "../LoadingSpinner";
 
 const PublicRoute = () => {
   const { isLoggedIn, loading } = useSelector((state) => state.auth);
-  console.log("public route called");
 
   if (loading) return <LoadingSpinner />;
 
