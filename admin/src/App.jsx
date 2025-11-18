@@ -22,6 +22,7 @@ import PageNotFound from './Pages/PageNotFound'
 import Users from './Pages/Users'
 import Profile from './Pages/Profile'
 import CategoryEdit from './Pages/CategoryEdit'
+import OrderDetail from './Pages/OrderDetails'
 
 
 
@@ -42,6 +43,7 @@ function App() {
         { path: "category/list", element: <CategoryList /> },
         { path: "category/edit/:id", element: <CategoryEdit /> },
         { path: "orders", element: <OrderList /> },
+        { path: "orders/:id", element: <OrderDetail /> },
         { path: "banners/add", element: <BannerCreate /> },
         { path: "banners/:id", element: <BannerEdit /> },
         { path: "banners/view", element: <BannerList /> },

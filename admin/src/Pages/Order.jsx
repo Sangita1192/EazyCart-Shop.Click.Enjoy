@@ -5,8 +5,10 @@ import { IoMdSearch } from 'react-icons/io';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { getAllUserOrders } from '../api/orderApi';
+import {useNavigate} from 'react-router-dom';
 
 const OrderList = () => {
+    const nav = useNavigate();
     const [orders, setOrders] = useState([]);
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -89,7 +91,7 @@ const OrderList = () => {
                             {orders.length > 0 ?
                                 (
                                     currentOrders?.map(o => (
-                                        <tr className="hover:bg-[#FFF3E8] cursor-pointer">
+                                        <tr className="hover:bg-[#FFF3E8] cursor-pointer" key={o._id} onClick={()=>nav(`/orders/${o._id}`)}>
                                             <td className="px-6 py-3 whitespace-nowrap">{o._id.slice(0, 10)}..</td>
                                             <td className="px-6 py-3 whitespace-nowrap">{o.payment_id.slice(0, 6)}..</td>
                                             <td className="px-6 py-3 whitespace-nowrap flex items-center gap-2">
