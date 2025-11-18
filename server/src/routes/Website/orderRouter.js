@@ -2,7 +2,7 @@ import express from 'express';
 import { getOrderDetail, getOrders } from '../../controllers/Website/orderController.js';
 import auth from '../../middleware/auth.js';
 
-export const orderRouter = express.Router();
+export const orderRouterWeb = express.Router();
 
-orderRouter.get('/', auth(), getOrders);
-orderRouter.get('/:orderId', auth(), getOrderDetail);
+orderRouterWeb.get('/', auth(), getOrders);
+orderRouterWeb.get('/:orderId', auth(), getOrderDetail);

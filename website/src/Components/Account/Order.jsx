@@ -68,7 +68,7 @@ const Order = () => {
                 (
                   <tr>
                     <td colSpan="11" className="text-center py-6 text-gray-500">
-                      🛍️ No orders yet — start shopping!
+                      No orders yet — start shopping!
                     </td>
                   </tr>
                 )}

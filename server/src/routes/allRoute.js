@@ -13,7 +13,8 @@ import { categoryRouterWeb } from './Website/categoryRouter.js';
 import { bannerRouterWeb } from './Website/bannerRouter.js';
 import { reviewRouter } from './Website/reviewRouter.js';
 import { paymentRouter } from './Website/paymentRouter.js';
-import { orderRouter } from './Website/orderRouter.js';
+import { orderRouterWeb } from './Website/orderRouter.js';
+import { orderRouter } from './Admin/orderRouter.js';
 
 const adminRouter = express.Router();  //handle admin panel routes
 const clientRouter = express.Router(); //handle frontend routes
@@ -24,6 +25,7 @@ adminRouter.use("/products", productRouter);
 adminRouter.use("/product-size", sizeRouter);
 adminRouter.use("/colors", colorRouter);
 adminRouter.use("/banners", bannerRouter);
+adminRouter.use("/orders", orderRouter);
 
 clientRouter.use("/products", ProductRouterWeb);
 clientRouter.use("/cart", cartRouterWeb);
@@ -34,6 +36,6 @@ clientRouter.use('/categories', categoryRouterWeb);
 clientRouter.use('/banners', bannerRouterWeb);
 clientRouter.use('/reviews', reviewRouter);
 clientRouter.use('/payment', paymentRouter);
-clientRouter.use('/orders', orderRouter);
+clientRouter.use('/orders', orderRouterWeb);
 
 export {adminRouter, clientRouter};
