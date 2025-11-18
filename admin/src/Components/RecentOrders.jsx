@@ -35,7 +35,7 @@ const RecentOrders = ({ orders }) => {
                         {orders.length > 0 ?
                             (
                                 currentOrders?.map(o => (
-                                    <tr className="hover:bg-gray-50">
+                                    <tr className="hover:bg-gray-50" key={o._id}>
                                         <td className="px-4 py-3">{o._id.slice(0, 8)}..</td>
                                         <td className="px-4 py-3">{o.user_id?.name}</td>
                                         <td className="px-4 py-3">{o.products.length}</td>
