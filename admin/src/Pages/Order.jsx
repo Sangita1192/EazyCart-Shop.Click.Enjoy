@@ -44,9 +44,6 @@ const OrderList = () => {
     const currentOrders = filteredOrders.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
-
-
-
     return (
         <>
             <div className="rounded-[8px] my-[15px] border border-gray-200 shadow-lg bg-white p-5 flex justify-between">

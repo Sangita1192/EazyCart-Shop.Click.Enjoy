@@ -1,7 +1,15 @@
 import Button from "@mui/material/Button";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const RecentOrders = () => {
+const RecentOrders = ({ orders }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const indexOfLast = currentPage * rowsPerPage;
+    const indexOfFirst = indexOfLast - rowsPerPage;
+    const currentOrders = orders.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(orders.length / rowsPerPage);
     return (
         <div className="rounded-[8px] border border-gray-200 shadow-lg bg-white p-5">
             <div className="flex justify-between items-center my-[15px] mb-[25px]">
@@ -24,88 +32,65 @@ const RecentOrders = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3">John Doe</td>
-                            <td className="px-4 py-3">25</td>
-                            <td className="px-4 py-3">$250</td>
-                            <td className="px-4 py-3">12/02/2025</td>
-                            <td className="px-4 py-3">
-                                <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Pending</span>
-                            </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3">John Doe</td>
-                            <td className="px-4 py-3">25</td>
-                            <td className="px-4 py-3">$250</td>
-                            <td className="px-4 py-3">12/02/2025</td>
-                            <td className="px-4 py-3">
-                                <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Pending</span>
-                            </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3">John Doe</td>
-                            <td className="px-4 py-3">25</td>
-                            <td className="px-4 py-3">$250</td>
-                            <td className="px-4 py-3">12/02/2025</td>
-                            <td className="px-4 py-3">
-                                <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Pending</span>
-                            </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3">John Doe</td>
-                            <td className="px-4 py-3">25</td>
-                            <td className="px-4 py-3">$250</td>
-                            <td className="px-4 py-3">12/02/2025</td>
-                            <td className="px-4 py-3">
-                                <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Pending</span>
-                            </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3">John Doe</td>
-                            <td className="px-4 py-3">25</td>
-                            <td className="px-4 py-3">$250</td>
-                            <td className="px-4 py-3">12/02/2025</td>
-                            <td className="px-4 py-3">
-                                <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Pending</span>
-                            </td>
-                        </tr>
-
+                        {orders.length > 0 ?
+                            (
+                                currentOrders?.map(o => (
+                                    <tr className="hover:bg-gray-50">
+                                        <td className="px-4 py-3">{o._id.slice(0, 8)}..</td>
+                                        <td className="px-4 py-3">{o.user_id?.name}</td>
+                                        <td className="px-4 py-3">{o.products.length}</td>
+                                        <td className="px-4 py-3">${o.total_amt}</td>
+                                        <td className="px-4 py-3">{new Date(o.createdAt).toLocaleString()}</td>
+                                        <td className="px-4 py-3">
+                                            <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">{o.payment_status}</span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )
+                            :
+                            (
+                                <tr>
+                                    <td colSpan={11} className="text-xl font-semibold text-center py-3 mt-2">
+                                        No orders found
+                                    </td>
+                                </tr>
+                            )
+                        }
                     </tbody>
                 </table>
             </div>
             <div className="md:flex justify-between items-center mt-4 text-center">
                 <div className="flex gap-2 items-center justify-content-center">
                     <span className="">Row per page </span>
-                    <select name="pageNumber" id="" className="bg-[#f1f1f1] px-[5px] py-[10px]">
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-
+                    <select
+                        value={rowsPerPage}
+                        onChange={(e) => {
+                            setRowsPerPage(Number(e.target.value));
+                            setCurrentPage(1);
+                        }}
+                        className="bg-[#f1f1f1] outline-gray-200 py-1 px-2"
+                    >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
                     </select>
                 </div>
                 <div className="space-x-2">
                     <span className="text-sm text-gray-600">
-                        Page 1 of 20
+                        Page {currentPage} of {totalPages || 1}
                     </span>
                     <Button
                         size="small"
                         variant="outlined"
-                    // onClick={handlePrev}
-                    // disabled={currentPage === 1}
+                        className="!me-1"
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     >
                         Prev
                     </Button>
                     <Button
                         size="small"
                         variant="outlined"
-                    // onClick={handleNext}
-                    // disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     >
                         Next
                     </Button>

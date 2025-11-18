@@ -4,8 +4,26 @@ import Button from "@mui/material/Button";
 import ecommerce from "/Images/ecom.webp";
 import WeeklyOrderTracking from "../Components/WeeklyOrderTracking";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getAllUserOrders } from "../api/orderApi";
 
 const Dashboard = () => {
+    const [orders, setOrders] = useState([]);
+    
+    useEffect(() => {
+        const fetchAllOrders = async () => {
+            try {
+                const res = await getAllUserOrders();
+                setOrders(res.data.orders);
+
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        fetchAllOrders();
+    }, []);
+
     return (
         <>
             <div className="p-4 shadow-lg rounded-[8px] bg-[white]">
@@ -27,7 +45,7 @@ const Dashboard = () => {
             <div className="p-3 my-[10px]">
                 <DashBoardSlider />
             </div>
-            <RecentOrders />
+            <RecentOrders orders={orders}/>
             <WeeklyOrderTracking />
 
         </>
