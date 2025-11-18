@@ -9,7 +9,8 @@ import { getAllUserOrders } from "../api/orderApi";
 
 const Dashboard = () => {
     const [orders, setOrders] = useState([]);
-    
+
+
     useEffect(() => {
         const fetchAllOrders = async () => {
             try {
@@ -45,7 +46,7 @@ const Dashboard = () => {
             <div className="p-3 my-[10px]">
                 <DashBoardSlider />
             </div>
-            <RecentOrders orders={orders}/>
+            <RecentOrders orders={orders} />
             <WeeklyOrderTracking />
 
         </>

@@ -15,6 +15,7 @@ import { reviewRouter } from './Website/reviewRouter.js';
 import { paymentRouter } from './Website/paymentRouter.js';
 import { orderRouterWeb } from './Website/orderRouter.js';
 import { orderRouter } from './Admin/orderRouter.js';
+import { dashboardStatsRouter } from './Admin/dashboardStatsRouter.js';
 
 const adminRouter = express.Router();  //handle admin panel routes
 const clientRouter = express.Router(); //handle frontend routes
@@ -26,6 +27,8 @@ adminRouter.use("/product-size", sizeRouter);
 adminRouter.use("/colors", colorRouter);
 adminRouter.use("/banners", bannerRouter);
 adminRouter.use("/orders", orderRouter);
+adminRouter.use("/dashboard", dashboardStatsRouter);
+
 
 clientRouter.use("/products", ProductRouterWeb);
 clientRouter.use("/cart", cartRouterWeb);
