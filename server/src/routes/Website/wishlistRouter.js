@@ -1,5 +1,5 @@
 import express from "express";
-import auth from "../../middleware/auth.js";
+import {auth} from "../../middleware/auth.js";
 import { addWishlistController, clearWishlistController, getWishlistController, removeProductFromWishlist } from "../../controllers/Website/wishlistController.js";
 
 const wishlistRouterWeb = express.Router();

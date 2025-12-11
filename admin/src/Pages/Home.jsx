@@ -9,10 +9,7 @@ const Home = () => {
   return (
     <div className="flex flex-col h-screen">
       <Header setShowSidebar={setShowSidebar} />
-
-      {/* Layout */}
       <div className="flex flex-1 overflow-hidden relative bg-[#EBE9E9]">
-        {/* Sidebar */}
         <div
           className={`
             bg-[#f1f1f1] transition-all duration-300 z-40 overflow-y-auto
@@ -21,8 +18,6 @@ const Home = () => {
         >
           <SideBar />
         </div>
-
-        {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-4 bg-[#f9f9f9]">
           <Outlet />
         </main>

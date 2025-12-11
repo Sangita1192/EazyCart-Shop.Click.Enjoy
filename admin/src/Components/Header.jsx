@@ -8,10 +8,26 @@ import Badge from "@mui/material/Badge";
 import user from "./../../public/Images/profile.jpg";
 import logo from "./../../public/Images/logo.png";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { adminLogout } from "../api/adminUser";
 
 const Header = ({ setShowSidebar }) => {
   const [dropdown, setDropdown] = useState(false);
+  const { setIsLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await adminLogout(); 
+      setIsLoggedIn(false); 
+      localStorage.removeItem("adminToken");
+      navigate("/login"); 
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   return (
     <div className="w-full py-2 shadow-md flex items-center justify-between px-4 bg-white z-10 relative">
@@ -59,7 +75,7 @@ const Header = ({ setShowSidebar }) => {
               <FaExpeditedssl size={20} />
               Reset Password
             </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[15px]">
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[15px]" onClick={handleLogout}>
               <FiLogOut size={20} />
               Logout
             </li>

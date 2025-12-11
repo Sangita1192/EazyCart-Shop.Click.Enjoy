@@ -1,5 +1,5 @@
 import express from "express";
-import auth from "../../middleware/auth.js";
+import {adminAuth} from "../../middleware/auth.js";
 import upload from "../../middleware/multer.js";
 import { createProduct, deleteProduct, getAllProducts, getProductById, toggleFeaturedProduct, updateProduct } from "../../controllers/Admin/productController.js";
 

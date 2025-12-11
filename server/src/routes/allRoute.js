@@ -16,11 +16,14 @@ import { paymentRouter } from './Website/paymentRouter.js';
 import { orderRouterWeb } from './Website/orderRouter.js';
 import { orderRouter } from './Admin/orderRouter.js';
 import { dashboardStatsRouter } from './Admin/dashboardStatsRouter.js';
+import adminAuthRouter from './Admin/adminAuthRouter.js';
+import { adminAuth } from '../middleware/auth.js';
 
 const adminRouter = express.Router();  //handle admin panel routes
 const clientRouter = express.Router(); //handle frontend routes
 
-
+adminRouter.use("/", adminAuthRouter);
+adminRouter.use(adminAuth());
 adminRouter.use("/categories", categoryRoute);
 adminRouter.use("/products", productRouter);
 adminRouter.use("/product-size", sizeRouter);

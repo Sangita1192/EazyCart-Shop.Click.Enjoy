@@ -1,5 +1,5 @@
 import express from "express";
-import auth from "../../middleware/auth.js";
+import {auth} from "../../middleware/auth.js";
 import { addAddress, deleteAddress, getAllAddress, updateAddress } from "../../controllers/Website/addressController.js";
 
 

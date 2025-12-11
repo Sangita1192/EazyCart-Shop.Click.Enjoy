@@ -23,14 +23,18 @@ import Users from './Pages/Users'
 import Profile from './Pages/Profile'
 import CategoryEdit from './Pages/CategoryEdit'
 import OrderDetail from './Pages/OrderDetails'
-
+import ProtectedRoute from './Components/protectedRouter'
 
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      element: (
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      ),
       children: [
         { index: true, element: <Dashboard /> },
         { path: "products/list", element: <ProductList /> },

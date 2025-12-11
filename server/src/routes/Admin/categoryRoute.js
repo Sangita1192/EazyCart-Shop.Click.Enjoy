@@ -1,7 +1,7 @@
 import express from "express";
 import upload from "../../middleware/multer.js";
 import { createCategory, deleteCategory, fetchActiveCategory, getAllCategories, getCategoryById, getCategoryList, toggleFeaturedCategory, toggleStatusCategory, updateCategory } from "../../controllers/Admin/categoryController.js";
-import auth from "../../middleware/auth.js";
+import {adminAuth} from "../../middleware/auth.js";
 const categoryRoute = express.Router();
 
 // categoryRoute.get("/",auth(["ADMIN"]), getAllCategories);

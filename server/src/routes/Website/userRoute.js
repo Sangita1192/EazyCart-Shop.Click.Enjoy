@@ -1,6 +1,6 @@
 import express from 'express';
 import { forgotPassword, getUser, logoutUser, registerUserController, resendOTP, resetPassword, updateUserDetails, userLogin, userProfileUpload, verifyUserAccount } from '../../controllers/Website/userController.js';
-import auth from '../../middleware/auth.js';
+import {auth, adminAuth} from '../../middleware/auth.js';
 import upload from '../../middleware/multer.js';
 import { removeImageFromCloudinary } from '../../utils/Cloudinary/removeImgCloudinary.js';
 
