@@ -1,87 +1,82 @@
 import Button from "@mui/material/Button";
 import { HiMenuAlt1 } from "react-icons/hi";
-import { FaRegBell, FaRegUser } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { FaExpeditedssl } from "react-icons/fa";
-import Badge from "@mui/material/Badge";
-import user from "./../../public/Images/profile.jpg";
-import logo from "./../../public/Images/logo.png";
-import { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
-import { useContext } from "react";
+import userProfile from "./../../public/Images/profile.jpg";
+import logo from "/Images/logo.png";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { adminLogout } from "../api/adminUser";
+import { GlobalContext } from "../context/GlobalContext";
 
 const Header = ({ setShowSidebar }) => {
-  const [dropdown, setDropdown] = useState(false);
-  const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [dropdown, setDropdown] = useState(false);
+  const { user, loading } = useContext(AuthContext);
+  const { handleLogout } = useContext(GlobalContext);
 
-  const handleLogout = async () => {
-    try {
-      await adminLogout(); 
-      setIsLoggedIn(false); 
-      localStorage.removeItem("adminToken");
-      navigate("/login"); 
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
+  if (loading) return null;
 
   return (
     <div className="w-full py-2 shadow-md flex items-center justify-between px-4 bg-white z-10 relative">
-      <div className="flex gap-2 items-center ">
-        <img src={logo} alt="logo" className="w-[210px] h-[60px]" />
+      <div className="flex gap-2 items-center">
         <Button
           className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px]"
           onClick={() => setShowSidebar((prev) => !prev)}
         >
           <HiMenuAlt1 size={28} className="text-[dimgray]" />
         </Button>
+        <img src={logo} alt="logo" className="w-[160px] sm:w-[210px] h-auto" />
       </div>
 
-      <div className="flex items-center gap-[25px]">
-        <Badge badgeContent={4} color="primary" className="cursor-pointer">
-          <FaRegBell size={24} className="text-[dimgray]" />
-        </Badge>
+      {user && (
+        <div className="flex items-center gap-4 relative">
+          {user.email && (
+            <p className="hidden sm:block text-sm font-medium text-gray-700">
+              {user.email}
+            </p>
+          )}
 
-        <FaRegUser size={20} className="text-[dimgray] cursor-pointer" />
-
-        <div className="h-[30px] w-[30px] cursor-pointer rounded-full relative">
           <img
-            src={user}
-            alt=""
+            src={userProfile}
+            alt="user_profile"
             onClick={() => setDropdown(!dropdown)}
-            className="h-full w-full object-contain rounded-full"
+            className="h-[35px] w-[35px] rounded-full cursor-pointer object-cover"
           />
 
-          {/* Dropdown */}
           <ul
-            className={`w-[200px] absolute top-[110%] right-[-10px] bg-white shadow-md rounded-md z-[99] border border-slate-300 
-              transition-all duration-300 ease-in-out transform
-              ${dropdown
-                ? "opacity-100 scale-100 pointer-events-auto"
-                : "opacity-0 scale-95 pointer-events-none"
-              }`}
+            className={`w-[200px] absolute top-[48px] right-0 bg-white shadow-lg rounded-md border border-gray-200 
+              transition-all duration-200 ease-out
+              ${dropdown ? "opacity-100 visible" : "opacity-0 invisible"}
+            `}
           >
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-slate-200 ">
-              <Link to="/profile" className="flex items-center gap-[15px]">
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b">
+              <Link to="/profile" className="flex items-center gap-3">
                 <MdManageAccounts size={20} />
                 My Account
               </Link>
             </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-slate-200 flex items-center gap-[15px]">
+
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b flex items-center gap-3">
               <FaExpeditedssl size={20} />
               Reset Password
             </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[15px]" onClick={handleLogout}>
+
+            <li
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-3"
+              onClick={() => {
+                handleLogout();
+                navigate("/login");
+              }}
+
+            >
               <FiLogOut size={20} />
               Logout
             </li>
           </ul>
         </div>
-      </div>
+      )}
     </div>
   );
 };

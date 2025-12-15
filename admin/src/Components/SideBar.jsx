@@ -1,14 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import { MdOutlineDashboard, MdLogout, MdCategory } from "react-icons/md";
 import { TbSlideshow } from "react-icons/tb";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiUsers } from "react-icons/hi2";
 import { FaBagShopping, FaProductHunt } from "react-icons/fa6";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FiLogOut } from "react-icons/fi";
+import { GlobalContext } from "../context/GlobalContext";
 
 export const SideBar = () => {
+    const navigate = useNavigate();
+    const { handleLogout } = useContext(GlobalContext);
     const [bannerShow, setBannerShow] = useState(false);
     const [productShow, setProductShow] = useState(false);
     const [categoryShow, setCategoryShow] = useState(false);
@@ -136,7 +139,10 @@ export const SideBar = () => {
                         </Link>
                     </li>
                     <li className="px-2 text-start border-b-1 border-b-slate-200">
-                        <Button className="!py-[15px] w-full !capitalize !text-[rgba(0,0,0,0.7)] flex !justify-between items-center" >
+                        <Button className="!py-[15px] w-full !capitalize !text-[rgba(0,0,0,0.7)] flex !justify-between items-center" onClick={() => {
+                            handleLogout();
+                            navigate("/login");
+                        }}>
                             <div className="flex items-center gap-3">
                                 <FiLogOut size={22} />
                                 Logout

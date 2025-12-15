@@ -12,7 +12,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useEffect } from "react";
 
 const Login = () => {
-    const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, setIsLoggedIn, setUser } = useContext(AuthContext);
     const nav = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -32,11 +32,10 @@ const Login = () => {
         setLoading(true);
         try {
             const res = await adminLogin(formData.email, formData.password);
-
             showSuccess("Login successful!");
             setIsLoggedIn(true);
+            setUser(res.data.user);
             nav("/");
-            console.log("Logged in user:", res.data.user);
         } catch (error) {
             showError(error.response?.data?.message || error.message || "Something went wrong");
         } finally {

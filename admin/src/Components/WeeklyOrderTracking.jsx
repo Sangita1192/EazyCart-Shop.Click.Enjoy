@@ -1,22 +1,28 @@
-import { useState, PureComponent, useEffect } from "react"
+import { useState, PureComponent, useEffect, useContext } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { WeeklyRevenue } from "../api/orderApi";
 import LoadingSpinner from "./LoadingSpinner";
+import { AuthContext } from "../context/AuthContext";
 
 const WeeklyOrderTracking = () => {
+    const { isLoggedIn } = useContext(AuthContext);
     const [weeklyChart, setWeeklyChart] = useState([]);
     useEffect(() => {
-        const fetchWeeklyData = async () => {
-            try {
-                const res = await WeeklyRevenue();
-                setWeeklyChart(res.data.weeklyRevenue);
-            } catch (error) {
-                console.error("Error loading weekly chart", error);
-            }
-        };
-
+        if (!isLoggedIn) {
+            setWeeklyChart([]);
+            return;
+        }
         fetchWeeklyData();
-    }, []);
+    }, [isLoggedIn]);
+
+    const fetchWeeklyData = async () => {
+        try {
+            const res = await WeeklyRevenue();
+            setWeeklyChart(res.data.weeklyRevenue);
+        } catch (error) {
+            console.error("Error loading weekly chart", error);
+        }
+    };
 
     return (
         <>
@@ -35,7 +41,6 @@ const WeeklyOrderTracking = () => {
                                 <Line type="monotone" dataKey="revenue" stroke="#10542A" name="Revenue" />
                             </LineChart>
                         </ResponsiveContainer>
-
                     </div>
                     :
                     <LoadingSpinner />

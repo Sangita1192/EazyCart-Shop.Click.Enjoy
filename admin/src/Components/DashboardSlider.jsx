@@ -6,10 +6,12 @@ import './../index.css'
 import { TbUserSquareRounded } from 'react-icons/tb';
 import { MdOutlineProductionQuantityLimits, MdReviews } from 'react-icons/md';
 import { BiSolidCartAlt } from 'react-icons/bi';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getAllStats } from '../api/statiscticsApi';
+import { AuthContext } from '../context/AuthContext';
 
 const DashBoardSlider = () => {
+    const { user } = useContext(AuthContext);
     const [users, setUser] = useState(0);
     const [products, setProducts] = useState(0);
     const [reviews, setReviews] = useState(0);
@@ -28,8 +30,9 @@ const DashBoardSlider = () => {
                 console.log(error);
             }
         }
+        if(!user) return;
         getStatistics();
-    }, [users, products, revenue, reviews]);
+    }, [user, users, products, revenue, reviews]);
 
     const formatRevenue = (num) => {
         if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";

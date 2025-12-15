@@ -4,33 +4,35 @@ import Button from "@mui/material/Button";
 import ecommerce from "/Images/ecom.webp";
 import WeeklyOrderTracking from "../Components/WeeklyOrderTracking";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getAllUserOrders } from "../api/orderApi";
+import { AuthContext } from "../context/AuthContext";
 
 const Dashboard = () => {
     const [orders, setOrders] = useState([]);
-
+    const { isLoggedIn, user } = useContext(AuthContext);
 
     useEffect(() => {
-        const fetchAllOrders = async () => {
-            try {
-                const res = await getAllUserOrders();
-                setOrders(res.data.orders);
-
-            }
-            catch (error) {
-                console.log(error);
-            }
-        }
+        if (!isLoggedIn) return;
         fetchAllOrders();
-    }, []);
+    }, [orders]);
+
+    const fetchAllOrders = async () => {
+        try {
+            const res = await getAllUserOrders();
+            setOrders(res.data.orders);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <>
             <div className="p-4 shadow-lg rounded-[8px] bg-[white]">
                 <div className="md:grid grid-cols-4 gap-[15px] items-center">
                     <div className="col-span-3">
-                        <h1 className="text-2xl font-bold">Good Morning, <br /> Sangeeta </h1>
+                        <h1 className="text-2xl font-bold capitalize">Good Morning, <br /> {user ? user.name : "User"} </h1>
                         <p className="py-3 text-xl">Here’s What happening on your store today. See the statistics at once.</p>
                         <Link to="/products/add">
                             <Button className="!bg-[#3B82F6] !text-white hover:!bg-[#2563EB] !my-[15px] !px-[15px] !capitalize">
